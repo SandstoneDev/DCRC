@@ -1,0 +1,951 @@
+{
+  "schema": 1,
+  "id": "sa1_us_1005",
+  "title": "Sonic Adventure",
+  "region": "USA",
+  "product": "MK-51000",
+  "version": "V1.005",
+  "boot": {
+    "path": "1ST_READ.BIN",
+    "bytes": 6735488,
+    "sha256": "45bc5d3c25dcfe2cc2c5701311d46783f33e4daa44a951cd9896724d66f0367a"
+  },
+  "overlays": [
+    {
+      "name": "adv00",
+      "file": "SONICADV/ADV00.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247424,
+      "code_hi": 2358325792,
+      "bytes": 2328347,
+      "sha256": "bac5bcd53a8e8b95e6a9e536d1ae5d7cd3ed63056c027366390c645d2d74c94d",
+      "config": "recomp/sa1_us_1005/overlays/adv00.toml"
+    },
+    {
+      "name": "adv0100",
+      "file": "SONICADV/ADV0100.PRS",
+      "slot": 2358378496,
+      "code_lo": 2358378496,
+      "code_hi": 2358440288,
+      "bytes": 2160414,
+      "sha256": "ee52af75e4e87374597a4227d2cdae5b136f51d191f21a0bbba0e92fdd8c31c8",
+      "config": "recomp/sa1_us_1005/overlays/adv0100.toml"
+    },
+    {
+      "name": "adv0130",
+      "file": "SONICADV/ADV0130.PRS",
+      "slot": 2358378496,
+      "code_lo": 2358378496,
+      "code_hi": 2358425120,
+      "bytes": 1034516,
+      "sha256": "497b1646a82ea9276a89bbf4697ecc0544fc0e3715257c7bd0bbc6182855d9d9",
+      "config": "recomp/sa1_us_1005/overlays/adv0130.toml"
+    },
+    {
+      "name": "adv01obj",
+      "file": "SONICADV/ADV01OBJ.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247424,
+      "code_hi": 2358252640,
+      "bytes": 6764,
+      "sha256": "8c60245dbc05f26858add2515feaf7da0e51934bebe3d8f746dffdc99681c310",
+      "config": "recomp/sa1_us_1005/overlays/adv01obj.toml"
+    },
+    {
+      "name": "adv02",
+      "file": "SONICADV/ADV02.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247424,
+      "code_hi": 2358337120,
+      "bytes": 2355272,
+      "sha256": "3a4f70b1557d629168de893ea025f07bdb3e18cdd69892c5daac1f5d67bc36d4",
+      "config": "recomp/sa1_us_1005/overlays/adv02.toml"
+    },
+    {
+      "name": "adv03",
+      "file": "SONICADV/ADV03.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247424,
+      "code_hi": 2358267680,
+      "bytes": 1060196,
+      "sha256": "ff80d10c55f095f4d22f068bba97bfd1477eb6f9a4be60c1b7e04ac4fe38c6dd",
+      "config": "recomp/sa1_us_1005/overlays/adv03.toml"
+    },
+    {
+      "name": "advertise",
+      "file": "SONICADV/ADVERTISE.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247456,
+      "code_hi": 2358307584,
+      "bytes": 937008,
+      "sha256": "49e2690ab09d2802a4e0a284526a8ace18306722973fbb2ded663ad95fff4c39",
+      "config": "recomp/sa1_us_1005/overlays/advertise.toml"
+    },
+    {
+      "name": "b_chaos0",
+      "file": "SONICADV/B_CHAOS0.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247424,
+      "code_hi": 2358268544,
+      "bytes": 392812,
+      "sha256": "3b1c4ae1b672426ca8445e7926b2aa626db1ccf048b27c89e2d0fada0e9bf9a1",
+      "config": "recomp/sa1_us_1005/overlays/b_chaos0.toml"
+    },
+    {
+      "name": "b_chaos4",
+      "file": "SONICADV/B_CHAOS4.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247424,
+      "code_hi": 2358276448,
+      "bytes": 383276,
+      "sha256": "df684213d2cf61e35f29b9898ffe5d77ad0dcde433821cd34678ad8d2ee9a682",
+      "config": "recomp/sa1_us_1005/overlays/b_chaos4.toml"
+    },
+    {
+      "name": "b_chaos6",
+      "file": "SONICADV/B_CHAOS6.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247424,
+      "code_hi": 2358277312,
+      "bytes": 1644776,
+      "sha256": "b426cb4fe5a1b5d2d30542c5307b544e827467c2e87894d32599bc13133216d4",
+      "config": "recomp/sa1_us_1005/overlays/b_chaos6.toml"
+    },
+    {
+      "name": "b_egm1",
+      "file": "SONICADV/B_EGM1.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247424,
+      "code_hi": 2358266720,
+      "bytes": 421244,
+      "sha256": "cf4fd00cca51851a6b06ab0f3fa0850ef19a843b8791e8bdb49a77e35de5ed60",
+      "config": "recomp/sa1_us_1005/overlays/b_egm1.toml"
+    },
+    {
+      "name": "b_egm3",
+      "file": "SONICADV/B_EGM3.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247424,
+      "code_hi": 2358291680,
+      "bytes": 364836,
+      "sha256": "95cfcdc07099e36e9d65b81a640a0e79e22d74fe356aec9a18f9f76773a9a259",
+      "config": "recomp/sa1_us_1005/overlays/b_egm3.toml"
+    },
+    {
+      "name": "ev0001",
+      "file": "SONICADV/EV0001.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360881696,
+      "bytes": 81596,
+      "sha256": "8386b36046abecae70bf31de35eda553e28a671ee857a7348fbeec1a0d8cdcaf",
+      "config": "recomp/sa1_us_1005/overlays/ev0001.toml"
+    },
+    {
+      "name": "ev0002",
+      "file": "SONICADV/EV0002.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360880864,
+      "bytes": 157824,
+      "sha256": "eb20858ae2ad5d28ec772ad5e9e33062d82555625390474d99664f9206276e10",
+      "config": "recomp/sa1_us_1005/overlays/ev0002.toml"
+    },
+    {
+      "name": "ev0003",
+      "file": "SONICADV/EV0003.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360874720,
+      "bytes": 87496,
+      "sha256": "9c53aa10e7922502b23aced8516e7b94efac5fd8d31a3330f771dca409c9b500",
+      "config": "recomp/sa1_us_1005/overlays/ev0003.toml"
+    },
+    {
+      "name": "ev0006",
+      "file": "SONICADV/EV0006.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360874592,
+      "bytes": 31640,
+      "sha256": "9bdf1b01e15bff52b0a7ad3087982b9146541859f921df71d27945892ee49e34",
+      "config": "recomp/sa1_us_1005/overlays/ev0006.toml"
+    },
+    {
+      "name": "ev0007",
+      "file": "SONICADV/EV0007.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360901376,
+      "bytes": 373876,
+      "sha256": "dcefbb43b30906491eb3e528aff5bcc700e165c4d6011168e8a311ee970860fd",
+      "config": "recomp/sa1_us_1005/overlays/ev0007.toml"
+    },
+    {
+      "name": "ev0008",
+      "file": "SONICADV/EV0008.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360908896,
+      "bytes": 475904,
+      "sha256": "5c89e0541efd1cd9b2e5840c97e7f06eb998ab9416e9ef0a0598a56348ea00ea",
+      "config": "recomp/sa1_us_1005/overlays/ev0008.toml"
+    },
+    {
+      "name": "ev0009",
+      "file": "SONICADV/EV0009.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360889600,
+      "bytes": 191104,
+      "sha256": "cfc482d56f4f321f93d5fddc718b313ae600a10da549763f93763ba53dbb7abf",
+      "config": "recomp/sa1_us_1005/overlays/ev0009.toml"
+    },
+    {
+      "name": "ev000b",
+      "file": "SONICADV/EV000B.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360899808,
+      "bytes": 383820,
+      "sha256": "6c061260e25583638437f00f7cbe09407a447a52f92bd32259a93011357eb3b7",
+      "config": "recomp/sa1_us_1005/overlays/ev000b.toml"
+    },
+    {
+      "name": "ev000c",
+      "file": "SONICADV/EV000C.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360888256,
+      "bytes": 169000,
+      "sha256": "96c3768dc8f8b318ada0e0f4dc24057ed000f27dcfbea3f12c1a45562058523b",
+      "config": "recomp/sa1_us_1005/overlays/ev000c.toml"
+    },
+    {
+      "name": "ev000d",
+      "file": "SONICADV/EV000D.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360878112,
+      "bytes": 87600,
+      "sha256": "abcac897cdb3934c0c372cd53f4fe5d5717e149a58950716bab78a04aef77b34",
+      "config": "recomp/sa1_us_1005/overlays/ev000d.toml"
+    },
+    {
+      "name": "ev0011",
+      "file": "SONICADV/EV0011.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360872928,
+      "bytes": 52536,
+      "sha256": "82a1807cbcea1b649ae76b5c5e69b9d38bb46b85821e78adc262e8108d0fb782",
+      "config": "recomp/sa1_us_1005/overlays/ev0011.toml"
+    },
+    {
+      "name": "ev0012",
+      "file": "SONICADV/EV0012.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360878240,
+      "bytes": 210688,
+      "sha256": "5bc21842d4028a338e9b357196e327fa351525b0f935a2d12343706482758d07",
+      "config": "recomp/sa1_us_1005/overlays/ev0012.toml"
+    },
+    {
+      "name": "ev0013",
+      "file": "SONICADV/EV0013.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360879616,
+      "bytes": 87520,
+      "sha256": "0e2668789ee8c13196baf87fb6ccc90b06750515c6288c420bdfce695e48e791",
+      "config": "recomp/sa1_us_1005/overlays/ev0013.toml"
+    },
+    {
+      "name": "ev0014",
+      "file": "SONICADV/EV0014.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360870080,
+      "bytes": 17496,
+      "sha256": "379fe12d289fcc88a50e42927d1a8fbdf3af645c6cb834cca0bf27d7792b964c",
+      "config": "recomp/sa1_us_1005/overlays/ev0014.toml"
+    },
+    {
+      "name": "ev0015",
+      "file": "SONICADV/EV0015.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360876224,
+      "bytes": 225412,
+      "sha256": "a614b49041e9369127196d4c9387e8c7aa81c8f47e41e368db46a82068179e67",
+      "config": "recomp/sa1_us_1005/overlays/ev0015.toml"
+    },
+    {
+      "name": "ev0016",
+      "file": "SONICADV/EV0016.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360881632,
+      "bytes": 275956,
+      "sha256": "e6f721dd365041ffd5be187f5052486eee37009b0d4890b1feb6eb6667bf0f75",
+      "config": "recomp/sa1_us_1005/overlays/ev0016.toml"
+    },
+    {
+      "name": "ev0017",
+      "file": "SONICADV/EV0017.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360879488,
+      "bytes": 185368,
+      "sha256": "271a4e60149eb325613e1fd2efa2c0d90f16fb0c9658df949372bba880bd4623",
+      "config": "recomp/sa1_us_1005/overlays/ev0017.toml"
+    },
+    {
+      "name": "ev001a",
+      "file": "SONICADV/EV001A.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360894464,
+      "bytes": 272120,
+      "sha256": "6d334f2c8048a7aeaadeadaf2f3d265b0fa53a89fed95cde7444e158ab61d939",
+      "config": "recomp/sa1_us_1005/overlays/ev001a.toml"
+    },
+    {
+      "name": "ev001b",
+      "file": "SONICADV/EV001B.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360877952,
+      "bytes": 154620,
+      "sha256": "2f03f0745da81476bcdeb13c3c4ebe7b4572f7002d6076ef224914bb535342f1",
+      "config": "recomp/sa1_us_1005/overlays/ev001b.toml"
+    },
+    {
+      "name": "ev001c",
+      "file": "SONICADV/EV001C.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360885312,
+      "bytes": 224592,
+      "sha256": "6a8ad1c577c2406b776bf32351b18edd8708838f944b537f920ca17af99ec8ba",
+      "config": "recomp/sa1_us_1005/overlays/ev001c.toml"
+    },
+    {
+      "name": "ev001d",
+      "file": "SONICADV/EV001D.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360882208,
+      "bytes": 68884,
+      "sha256": "7575e162b6d9c48f5a1bb17c5d2a9afeafbf931de4a4bed6c9f0dbc4861a235e",
+      "config": "recomp/sa1_us_1005/overlays/ev001d.toml"
+    },
+    {
+      "name": "ev001e",
+      "file": "SONICADV/EV001E.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360894784,
+      "bytes": 113296,
+      "sha256": "6fbbb9140c8f65d74f9bb034cf521187da0870d2df81b9d5e374b8a9d43eb19b",
+      "config": "recomp/sa1_us_1005/overlays/ev001e.toml"
+    },
+    {
+      "name": "ev0020",
+      "file": "SONICADV/EV0020.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360878816,
+      "bytes": 26612,
+      "sha256": "566c83785da0723bbee35d9d48c6fa0c366c8a44822dfabf1af67d4303adaacd",
+      "config": "recomp/sa1_us_1005/overlays/ev0020.toml"
+    },
+    {
+      "name": "ev0021",
+      "file": "SONICADV/EV0021.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360871616,
+      "bytes": 15056,
+      "sha256": "45d038ca2e63e4129ccd5a43fadf6f58c29edf8480ea5079f43f8ae353909810",
+      "config": "recomp/sa1_us_1005/overlays/ev0021.toml"
+    },
+    {
+      "name": "ev0022",
+      "file": "SONICADV/EV0022.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360874080,
+      "bytes": 172224,
+      "sha256": "3ca25d574a22456e76da88395cb42bd671775a6029b7b804e679a83bd33b2cc9",
+      "config": "recomp/sa1_us_1005/overlays/ev0022.toml"
+    },
+    {
+      "name": "ev0023",
+      "file": "SONICADV/EV0023.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360882816,
+      "bytes": 107184,
+      "sha256": "5a119d2d1604d08d53935d20dceeeae2b925f10282542d12859f9581f1ebbc0c",
+      "config": "recomp/sa1_us_1005/overlays/ev0023.toml"
+    },
+    {
+      "name": "ev0024",
+      "file": "SONICADV/EV0024.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360877504,
+      "bytes": 24824,
+      "sha256": "15697795d7bc08db181e54467d1f96263906033b3fd4502ffcd9b635c46fee40",
+      "config": "recomp/sa1_us_1005/overlays/ev0024.toml"
+    },
+    {
+      "name": "ev0026",
+      "file": "SONICADV/EV0026.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360908064,
+      "bytes": 160308,
+      "sha256": "c36adc7f1e481ba7d50f5688b3881bf747f85e0e8560aa0ad42916f90b8b255c",
+      "config": "recomp/sa1_us_1005/overlays/ev0026.toml"
+    },
+    {
+      "name": "ev0028",
+      "file": "SONICADV/EV0028.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360876608,
+      "bytes": 104060,
+      "sha256": "66a69a8445a0b0ccb954a06f5277dfdbec67f9bbe011d32253b605cfef72bf08",
+      "config": "recomp/sa1_us_1005/overlays/ev0028.toml"
+    },
+    {
+      "name": "ev0029",
+      "file": "SONICADV/EV0029.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360890912,
+      "bytes": 92420,
+      "sha256": "58648e981906308f80475b7695c95d7acb1d266d5f6896713800c856139785f5",
+      "config": "recomp/sa1_us_1005/overlays/ev0029.toml"
+    },
+    {
+      "name": "ev002a",
+      "file": "SONICADV/EV002A.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360871424,
+      "bytes": 85856,
+      "sha256": "caeb05a64a0f4c8d83097674a4283488c29be527ddc643e81b6baee7426de465",
+      "config": "recomp/sa1_us_1005/overlays/ev002a.toml"
+    },
+    {
+      "name": "ev002b",
+      "file": "SONICADV/EV002B.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360910432,
+      "bytes": 325560,
+      "sha256": "24958a1055e9aa83580f6777ba9a4e3675c44e290842f31b86375755853a985e",
+      "config": "recomp/sa1_us_1005/overlays/ev002b.toml"
+    },
+    {
+      "name": "ev0180",
+      "file": "SONICADV/EV0180.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360876128,
+      "bytes": 82208,
+      "sha256": "a79f948b514bde152598b719b4f8390df5b1e8b96ef5e72b9fc7fe99475433f6",
+      "config": "recomp/sa1_us_1005/overlays/ev0180.toml"
+    },
+    {
+      "name": "shooting",
+      "file": "SONICADV/SHOOTING.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247424,
+      "code_hi": 2358283488,
+      "bytes": 1916104,
+      "sha256": "83aef5dc9b3ea44a4fe653bc727af8aa20e7c5fd4bebfd298f95d08e41dab162",
+      "config": "recomp/sa1_us_1005/overlays/shooting.toml"
+    },
+    {
+      "name": "stg01",
+      "file": "SONICADV/STG01.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247424,
+      "code_hi": 2358309856,
+      "bytes": 1954056,
+      "sha256": "38edbe29b2da1ee267cb53b089cdd231732f28cb1e7136093cfe751f57c7f7ab",
+      "config": "recomp/sa1_us_1005/overlays/stg01.toml"
+    },
+    {
+      "name": "stg02",
+      "file": "SONICADV/STG02.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247424,
+      "code_hi": 2358300096,
+      "bytes": 1138093,
+      "sha256": "59e1b467567021cee5eb69e02b86bfdb54a94b94d0330419f60a3b56f33deb11",
+      "config": "recomp/sa1_us_1005/overlays/stg02.toml"
+    },
+    {
+      "name": "stg03",
+      "file": "SONICADV/STG03.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247424,
+      "code_hi": 2358339680,
+      "bytes": 1212172,
+      "sha256": "36ebd31dcc1a9f6de3002e0d8c2448bc98fcb58d2896cf6a8b375d9b8a5d86d9",
+      "config": "recomp/sa1_us_1005/overlays/stg03.toml"
+    },
+    {
+      "name": "stg04",
+      "file": "SONICADV/STG04.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247424,
+      "code_hi": 2358318656,
+      "bytes": 1558768,
+      "sha256": "582223f74f81b1f1167948e88312570e6f046665f1692997e178c22dc99d011e",
+      "config": "recomp/sa1_us_1005/overlays/stg04.toml"
+    },
+    {
+      "name": "stg05",
+      "file": "SONICADV/STG05.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247424,
+      "code_hi": 2358327168,
+      "bytes": 1954534,
+      "sha256": "5231b156f0895b252ad51888832c09cf43063281f7fb9e9383e137837e7d3691",
+      "config": "recomp/sa1_us_1005/overlays/stg05.toml"
+    },
+    {
+      "name": "stg06",
+      "file": "SONICADV/STG06.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247424,
+      "code_hi": 2358360832,
+      "bytes": 1995960,
+      "sha256": "b1e44238cab5561e227782fa74cead30bfc45a1d0e31360586b8b8280ed7bbf7",
+      "config": "recomp/sa1_us_1005/overlays/stg06.toml"
+    },
+    {
+      "name": "stg07",
+      "file": "SONICADV/STG07.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247424,
+      "code_hi": 2358296544,
+      "bytes": 1430380,
+      "sha256": "3bd82699695745fd199949bd4a40f931a1546cce7a004c085ea9b29eefdfdb43",
+      "config": "recomp/sa1_us_1005/overlays/stg07.toml"
+    },
+    {
+      "name": "stg08",
+      "file": "SONICADV/STG08.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247424,
+      "code_hi": 2358329440,
+      "bytes": 2024604,
+      "sha256": "db141931d1afc5c8b8a937cb4cfe1233827952b46ebd48ffb850cf65c3ff7d49",
+      "config": "recomp/sa1_us_1005/overlays/stg08.toml"
+    },
+    {
+      "name": "stg09",
+      "file": "SONICADV/STG09.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247424,
+      "code_hi": 2358394272,
+      "bytes": 2242852,
+      "sha256": "a519225e97f4c46b3538d4f172d3afe55c83e0059960e96b1ca5977b260d9119",
+      "config": "recomp/sa1_us_1005/overlays/stg09.toml"
+    },
+    {
+      "name": "stg10",
+      "file": "SONICADV/STG10.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247424,
+      "code_hi": 2358340448,
+      "bytes": 2229116,
+      "sha256": "68176c73e0d972bc5c5f226deaa44ec3a590850cf631bd63a6613ad9a3b020a1",
+      "config": "recomp/sa1_us_1005/overlays/stg10.toml"
+    },
+    {
+      "name": "stg12",
+      "file": "SONICADV/STG12.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247424,
+      "code_hi": 2358345760,
+      "bytes": 1904268,
+      "sha256": "9ce6ec66592476b285df6e4a6c16f483a8047d2f6d8b25d5cff3cd62427c51c2",
+      "config": "recomp/sa1_us_1005/overlays/stg12.toml"
+    },
+    {
+      "name": "summary",
+      "file": "SONICADV/SUMMARY.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247456,
+      "code_hi": 2358260832,
+      "bytes": 695821,
+      "sha256": "9fc758d366c9c22730440245de2e0d058fa9c29110af1b5c2afa022ca29d60cc",
+      "config": "recomp/sa1_us_1005/overlays/summary.toml"
+    }
+  ],
+  "catalogs": {
+    "main": {
+      "file": "functions/main.json",
+      "sha256": "ebbbd6f1f256838359ae4cef210f59876e2b81e4657f6e245909fdd7b03e22e5",
+      "rows": 9756,
+      "discovery_metadata_sha256": "887dffe83eb3463639561058d3f445085f31d2dea47b439200867844107d0ce7"
+    },
+    "adv00": {
+      "file": "functions/adv00.json",
+      "sha256": "978c8d23391f4c828736640bd7ec6a04b96501520760f1b75cd8c42f46e9cfbb",
+      "rows": 558,
+      "discovery_metadata_sha256": "3e27f537655b63e48a95b92d470e10ea342b6a566ae08be97a52e813d867dafe"
+    },
+    "adv0100": {
+      "file": "functions/adv0100.json",
+      "sha256": "bc9bfc6350750e4faf0e0e90c60817bdc43bdbaecb0cee84682f77c1d141b0ca",
+      "rows": 292,
+      "discovery_metadata_sha256": "f72130f037fd5ac4814c57094c421b632ef46383364a8ebfae5ab67be082ef00"
+    },
+    "adv0130": {
+      "file": "functions/adv0130.json",
+      "sha256": "ff2ed78db7dea75f09bb8132d64cd164669fe5d2d4cd05fc2e63f6f680523544",
+      "rows": 220,
+      "discovery_metadata_sha256": "637134d11f504261eace5799be50338d9237ff9b6469821376d8fafba89e4f28"
+    },
+    "adv01obj": {
+      "file": "functions/adv01obj.json",
+      "sha256": "fb2a8f1eb63d930abdfaae27d529ba00dc92857f39f906c904a22a8a981e1bbf",
+      "rows": 44,
+      "discovery_metadata_sha256": "2104435893d8db5a29ad91dc448cf9a9ea6ce08fd4ec5fac0cf5ea996057f321"
+    },
+    "adv02": {
+      "file": "functions/adv02.json",
+      "sha256": "d931f2d45faaa70324317368ac30c519cebf9d8ffc4a1ef8360842192c7236e1",
+      "rows": 421,
+      "discovery_metadata_sha256": "826aa669c58a7fbb4f68150de1993ba1f90b35e5624e15547390353a6219dc97"
+    },
+    "adv03": {
+      "file": "functions/adv03.json",
+      "sha256": "7893727153ea4a00140b3a2cfc84990a1f4a308fe21964d21ee06164e711d908",
+      "rows": 175,
+      "discovery_metadata_sha256": "6cace6fba50847e5b84b9adad834d6da6a4e1165ed27ecfb6d6968199bc08a22"
+    },
+    "advertise": {
+      "file": "functions/advertise.json",
+      "sha256": "7353400ace4802286fb3dd599c1d6b3309746e301ffb70cb9ae24dddb711c8b4",
+      "rows": 384,
+      "discovery_metadata_sha256": "09a63ac544d29bb7c7b29e9dc0ea109aff493cae41b8627fc483f26d74715723"
+    },
+    "b_chaos0": {
+      "file": "functions/b_chaos0.json",
+      "sha256": "3005556bf1196937dd0d5256412b95e6711c4d72d4946a6871e426760bf9826a",
+      "rows": 153,
+      "discovery_metadata_sha256": "90f406a5ce7ff4f5579121bea72038185b560e4e3fd28efd7a1513ca248eaebb"
+    },
+    "b_chaos4": {
+      "file": "functions/b_chaos4.json",
+      "sha256": "73de2e9d0b5a669cbfd9de8f692db4b3609fea76416bb911754f84662d7fe377",
+      "rows": 142,
+      "discovery_metadata_sha256": "3b6e29ba917f2e03b40b0629f507fb9bebebbd0271f48bbe93cc49770cc5b8fe"
+    },
+    "b_chaos6": {
+      "file": "functions/b_chaos6.json",
+      "sha256": "81758a8329e0dd6c20dcb6485eb610b27ddfacf7cb75ef0a7ef9ba95756c7bf5",
+      "rows": 106,
+      "discovery_metadata_sha256": "3cacee807b3ce569d5248b1a2badf59376383da506371f200c41097113c2bc96"
+    },
+    "b_egm1": {
+      "file": "functions/b_egm1.json",
+      "sha256": "e849a1f5a553d5863c6ef6e4c8e734c544c7bdda1289181285d8bd9d9a44056a",
+      "rows": 151,
+      "discovery_metadata_sha256": "ed6191e863687036986c4771adacfe8925c3c717897016fbaa80cba25119d82f"
+    },
+    "b_egm3": {
+      "file": "functions/b_egm3.json",
+      "sha256": "4f05149e41fa65264d0a443c6e172c51a3350893214cd5fd86a47a84ce614c39",
+      "rows": 212,
+      "discovery_metadata_sha256": "a19bc01f7f0c707f3c2a5d592c657780f17dda0f28c1699b5e8e72b655d3734c"
+    },
+    "ev0001": {
+      "file": "functions/ev0001.json",
+      "sha256": "af0da201060224204e87ddd5f08d9d20d3f6d7893f45a6b73ef1ececb6d55bb1",
+      "rows": 59,
+      "discovery_metadata_sha256": "ad42e53b7e88dcc334084b6fbfaa4faf230d4a7ac7dbb7b846ef5035a9bd3bd3"
+    },
+    "ev0002": {
+      "file": "functions/ev0002.json",
+      "sha256": "85a80d5df5483174a32c60ebd0f9cab0de9b72841bcd401202c0612440cfbb95",
+      "rows": 83,
+      "discovery_metadata_sha256": "5b8cddd0a788aeaf9100747643cd258d87cd9659675d4da9877d7ef91d17d048"
+    },
+    "ev0003": {
+      "file": "functions/ev0003.json",
+      "sha256": "7c6992a379be86e9982d2a6d5adb660492c8f5a90449dac1c43abe1bd0ecc548",
+      "rows": 27,
+      "discovery_metadata_sha256": "fc9af7813afb2696339694c02fec1fa9e33ef0bc8c88623064d8af9788a9746f"
+    },
+    "ev0006": {
+      "file": "functions/ev0006.json",
+      "sha256": "fd6fc60a9ebe1dfc0ea4c6dcdc92b020e306155cb2f8d9f1d50a1f545a5d1a9e",
+      "rows": 23,
+      "discovery_metadata_sha256": "9ba14920564d46cbb9f241af1eb1cb18da2e3f6cbc2484181f14f8ff02d0c8ad"
+    },
+    "ev0007": {
+      "file": "functions/ev0007.json",
+      "sha256": "d407730256e43405d57f8e1eb65a41ba508f0b1222177ebe49a0c080def0355e",
+      "rows": 142,
+      "discovery_metadata_sha256": "acdc69dff71437f923e86ec17edf2a6d22bc0db907f2c390348a1589abefc01c"
+    },
+    "ev0008": {
+      "file": "functions/ev0008.json",
+      "sha256": "e6bb26bd764725aeb7282afb7106ba671d16109137f367aa7be7359478d05c8d",
+      "rows": 168,
+      "discovery_metadata_sha256": "47bf5fcfc7f0dc87b64ee8e8af19f26e15c45f6916470a506cc1d76ecf28b6f2"
+    },
+    "ev0009": {
+      "file": "functions/ev0009.json",
+      "sha256": "174f6054396ec90cb05d60e3ea7ca6be297fc3c2a55f04750c5a375eb61d6f22",
+      "rows": 78,
+      "discovery_metadata_sha256": "173b4a9ecb2665b40eae2c29ea862dcc15213d73fe90eb505d4bbe017a50d3b0"
+    },
+    "ev000b": {
+      "file": "functions/ev000b.json",
+      "sha256": "9c16aa4e5da461b22c8d35de403bad7f65ecda886db9a4f50972c65c280c5b9b",
+      "rows": 122,
+      "discovery_metadata_sha256": "1f014c41e33980a1b9769d8d1caa309c89f46e86dad0bf60a37e420774b8d451"
+    },
+    "ev000c": {
+      "file": "functions/ev000c.json",
+      "sha256": "892972f0f18d1732969a8467d5b047e4d80412afcac73fb3ce702e346670eb4d",
+      "rows": 68,
+      "discovery_metadata_sha256": "5e57e702ecf4e5e8b8452f4ed0f8a2a3834ee5ffb8671d65ae288846ea1b7587"
+    },
+    "ev000d": {
+      "file": "functions/ev000d.json",
+      "sha256": "c6dddc777dfbd8672d5313ff0e69243893e242a3a9187284643734abbcaa5bb0",
+      "rows": 78,
+      "discovery_metadata_sha256": "0db7e717b298c3109a9eba18f9075a31b34fb4857e8a9726801cd0c6b09ffd69"
+    },
+    "ev0011": {
+      "file": "functions/ev0011.json",
+      "sha256": "9b962ef998d21af42482b8fbc3bff1ec3972e244915c3316bd47f87eb14896d9",
+      "rows": 20,
+      "discovery_metadata_sha256": "e5ca6c445a9f1261a39c15d583078c9835ab9804310795bf436fc05e778755b2"
+    },
+    "ev0012": {
+      "file": "functions/ev0012.json",
+      "sha256": "78b1b7591d44630ba39d2838e550323cf3a02f11e08611ecffc453c47d252bf9",
+      "rows": 26,
+      "discovery_metadata_sha256": "9308058c12305ef916a1b6e7ee352c25fef27d88838d76e6bf9c21a300249907"
+    },
+    "ev0013": {
+      "file": "functions/ev0013.json",
+      "sha256": "9503767751acfa47470ac757f978c40b53217cae3c79bfbc10cfb21b0ca3eda9",
+      "rows": 47,
+      "discovery_metadata_sha256": "6374eb789b6f197fceef08d00a5f72137a209c90e77393ebe570530d09eeadb7"
+    },
+    "ev0014": {
+      "file": "functions/ev0014.json",
+      "sha256": "a67b590d0d4f4a5f31d4958c84e81ec51df48389de22751f138e58eccb251ffd",
+      "rows": 1,
+      "discovery_metadata_sha256": "1002b1a58f6aa33fcb66fd65c484afa1d51ccce433ea011ac07e80585526168b"
+    },
+    "ev0015": {
+      "file": "functions/ev0015.json",
+      "sha256": "f1d1ec27054552e284287eaef157a0ca881329387a151d1110587d239f331f2f",
+      "rows": 23,
+      "discovery_metadata_sha256": "febb17f411c797ac941cb66c24cba7631aa109bcdd74761b9edf1e934bac053c"
+    },
+    "ev0016": {
+      "file": "functions/ev0016.json",
+      "sha256": "12e433ada924773cc2faed4ec516e9ae2e7df4a8c49c5877fe13e608d693caf0",
+      "rows": 67,
+      "discovery_metadata_sha256": "63c6e3ec2672167f58de2d5e73f272773aa254db4e3065a8dd0f85aeb561434a"
+    },
+    "ev0017": {
+      "file": "functions/ev0017.json",
+      "sha256": "4eaa1ff53178aeaccbc622da7ec8a0f0aa2f1bee5076e8a1663bc72fd0eb83d3",
+      "rows": 53,
+      "discovery_metadata_sha256": "0a47aa8d15bed7fccf0f6742b19196ea73245ef174f34c406ef0feaddfb26e11"
+    },
+    "ev001a": {
+      "file": "functions/ev001a.json",
+      "sha256": "71b0c76da43020650d064501f1bc718b425ceb707f86a4a764b546667163eab1",
+      "rows": 91,
+      "discovery_metadata_sha256": "32a2dbaebd1ba0809dc39f94015302940b3e9d41f4df8439575140500385de6a"
+    },
+    "ev001b": {
+      "file": "functions/ev001b.json",
+      "sha256": "9e896c14b6d4d253d06c4eac1107b1a85689f398e71d7705e9010288332807de",
+      "rows": 16,
+      "discovery_metadata_sha256": "4b53bb48e52b21a44e597b9dbbf6c12e2f47193369ce87a3c9b8080a76d909cc"
+    },
+    "ev001c": {
+      "file": "functions/ev001c.json",
+      "sha256": "50fe06add082b0eafe2679e9a8383cf4109895f864cf327bafb41b05db92efcf",
+      "rows": 57,
+      "discovery_metadata_sha256": "abcf47655387643f8b12249f010106e62080a913488d710b199a8952b74ef4c7"
+    },
+    "ev001d": {
+      "file": "functions/ev001d.json",
+      "sha256": "1b9c9ddf9cb1aea84ac5b81a0e1adfde8e46e305e711791c40e01ca837886339",
+      "rows": 48,
+      "discovery_metadata_sha256": "e134e0580a4ce970da5b17bafb554795efb0c4123231c76014ddd38da9b99051"
+    },
+    "ev001e": {
+      "file": "functions/ev001e.json",
+      "sha256": "2039533a2ffe274b31577de20b90087f7283393be8fe5a7fd6646e5af9e84d9c",
+      "rows": 89,
+      "discovery_metadata_sha256": "7cb5ed4bd94dec513091c02da3f96b10e9e60e3d4fb3e724cd5b4d7326a4d0e7"
+    },
+    "ev0020": {
+      "file": "functions/ev0020.json",
+      "sha256": "8f1550b410027e712805940ac0fb26a58be272d940044e6714a757476ba5e479",
+      "rows": 76,
+      "discovery_metadata_sha256": "e5ac29fa3a09789a4e6179b47dc87311c9fa9354066f9673838d738df283bb6e"
+    },
+    "ev0021": {
+      "file": "functions/ev0021.json",
+      "sha256": "a2f355e8b3fc257e319e0d9fb0cb84596c411502a325a0e739072a200a56c843",
+      "rows": 21,
+      "discovery_metadata_sha256": "fbc503c03497bf2b4d2870f5b88631c12400d5cdc6406c255de0a149b8dd6e97"
+    },
+    "ev0022": {
+      "file": "functions/ev0022.json",
+      "sha256": "3a6264bc37b81c7da2ccfc32d7cdfd14a29ba5dc8d476f7f15d225a33025e9d1",
+      "rows": 34,
+      "discovery_metadata_sha256": "b91fefb5bee336f29b95aea3a1766fde99a5bc5118fc68b5589a5d513d139d68"
+    },
+    "ev0023": {
+      "file": "functions/ev0023.json",
+      "sha256": "accca263ca85bfaa0001cd00d0653568fff894f819d100bea3906f312f66765f",
+      "rows": 76,
+      "discovery_metadata_sha256": "f178e36b5e3c2490f0573d66dfb1770dcf6d2fc8ab8f71d0f3770e421bb6ec0e"
+    },
+    "ev0024": {
+      "file": "functions/ev0024.json",
+      "sha256": "4ea945dda579b91bf88738ae299f0255f8a654e69403a1857d6ce849ffdda800",
+      "rows": 34,
+      "discovery_metadata_sha256": "0f8f9db9eb55573776345195664cded55e58554e91d9105f4cc5233efe260be4"
+    },
+    "ev0026": {
+      "file": "functions/ev0026.json",
+      "sha256": "679ab2bc33c6822d81a786938770336243296a0b2341ff55f31fc4ebce05ad6b",
+      "rows": 123,
+      "discovery_metadata_sha256": "fb6867b90bb61973e555d34a2b270ba8237b339ee44b173f6aa496187a1ae0bf"
+    },
+    "ev0028": {
+      "file": "functions/ev0028.json",
+      "sha256": "899feeca6014ee530f07cb002cec58e32cbea8779f443efd439d6187dacc6922",
+      "rows": 17,
+      "discovery_metadata_sha256": "64dd230037d4e50c6428eb915ddaa0965838454286eba2ed9d7a1e395df2b535"
+    },
+    "ev0029": {
+      "file": "functions/ev0029.json",
+      "sha256": "dc2e10c0360cbd29f0c112b542beea0926be95ff6b2218426b3fd1a6aeb9dc2d",
+      "rows": 80,
+      "discovery_metadata_sha256": "ceb7e1ae3489b9ac20f3898b3ea02fe4bbd972d5ccc933bebd5e22e2a1d5ce5d"
+    },
+    "ev002a": {
+      "file": "functions/ev002a.json",
+      "sha256": "96df1b81cf814a3255db2b2a3a55dc96a7e066c0c7999c5ace164ed060323a5c",
+      "rows": 7,
+      "discovery_metadata_sha256": "269e387f628bb6d7b4ad6331f9fb01ab6466b84786298c89809db671c88e016b"
+    },
+    "ev002b": {
+      "file": "functions/ev002b.json",
+      "sha256": "6d09191a7eb6245a4e9be6ffa4becdd31e76e0c2c89be1ab8ffe97344b17bb0f",
+      "rows": 119,
+      "discovery_metadata_sha256": "8c4a8b3c8ddc0085773619e880c0f9b692741c85b9af2da5a065b4ab31ce3b6f"
+    },
+    "ev0180": {
+      "file": "functions/ev0180.json",
+      "sha256": "c24fa42768da986da5b93b02c939d0bc7c86d702c9b325c9d50aef4fc133f678",
+      "rows": 46,
+      "discovery_metadata_sha256": "6492bf3b4f69df0166338b5ad0dc54e0b9ff8258260f79be071b7fc8c3a06fe1"
+    },
+    "shooting": {
+      "file": "functions/shooting.json",
+      "sha256": "9049f2a58e94f70311493040f6d7735181eb3cf2049bf449328df45ae04b0665",
+      "rows": 236,
+      "discovery_metadata_sha256": "ddd97a10fc83056678871c12f149bd966141c1bf12168edd41bbfca5cf909764"
+    },
+    "stg01": {
+      "file": "functions/stg01.json",
+      "sha256": "5e9da20e21028241ed0ce15c586743f5eb1b887b7b39d05053772394a69465e1",
+      "rows": 367,
+      "discovery_metadata_sha256": "5b30e30b58022f455165479148ef5d75370a6f696c229bd2f859d3ea94d7a7ac"
+    },
+    "stg02": {
+      "file": "functions/stg02.json",
+      "sha256": "683eeda162a3340eceb1fe76f4c3ae0f89e8b5c9a4a267913a828f8d5363050f",
+      "rows": 263,
+      "discovery_metadata_sha256": "cb255984a95f3408ea631d0218ceb9ccc87c86a55081e5adc0964959375ef242"
+    },
+    "stg03": {
+      "file": "functions/stg03.json",
+      "sha256": "207c83db60c986dffb4f4b5305dcbe580fc326ce61af928756adbd8cb399f36e",
+      "rows": 377,
+      "discovery_metadata_sha256": "d4d7d189f33e0335aa8ab88d2e1d6828325a646d83326ed1f76e006e244aada5"
+    },
+    "stg04": {
+      "file": "functions/stg04.json",
+      "sha256": "49a25120d1c1343cea5690c4ae21171a811d0d76c99e5773864e9235cead3888",
+      "rows": 349,
+      "discovery_metadata_sha256": "ef2bd06db812bdd754c3d1d1fe1af531c9528acc8390bbe6df065666e4b7980a"
+    },
+    "stg05": {
+      "file": "functions/stg05.json",
+      "sha256": "ce740d5bb5d9bb727fcb5735877b117a1200d7274b97d7c040492fd2112e9e55",
+      "rows": 417,
+      "discovery_metadata_sha256": "a085c64e3de3e4d96a497f28e363d243c5b1bf16a9377992f89d416eb53201f5"
+    },
+    "stg06": {
+      "file": "functions/stg06.json",
+      "sha256": "5ae28124464df8f436dddfc2738b9fbe0741909c4ccfb957e1e3398b3a8a00f5",
+      "rows": 472,
+      "discovery_metadata_sha256": "1f4259f43199599328bb7cdb1ef2d3b6c302c2511f0a81b1dd3e30577bc633a3"
+    },
+    "stg07": {
+      "file": "functions/stg07.json",
+      "sha256": "53ff74bae3dc7d4850a9b8252cf1c985b7fb20ab177f9518eaf9c4edde197f43",
+      "rows": 323,
+      "discovery_metadata_sha256": "3af2e18448a27406ca0c35efc2bde8bfedfc590b333b39e805d9a8ac81aed1be"
+    },
+    "stg08": {
+      "file": "functions/stg08.json",
+      "sha256": "f8c8fc21d1c0d002512a64823c0639b6a0519174450d82facb6b3dcc1d8dc052",
+      "rows": 397,
+      "discovery_metadata_sha256": "82066f75351fe0b0923bbd0b159a31944ae4a8904f3b62a4d50cccd582545b56"
+    },
+    "stg09": {
+      "file": "functions/stg09.json",
+      "sha256": "8c42b906f8ea034e9642063d1b1a03e885794ed8ba3db7987333c942f18ac42d",
+      "rows": 793,
+      "discovery_metadata_sha256": "b089c33fa7406661baab592124a81b02a34644f66ce5b8ef27a266dafa540183"
+    },
+    "stg10": {
+      "file": "functions/stg10.json",
+      "sha256": "4c437f2158695f241b2a61ced5f3da942769c299d95b312afc3500e911da8951",
+      "rows": 493,
+      "discovery_metadata_sha256": "8e2e89e17e1eeec161d943d92e09015a536fdabe4f716ffefeb867f769aa98f2"
+    },
+    "stg12": {
+      "file": "functions/stg12.json",
+      "sha256": "3b2eb83e80381e76d84e229e3e360cdbee372d01e25a2e7ab0a9b9c62b1fe7c6",
+      "rows": 584,
+      "discovery_metadata_sha256": "c62d9213e13517e98074fd51790ece63cf8da05159be77f692e86c0427530b93"
+    },
+    "summary": {
+      "file": "functions/summary.json",
+      "sha256": "d14b28e0376c5a4864c62288eddce5392c67909a916b52327da3e8bd21d7c6aa",
+      "rows": 86,
+      "discovery_metadata_sha256": "01a1cfe36edb16d89e6ec141af9b463b37eb4bf9acdbb5d8d824d67559cfef58"
+    }
+  }
+}

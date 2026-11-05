@@ -1,0 +1,566 @@
+/* math.c - Ninja matrix, vector and camera math.  Not graphics: these
+ * results feed positions, collision and culling in game logic, and the game
+ * reads the same guest globals directly (it even has an inlined
+ * njPushMatrix), so the state has to live where the SDK kept it.
+ *
+ * Conventions (docs/m1-boot-report.md, "Ninja math"): a matrix is 16
+ * floats, column j = m[4j..4j+3], x' = m0*x + m4*y + m8*z + m12*w.  The
+ * current matrix XMTRX is the back FP bank, c->xf[0..15], same indexing.
+ * A NULL matrix argument means XMTRX.  Angles: 65536 = one turn, only the
+ * low 16 bits count.  Rotate/Translate/Scale post-multiply in place.
+ *
+ * Guest globals: matrix depth 0x8C88F69C, max 0x8C88F698, stack ptr
+ * 0x8C88F5F8, stack base 0x8C88F5FC, unit-normal flag 0x8C890070, the stack
+ * itself where njInitMatrix puts it (0x8C7EC8E0, 64-byte slots); screen
+ * dist 0x8C88F5E4, w/h 0x8C88F5E8/EC, cx/cy 0x8C88F5F0/F4, clip 0x8C88F610/
+ * 614, aspect 0x8C88F618/61C; current camera 0x8C8E9F00, its view copy
+ * 0x8C8E9F20.
+ *
+ * Part of sa1-psp (MIT). */
+#include "../hle.h"
+#include "../seam.h"
+
+#include <math.h>
+#include <string.h>
+
+#define G_DEPTH  0x8C88F69Cu
+#define G_MAX    0x8C88F698u
+#define G_PTR    0x8C88F5F8u
+#define G_BASE   0x8C88F5FCu
+#define G_UNITN  0x8C890070u
+#define G_DIST   0x8C88F5E4u
+#define G_W      0x8C88F5E8u
+#define G_H      0x8C88F5ECu
+#define G_CX     0x8C88F5F0u
+#define G_CY     0x8C88F5F4u
+#define G_CLIPN  0x8C88F610u
+#define G_CLIPF  0x8C88F614u
+#define G_AX     0x8C88F618u
+#define G_AY     0x8C88F61Cu
+#define G_CAMERA 0x8C8E9F00u
+#define G_CAMVIEW 0x8C8E9F20u
+#define G_SCREEN_W 0x8C88F644u
+#define G_SCREEN_H 0x8C88F648u
+
+#define FR0(v) (c->fr[0] = (v))
+#define FARG(i) (c->fr[4 + (i)])
+
+static inline uint32_t rad_ang(float r) { return (uint32_t)(int32_t)(r * (65536.0f / 6.2831853f)) & 0xFFFFu; }
+/* Sine and cosine of a Ninja angle: njSin and njCos are fsca on the
+ * console, so they read the same table (sh4_trig.h), bit for bit; it also
+ * replaced a 64 KB cache of host sinf/cosf (2.3 % of a PSP-3001 Station
+ * Square frame, 2026-10-21). */
+static inline __attribute__((always_inline)) void ang_sc(uint32_t a, float *s, float *c) {
+    *s = sh4_sin16(a); *c = sh4_cos16(a);
+}
+
+/* ---- matrix access: XMTRX or guest memory ---------------------------------
+ * Each guest block (a 64-byte matrix, a 12-byte vector) is resolved to a host
+ * pointer once and then indexed: RAMP masks the base and adds the
+ * displacement after, so RAMP(a, 0) + 4 * i is the byte RDF(a, 4 * i) reads,
+ * for every address (the null page included), without the area test per
+ * float.  Debug builds (SA1_RAM_CHECK) check the base only. */
+static inline const sa1_f32a *g_rd(uint32_t addr) { return (const sa1_f32a *)(const void *)RAMP(addr, 0); }
+static inline sa1_f32a *g_wr(uint32_t addr) { return (sa1_f32a *)(void *)RAMPW(addr, 0); }
+/* A matrix argument as a host pointer: XMTRX (the context's back bank) for
+ * 0, else the guest block.  The njXxx bodies work on it in place instead of
+ * copying it into a local and back (2026-10-21: those copies were 5 % of a
+ * Station Square frame on the PSP-3001, about 9,000 a frame).  In place is
+ * the same: every helper below reads what it needs of a column (or of the
+ * whole matrix, m_mul and m_invert through a temporary) before it writes
+ * there, and a word it leaves alone was only ever rewritten with its own
+ * bits. */
+static inline const sa1_f32a *m_rp(sh4_ctx *c, uint32_t addr) { return addr ? g_rd(addr) : (const sa1_f32a *)c->xf; }
+static inline sa1_f32a *m_wp(sh4_ctx *c, uint32_t addr) { return addr ? g_wr(addr) : (sa1_f32a *)c->xf; }
+/* 16 words, all read before any is written (a load into a local and a store
+ * back, as before, also for overlapping blocks); as words, so the bits are
+ * the bits, and with no load-use stall between a load and its store. */
+static inline void m_copy(void *d, const void *s) {
+    const sa1_u32a *p = (const sa1_u32a *)s; sa1_u32a *q = (sa1_u32a *)d;
+    /* Sixteen scalars, not a loop through a local array: GCC made that a
+     * byte-aligned block move (lwl/lwr) through a spilled pointer. */
+    uint32_t t0 = p[0], t1 = p[1], t2 = p[2], t3 = p[3], t4 = p[4], t5 = p[5], t6 = p[6], t7 = p[7];
+    uint32_t t8 = p[8], t9 = p[9], t10 = p[10], t11 = p[11], t12 = p[12], t13 = p[13], t14 = p[14], t15 = p[15];
+    q[0] = t0; q[1] = t1; q[2] = t2; q[3] = t3; q[4] = t4; q[5] = t5; q[6] = t6; q[7] = t7;
+    q[8] = t8; q[9] = t9; q[10] = t10; q[11] = t11; q[12] = t12; q[13] = t13; q[14] = t14; q[15] = t15;
+}
+/* The copies on the VFPU (PSP): math = native (the default) moves an
+ * aligned 64-byte block (XMTRX, the matrix stack, most game matrices) with
+ * four lv.q and four sv.q, all loads before any store as m_copy does; an
+ * unaligned one takes m_copy.  The bits are the bits.  math = check counts
+ * the VFPU copies and compares each destination with its source (the
+ * summary at the end, kamui_report); math = exact, a strict run, or
+ * sa1psp.ini math_exact / --math-exact 8c639c70 keep m_copy.  The desktop
+ * always runs m_copy.  (VFPU arithmetic was tried for the rotations,
+ * products and transforms: vmul.q / vadd.q differ from the FPU in the last
+ * bit or two in most calls, 2026-10-26, so the arithmetic stays scalar.)
+ * VFPU registers: C000-C030 are scratch here, as in draw_gu.c. */
+#ifdef __psp__
+#define NJ_VFPU 1
+#define NJ_KEY 0x8c639c70u
+static int nj_mode = -1;
+static inline int nj_m(void) {
+    if (__builtin_expect(nj_mode < 0, 0)) {
+        nj_mode = hle_math_mode_for(NJ_KEY);
+        sa1_log("ninja math: copies %s", nj_mode == 1 ? "on the VFPU" : nj_mode == 2 ? "on the VFPU, checked" : "scalar (exact)");
+    }
+    return nj_mode;
+}
+#define VF_AL(p) ((((uintptr_t)(const void *)(p)) & 15u) == 0)
+static uint32_t njc_calls, njc_diff, njc_unal, njc_logged;
+void nj_check_report(void) {
+    if (nj_mode == 2) sa1_log("check: ninja math copies %u differing %u unaligned (scalar) %u", njc_calls, njc_diff, njc_unal);
+}
+/* d = s, 64 bytes, both aligned. */
+static inline void vf_copy16(void *d, const void *s) {
+    __asm__ volatile(
+        "lv.q C000, 0(%1)\n lv.q C010, 16(%1)\n lv.q C020, 32(%1)\n lv.q C030, 48(%1)\n"
+        "sv.q C000, 0(%0)\n sv.q C010, 16(%0)\n sv.q C020, 32(%0)\n sv.q C030, 48(%0)\n"
+        : : "r"(d), "r"(s) : "memory");
+}
+/* d1 = d2 = s (njPushMatrix(0) pushes XMTRX and keeps it): one load. */
+static inline void vf_copy16x2(void *d1, void *d2, const void *s) {
+    __asm__ volatile(
+        "lv.q C000, 0(%2)\n lv.q C010, 16(%2)\n lv.q C020, 32(%2)\n lv.q C030, 48(%2)\n"
+        "sv.q C000, 0(%0)\n sv.q C010, 16(%0)\n sv.q C020, 32(%0)\n sv.q C030, 48(%0)\n"
+        "sv.q C000, 0(%1)\n sv.q C010, 16(%1)\n sv.q C020, 32(%1)\n sv.q C030, 48(%1)\n"
+        : : "r"(d1), "r"(d2), "r"(s) : "memory");
+}
+static void njc_cmp(const void *d, const void *s) {
+    njc_calls++;
+    const intptr_t gap = (const char *)d - (const char *)s;
+    if (gap != 0 && gap < 64 && gap > -64) return;      /* overlapping: nothing to compare */
+    if (memcmp(d, s, 64)) {
+        njc_diff++;
+        if (njc_logged < 16) { njc_logged++; sa1_log("check: ninja math copy f%u differs", hle_frame_count()); }
+    }
+}
+#else
+void nj_check_report(void) {}
+#endif
+static inline __attribute__((always_inline)) void nj_copy(void *d, const void *s) {
+#ifdef NJ_VFPU
+    const int md = nj_m();
+    if (md && VF_AL(d) && VF_AL(s)) {
+        vf_copy16(d, s);
+        if (md == 2) njc_cmp(d, s);
+        return;
+    }
+    if (md == 2) njc_unal++;
+#endif
+    m_copy(d, s);
+}
+static void m_store(sh4_ctx *c, uint32_t addr, const float *m) { nj_copy(m_wp(c, addr), m); }
+static void v_load(uint32_t addr, float *v) { const sa1_f32a *p = g_rd(addr); for (int i = 0; i < 3; i++) v[i] = p[i]; }
+static void v_store(uint32_t addr, const float *v) { sa1_f32a *p = g_wr(addr); for (int i = 0; i < 3; i++) p[i] = v[i]; }
+
+static void m_unit(float *m) { for (int i = 0; i < 16; i++) m[i] = (i % 5 == 0) ? 1.0f : 0.0f; }
+/* d = a * b */
+static void m_mul(sa1_f32a *d, const sa1_f32a *a, const sa1_f32a *b) {
+    float r[16];
+    for (int j = 0; j < 4; j++)
+        for (int i = 0; i < 4; i++)
+            r[4 * j + i] = a[i] * b[4 * j] + a[4 + i] * b[4 * j + 1] + a[8 + i] * b[4 * j + 2] + a[12 + i] * b[4 * j + 3];
+    for (int i = 0; i < 16; i++) d[i] = r[i];
+}
+/* The helpers below read every word they use into locals before they write
+ * any: sa1_f32a may alias anything, so a loop that multiplies a word and
+ * stores it back made GCC reload the operands after each store and wait for
+ * each product (qa, 2026-10-27: njScale, the transforms and the rotations
+ * were 5 % of a Chaos 0 turn on the PSP-3001).  Each result is the same
+ * operations in the same order as before, so the bits are the bits. */
+static inline __attribute__((always_inline)) void m_xform(const sa1_f32a *m, const float *v, float w, float *out) {
+    const float m0 = m[0], m1 = m[1], m2 = m[2], m4 = m[4], m5 = m[5], m6 = m[6];
+    const float m8 = m[8], m9 = m[9], m10 = m[10], m12 = m[12], m13 = m[13], m14 = m[14];
+    const float x = v[0], y = v[1], z = v[2];
+    const float o0 = m0 * x + m4 * y + m8 * z + m12 * w;
+    const float o1 = m1 * x + m5 * y + m9 * z + m13 * w;
+    const float o2 = m2 * x + m6 * y + m10 * z + m14 * w;
+    out[0] = o0; out[1] = o1; out[2] = o2;
+}
+/* Columns p and q of m become co * p + s * q and co * q - s * p. */
+static inline __attribute__((always_inline)) void m_rot2(sa1_f32a *p, sa1_f32a *q, float s, float co) {
+    const float p0 = p[0], p1 = p[1], p2 = p[2], p3 = p[3];
+    const float q0 = q[0], q1 = q[1], q2 = q[2], q3 = q[3];
+    const float r0 = co * p0 + s * q0, r1 = co * p1 + s * q1, r2 = co * p2 + s * q2, r3 = co * p3 + s * q3;
+    const float t0 = co * q0 - s * p0, t1 = co * q1 - s * p1, t2 = co * q2 - s * p2, t3 = co * q3 - s * p3;
+    p[0] = r0; p[1] = r1; p[2] = r2; p[3] = r3;
+    q[0] = t0; q[1] = t1; q[2] = t2; q[3] = t3;
+}
+static void m_rot_x(sa1_f32a *m, uint32_t a) {
+    float s, co; ang_sc(a, &s, &co);
+    m_rot2(m + 4, m + 8, s, co);
+}
+static void m_rot_y(sa1_f32a *m, uint32_t a) {
+    float s, co; ang_sc(a, &s, &co);
+    const float p0 = m[0], p1 = m[1], p2 = m[2], p3 = m[3], q0 = m[8], q1 = m[9], q2 = m[10], q3 = m[11];
+    const float r0 = co * p0 - s * q0, r1 = co * p1 - s * q1, r2 = co * p2 - s * q2, r3 = co * p3 - s * q3;
+    const float t0 = s * p0 + co * q0, t1 = s * p1 + co * q1, t2 = s * p2 + co * q2, t3 = s * p3 + co * q3;
+    m[0] = r0; m[1] = r1; m[2] = r2; m[3] = r3;
+    m[8] = t0; m[9] = t1; m[10] = t2; m[11] = t3;
+}
+static void m_rot_z(sa1_f32a *m, uint32_t a) {
+    float s, co; ang_sc(a, &s, &co);
+    m_rot2(m, m + 4, s, co);
+}
+static inline __attribute__((always_inline)) void m_translate(sa1_f32a *m, const float *v) {
+    float t[3];
+    m_xform(m, v, 1.0f, t);
+    m[12] = t[0]; m[13] = t[1]; m[14] = t[2];
+}
+static inline __attribute__((always_inline)) void m_scale(sa1_f32a *m, float x, float y, float z) {
+    const float a0 = m[0], a1 = m[1], a2 = m[2], a3 = m[3], b0 = m[4], b1 = m[5], b2 = m[6], b3 = m[7];
+    const float c0 = m[8], c1 = m[9], c2 = m[10], c3 = m[11];
+    m[0] = a0 * x; m[1] = a1 * x; m[2] = a2 * x; m[3] = a3 * x;
+    m[4] = b0 * y; m[5] = b1 * y; m[6] = b2 * y; m[7] = b3 * y;
+    m[8] = c0 * z; m[9] = c1 * z; m[10] = c2 * z; m[11] = c3 * z;
+}
+static float v_dot(const float *a, const float *b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; }
+static float v_len(const float *a) { return sqrtf(v_dot(a, a)); }
+static void v_cross(const float *a, const float *b, float *d) {
+    d[0] = a[1] * b[2] - a[2] * b[1]; d[1] = a[2] * b[0] - a[0] * b[2]; d[2] = a[0] * b[1] - a[1] * b[0];
+}
+
+/* General 4x4 inverse by cofactors; det 0 fills with 3.4e38 like the SDK. */
+static void m_invert(sa1_f32a *mg) {
+    float m[16], inv[16];
+    for (int i = 0; i < 16; i++) m[i] = mg[i];
+    inv[0] = m[5]*m[10]*m[15] - m[5]*m[11]*m[14] - m[9]*m[6]*m[15] + m[9]*m[7]*m[14] + m[13]*m[6]*m[11] - m[13]*m[7]*m[10];
+    inv[4] = -m[4]*m[10]*m[15] + m[4]*m[11]*m[14] + m[8]*m[6]*m[15] - m[8]*m[7]*m[14] - m[12]*m[6]*m[11] + m[12]*m[7]*m[10];
+    inv[8] = m[4]*m[9]*m[15] - m[4]*m[11]*m[13] - m[8]*m[5]*m[15] + m[8]*m[7]*m[13] + m[12]*m[5]*m[11] - m[12]*m[7]*m[9];
+    inv[12] = -m[4]*m[9]*m[14] + m[4]*m[10]*m[13] + m[8]*m[5]*m[14] - m[8]*m[6]*m[13] - m[12]*m[5]*m[10] + m[12]*m[6]*m[9];
+    inv[1] = -m[1]*m[10]*m[15] + m[1]*m[11]*m[14] + m[9]*m[2]*m[15] - m[9]*m[3]*m[14] - m[13]*m[2]*m[11] + m[13]*m[3]*m[10];
+    inv[5] = m[0]*m[10]*m[15] - m[0]*m[11]*m[14] - m[8]*m[2]*m[15] + m[8]*m[3]*m[14] + m[12]*m[2]*m[11] - m[12]*m[3]*m[10];
+    inv[9] = -m[0]*m[9]*m[15] + m[0]*m[11]*m[13] + m[8]*m[1]*m[15] - m[8]*m[3]*m[13] - m[12]*m[1]*m[11] + m[12]*m[3]*m[9];
+    inv[13] = m[0]*m[9]*m[14] - m[0]*m[10]*m[13] - m[8]*m[1]*m[14] + m[8]*m[2]*m[13] + m[12]*m[1]*m[10] - m[12]*m[2]*m[9];
+    inv[2] = m[1]*m[6]*m[15] - m[1]*m[7]*m[14] - m[5]*m[2]*m[15] + m[5]*m[3]*m[14] + m[13]*m[2]*m[7] - m[13]*m[3]*m[6];
+    inv[6] = -m[0]*m[6]*m[15] + m[0]*m[7]*m[14] + m[4]*m[2]*m[15] - m[4]*m[3]*m[14] - m[12]*m[2]*m[7] + m[12]*m[3]*m[6];
+    inv[10] = m[0]*m[5]*m[15] - m[0]*m[7]*m[13] - m[4]*m[1]*m[15] + m[4]*m[3]*m[13] + m[12]*m[1]*m[7] - m[12]*m[3]*m[5];
+    inv[14] = -m[0]*m[5]*m[14] + m[0]*m[6]*m[13] + m[4]*m[1]*m[14] - m[4]*m[2]*m[13] - m[12]*m[1]*m[6] + m[12]*m[2]*m[5];
+    inv[3] = -m[1]*m[6]*m[11] + m[1]*m[7]*m[10] + m[5]*m[2]*m[11] - m[5]*m[3]*m[10] - m[9]*m[2]*m[7] + m[9]*m[3]*m[6];
+    inv[7] = m[0]*m[6]*m[11] - m[0]*m[7]*m[10] - m[4]*m[2]*m[11] + m[4]*m[3]*m[10] + m[8]*m[2]*m[7] - m[8]*m[3]*m[6];
+    inv[11] = -m[0]*m[5]*m[11] + m[0]*m[7]*m[9] + m[4]*m[1]*m[11] - m[4]*m[3]*m[9] - m[8]*m[1]*m[7] + m[8]*m[3]*m[5];
+    inv[15] = m[0]*m[5]*m[10] - m[0]*m[6]*m[9] - m[4]*m[1]*m[10] + m[4]*m[2]*m[9] + m[8]*m[1]*m[6] - m[8]*m[2]*m[5];
+    float det = m[0] * inv[0] + m[1] * inv[4] + m[2] * inv[8] + m[3] * inv[12];
+    if (det == 0.0f) { for (int i = 0; i < 16; i++) mg[i] = 3.4e38f; return; }
+    det = 1.0f / det;
+    for (int i = 0; i < 16; i++) mg[i] = inv[i] * det;
+}
+/* For native routines that redo the game's matrix steps on a host copy
+ * (hle/game/sphere_sweep.c): njInvertMatrix's arithmetic. */
+void hle_m_invert(float *m) { m_invert((sa1_f32a *)m); }
+
+/* ---- matrix stack ---------------------------------------------------------- */
+static const float DIAG_MM11[16] = {-1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1};
+
+void sdk_8c638fe4(sh4_ctx *c) {         /* njInitMatrix(base, n, flag) */
+    HLE_ENTER(0x8c638fe4u, "njInitMatrix");
+    hle_wr32(G_DEPTH, 1); hle_wr32(G_MAX, ARG1); hle_wr32(G_PTR, ARG0); hle_wr32(G_BASE, ARG0);
+    hle_wr32(G_UNITN, ARG2);
+    m_store(c, ARG0, DIAG_MM11);
+    m_store(c, 0, DIAG_MM11);
+}
+
+void sdk_8c639c70(sh4_ctx *c) {         /* njPushMatrix(m) */
+    HLE_ENTER(0x8c639c70u, "njPushMatrix");
+    uint32_t depth = hle_rd32(G_DEPTH);
+    if (depth >= hle_rd32(G_MAX)) { RET(0); return; }
+    uint32_t ptr = hle_rd32(G_PTR);
+    sa1_f32a *p0 = g_wr(ptr);
+    ptr += 64;
+    hle_wr32(G_DEPTH, depth + 1); hle_wr32(G_PTR, ptr);
+#ifdef NJ_VFPU
+    if (ARG0 == 0 && nj_m() == 1 && VF_AL(p0) && VF_AL(c->xf)) { vf_copy16x2(p0, p0 + 16, c->xf); RET(1); return; }
+#endif
+    nj_copy(p0, c->xf);
+    if (ARG0 == 0) nj_copy(g_wr(ptr), c->xf);
+    else nj_copy(c->xf, g_rd(ARG0));
+    RET(1);
+}
+
+void sdk_8c639b98(sh4_ctx *c) {         /* njPopMatrix(n) */
+    HLE_ENTER(0x8c639b98u, "njPopMatrix");
+    uint32_t depth = hle_rd32(G_DEPTH), n = ARG0;
+    if ((int32_t)(depth - n) < 1) { RET(0); return; }
+    uint32_t ptr = hle_rd32(G_PTR) - 64 * n;
+    hle_wr32(G_DEPTH, depth - n); hle_wr32(G_PTR, ptr);
+    nj_copy(c->xf, g_rd(ptr));
+    RET(1);
+}
+
+void sdk_8c63a8e0(sh4_ctx *c) { HLE_ENTER(0x8c63a8e0u, "njUnitMatrix"); float m[16]; m_unit(m); m_store(c, ARG0, m); }
+void sdk_8c63a770(sh4_ctx *c) { HLE_ENTER(0x8c63a770u, "njSetMatrix"); const sa1_f32a *s = m_rp(c, ARG1); nj_copy(m_wp(c, ARG0), s); }
+void sdk_8c638f94(sh4_ctx *c) { HLE_ENTER(0x8c638f94u, "njGetMatrix"); nj_copy(m_wp(c, ARG0), c->xf); }
+void sdk_8c63997c(sh4_ctx *c) {         /* njMultiMatrix(md, ms): Md = Md * Ms */
+    HLE_ENTER(0x8c63997cu, "njMultiMatrix");
+    const sa1_f32a *b = m_rp(c, ARG1); sa1_f32a *a = m_wp(c, ARG0); m_mul(a, a, b);
+}
+void sdk_8c6390b0(sh4_ctx *c) { HLE_ENTER(0x8c6390b0u, "njInvertMatrix"); m_invert(m_wp(c, ARG0)); }
+
+void sdk_8c639ec8(sh4_ctx *c) { HLE_ENTER(0x8c639ec8u, "njRotateX"); m_rot_x(m_wp(c, ARG0), ARG1); }
+void sdk_8c639f5c(sh4_ctx *c) { HLE_ENTER(0x8c639f5cu, "njRotateY"); m_rot_y(m_wp(c, ARG0), ARG1); }
+void sdk_8c63a1cc(sh4_ctx *c) { HLE_ENTER(0x8c63a1ccu, "njRotateZ"); m_rot_z(m_wp(c, ARG0), ARG1); }
+/* njRotateXYZ(m, ax, ay, az): Z, then Y, then X.  As the SDK body (tst rN,rN),
+ * an axis is skipped only when its whole register is 0: 0x10000 still runs the
+ * rotation by fsca(0), which is not a no-op for -0 and NaN entries. */
+void sdk_8c639cf4(sh4_ctx *c) {
+    HLE_ENTER(0x8c639cf4u, "njRotateXYZ");
+    sa1_f32a *m = m_wp(c, ARG0);
+    if (ARG3) m_rot_z(m, ARG3);
+    if (ARG2) m_rot_y(m, ARG2);
+    if (ARG1) m_rot_x(m, ARG1);
+}
+/* njRotateZXY(m, ax, ay, az), the ZXY_ANG sibling (node flag 0x20): Y, then X,
+ * then Z.  Each axis is the same per-axis block as njRotateXYZ in the SDK body,
+ * in this order, and an axis is skipped only when the whole register is 0
+ * (tst rN,rN).  Until 2026-10-28 this was a seam stub that rotated nothing:
+ * objects drawn with ZXY angles (Mystic Ruins 2, ~13 calls a frame; also
+ * reachable from Egg Mobile 1, Final Egg and the adventure fields) lost their
+ * whole rotation. */
+void sdk_8c639ff8(sh4_ctx *c) {
+    HLE_ENTER(0x8c639ff8u, "njRotateZXY");
+    sa1_f32a *m = m_wp(c, ARG0);
+    if (ARG2) m_rot_y(m, ARG2);
+    if (ARG1) m_rot_x(m, ARG1);
+    if (ARG3) m_rot_z(m, ARG3);
+}
+void sdk_8c63a878(sh4_ctx *c) {         /* njTranslate(m, x, y, z) */
+    HLE_ENTER(0x8c63a878u, "njTranslate");
+    float v[3] = {FARG(0), FARG(1), FARG(2)}; m_translate(m_wp(c, ARG0), v);
+}
+void sdk_8c63a804(sh4_ctx *c) {         /* njTranslateV(m, v) */
+    HLE_ENTER(0x8c63a804u, "njTranslateV");
+    float v[3]; sa1_f32a *m = m_wp(c, ARG0); v_load(ARG1, v); m_translate(m, v);
+}
+void sdk_8c63a69c(sh4_ctx *c) {         /* njScale(m, sx, sy, sz) */
+    HLE_ENTER(0x8c63a69cu, "njScale");
+    m_scale(m_wp(c, ARG0), FARG(0), FARG(1), FARG(2));
+}
+void sdk_8c63a5ec(sh4_ctx *c) {         /* njScaleV(m, v) */
+    HLE_ENTER(0x8c63a5ecu, "njScaleV");
+    float v[3]; sa1_f32a *m = m_wp(c, ARG0); v_load(ARG1, v); m_scale(m, v[0], v[1], v[2]);
+}
+
+/* ---- point and vector transforms ----------------------------------------- */
+void sdk_8c638ecc(sh4_ctx *c) {         /* njCalcPoint(m, vs, vd) */
+    HLE_ENTER(0x8c638eccu, "njCalcPoint");
+    float v[3], o[3]; const sa1_f32a *m = m_rp(c, ARG0); v_load(ARG1, v); m_xform(m, v, 1.0f, o); v_store(ARG2, o);
+}
+void sdk_8c638f28(sh4_ctx *c) {         /* njCalcVector(m, vs, vd) */
+    HLE_ENTER(0x8c638f28u, "njCalcVector");
+    float v[3], o[3]; const sa1_f32a *m = m_rp(c, ARG0); v_load(ARG1, v); m_xform(m, v, 0.0f, o);
+    if (hle_rd32(G_UNITN)) { float l = v_len(o); if (l != 0.0f) for (int i = 0; i < 3; i++) o[i] /= l; }
+    v_store(ARG2, o);
+}
+void sdk_8c639bdc(sh4_ctx *c) {         /* njProjectScreen(m, p3, p2) */
+    HLE_ENTER(0x8c639bdcu, "njProjectScreen");
+    float v[3], q[3]; const sa1_f32a *m = m_rp(c, ARG0); v_load(ARG1, v); m_xform(m, v, 1.0f, q);
+    float dist = hle_rdf(G_DIST);
+    float z = q[2] != 0.0f ? q[2] : 1.0f;
+    hle_wrf(ARG2, dist * q[0] / z * hle_rdf(G_AX) + hle_rdf(G_CX));
+    hle_wrf(ARG2 + 4, dist * q[1] / z * hle_rdf(G_AY) + hle_rdf(G_CY));
+}
+
+/* ---- scalar and vector math ------------------------------------------------ */
+void sdk_8c63a9b8(sh4_ctx *c) { HLE_ENTER(0x8c63a9b8u, "njSin"); float s, co; ang_sc(ARG0, &s, &co); FR0(s); c->fr[1] = co; }
+void sdk_8c63a970(sh4_ctx *c) { HLE_ENTER(0x8c63a970u, "njCos"); float s, co; ang_sc(ARG0, &s, &co); FR0(co); c->fr[1] = s; }
+void sdk_8c63a9f4(sh4_ctx *c) { HLE_ENTER(0x8c63a9f4u, "njTan"); float s, co; ang_sc(ARG0, &s, &co); FR0(s / co); }
+void sdk_8c63a9c4(sh4_ctx *c) { HLE_ENTER(0x8c63a9c4u, "njSqrt"); float x = FARG(0); FR0(x >= 0.0f ? sqrtf(x) : -sqrtf(-x)); }
+void sdk_8c63a980(sh4_ctx *c) { HLE_ENTER(0x8c63a980u, "njFraction"); float x = FARG(0); FR0(x - truncf(x)); }
+void sdk_8c63a994(sh4_ctx *c) { HLE_ENTER(0x8c63a994u, "njRoundOff"); FR0(truncf(FARG(0))); }
+void sdk_8c63a75c(sh4_ctx *c) { HLE_ENTER(0x8c63a75cu, "njScalor"); float v[3]; v_load(ARG0, v); FR0(v_len(v)); }
+void sdk_8c63a94c(sh4_ctx *c) {         /* njUnitVector(v): in place, fr0 = old length */
+    HLE_ENTER(0x8c63a94cu, "njUnitVector");
+    float v[3]; v_load(ARG0, v);
+    float l = v_len(v), r = 1.0f / l;    /* zero vector -> inf/NaN as the hardware fsrra gives */
+    for (int i = 0; i < 3; i++) v[i] *= r;
+    v_store(ARG0, v);
+    FR0(l);
+}
+void sdk_8c639090(sh4_ctx *c) { HLE_ENTER(0x8c639090u, "njInnerProduct"); float a[3], b[3]; v_load(ARG0, a); v_load(ARG1, b); FR0(v_dot(a, b)); }
+void sdk_8c639b50(sh4_ctx *c) {         /* njOuterProduct(v1, v2, vd) */
+    HLE_ENTER(0x8c639b50u, "njOuterProduct");
+    float a[3], b[3], d[3]; v_load(ARG0, a); v_load(ARG1, b); v_cross(a, b, d); v_store(ARG2, d); FR0(v_len(d));
+}
+void sdk_8c638eac(sh4_ctx *c) { HLE_ENTER(0x8c638eacu, "njAddVector"); float a[3], b[3]; v_load(ARG0, a); v_load(ARG1, b); for (int i = 0; i < 3; i++) a[i] += b[i]; v_store(ARG0, a); }
+void sdk_8c63a7e4(sh4_ctx *c) { HLE_ENTER(0x8c63a7e4u, "njSubVector"); float a[3], b[3]; v_load(ARG0, a); v_load(ARG1, b); for (int i = 0; i < 3; i++) a[i] -= b[i]; v_store(ARG0, a); }
+
+/* ---- distances (line = {p[3], d[3]}, plane = {p[3], n[3]}) ------------------ */
+void sdk_8c640128(sh4_ctx *c) {         /* njDistanceP2P(p, q) */
+    HLE_ENTER(0x8c640128u, "njDistanceP2P");
+    float a[3], b[3]; v_load(ARG0, a); v_load(ARG1, b); for (int i = 0; i < 3; i++) a[i] -= b[i]; FR0(v_len(a));
+}
+void sdk_8c63ff84(sh4_ctx *c) {         /* njDistanceP2L(p, line, foot) */
+    HLE_ENTER(0x8c63ff84u, "njDistanceP2L");
+    float p[3], lp[3], d[3], w[3], f[3]; v_load(ARG0, p); v_load(ARG1, lp); v_load(ARG1 + 12, d);
+    for (int i = 0; i < 3; i++) w[i] = p[i] - lp[i];
+    float dd = v_dot(d, d), t = dd != 0.0f ? v_dot(d, w) / dd : 0.0f;
+    for (int i = 0; i < 3; i++) { f[i] = lp[i] + t * d[i]; w[i] = p[i] - f[i]; }
+    if (ARG2) v_store(ARG2, f);
+    FR0(v_len(w));
+}
+static float dist_p2pl(const float *p, const float *pp, const float *n, float *foot) {
+    float w[3]; for (int i = 0; i < 3; i++) w[i] = p[i] - pp[i];
+    float k = v_dot(n, w), nn = v_dot(n, n);
+    if (foot) for (int i = 0; i < 3; i++) foot[i] = p[i] - (nn != 0.0f ? k / nn : 0.0f) * n[i];
+    return nn != 0.0f ? fabsf(k) / sqrtf(nn) : 0.0f;
+}
+void sdk_8c640080(sh4_ctx *c) {         /* njDistanceP2PL(p, plane, foot) */
+    HLE_ENTER(0x8c640080u, "njDistanceP2PL");
+    float p[3], pp[3], n[3], f[3]; v_load(ARG0, p); v_load(ARG1, pp); v_load(ARG1 + 12, n);
+    float r = dist_p2pl(p, pp, n, f);
+    if (ARG2) v_store(ARG2, f);
+    FR0(r);
+}
+void sdk_8c63feac(sh4_ctx *c) {         /* njDistanceL2PL(line, plane, cross) */
+    HLE_ENTER(0x8c63feacu, "njDistanceL2PL");
+    float lp[3], d[3], pp[3], n[3], x[3]; v_load(ARG0, lp); v_load(ARG0 + 12, d); v_load(ARG1, pp); v_load(ARG1 + 12, n);
+    float nd = v_dot(n, d);
+    if (nd == 0.0f) { float r = dist_p2pl(lp, pp, n, x); if (ARG2) v_store(ARG2, x); FR0(r); return; }
+    float w[3]; for (int i = 0; i < 3; i++) w[i] = lp[i] - pp[i];
+    float t = -v_dot(n, w) / nd;
+    for (int i = 0; i < 3; i++) x[i] = lp[i] + t * d[i];
+    if (ARG2) v_store(ARG2, x);
+    FR0(0.0f);
+}
+void sdk_8c64016c(sh4_ctx *c) {         /* njDistancePL2PL(pl1, pl2, line) */
+    HLE_ENTER(0x8c64016cu, "njDistancePL2PL");
+    float p1[3], n1[3], p2[3], n2[3], d[3]; v_load(ARG0, p1); v_load(ARG0 + 12, n1); v_load(ARG1, p2); v_load(ARG1 + 12, n2);
+    v_cross(n1, n2, d);
+    if (v_dot(d, d) == 0.0f) {
+        if (ARG2) { float z[3] = {0, 0, 0}; v_store(ARG2, z); v_store(ARG2 + 12, z); }
+        FR0(dist_p2pl(p1, p2, n2, NULL));
+        return;
+    }
+    /* a point on both planes: p1 moved along (n2 x d) until it meets plane 2 */
+    float u[3], w[3]; v_cross(n2, d, u);
+    for (int i = 0; i < 3; i++) w[i] = p2[i] - p1[i];
+    float un2 = v_dot(u, n2), t = un2 != 0.0f ? v_dot(w, n2) / un2 : 0.0f;
+    float q[3]; for (int i = 0; i < 3; i++) q[i] = p1[i] + t * u[i];
+    if (ARG2) { v_store(ARG2, q); v_store(ARG2 + 12, d); }
+    FR0(0.0f);
+}
+
+/* ---- screen globals ------------------------------------------------------- */
+void sdk_8c640528(sh4_ctx *c) {         /* njSetScreen(scr {dist, w, h, cx, cy}) */
+    HLE_ENTER(0x8c640528u, "njSetScreen");
+    hle_wrf(G_DIST, hle_rdf(ARG0)); hle_wrf(G_CX, hle_rdf(ARG0 + 12)); hle_wrf(G_CY, hle_rdf(ARG0 + 16));
+}
+void sdk_8c640500(sh4_ctx *c) {         /* njSetPerspective(ang): dist = w / (t + t), t = njTan(ang >> 1) */
+    HLE_ENTER(0x8c640500u, "njSetPerspective");
+    /* as the console: shar r4, njTan (fsca, fdiv), w / (t + t), stored even when t is 0 */
+    uint32_t half = (uint32_t)((int32_t)ARG0 >> 1);
+    float t = sh4_sin16(half) / sh4_cos16(half);
+    hle_wrf(G_DIST, hle_rdf(G_W) / (t + t));
+}
+void sdk_8c64036c(sh4_ctx *c) {         /* njClipZ(near, far) */
+    HLE_ENTER(0x8c64036cu, "njClipZ");
+    float n = FARG(0), f = FARG(1);
+    if (n < -65535.0f) n = -65535.0f; if (n > -1.0f) n = -1.0f;
+    if (f < -65535.0f) f = -65535.0f; if (f > -1.0f) f = -1.0f;
+    hle_wrf(G_CLIPN, -n); hle_wrf(G_CLIPF, -f);
+}
+
+/* ---- camera (game-owned struct: matrix +0, pos +64, dir +76, roll +88,
+ *      base copies +92 / +104 / +116) ------------------------------------- */
+#define CAM_POS 64
+#define CAM_DIR 76
+#define CAM_ROLL 88
+#define CAM_BPOS 92
+#define CAM_BDIR 104
+#define CAM_BROLL 116
+
+static uint32_t cam_arg(uint32_t a) { return a ? a : hle_rd32(G_CAMERA); }
+
+void sdk_8c6403b0(sh4_ctx *c) {         /* njInitCamera(cam) */
+    HLE_ENTER(0x8c6403b0u, "njInitCamera");
+    uint32_t cam = ARG0;
+    float m[16]; m_unit(m); m_store(c, cam, m);
+    float z[3] = {0, 0, 0}, d[3] = {0, 0, -1};
+    v_store(cam + CAM_POS, z); v_store(cam + CAM_DIR, d); hle_wr32(cam + CAM_ROLL, 0);
+    v_store(cam + CAM_BPOS, z); v_store(cam + CAM_BDIR, d); hle_wr32(cam + CAM_BROLL, 0);
+}
+
+/* The console's njSetCamera takes its arc cosines from the game's own acosf
+ * (0x8C10D008, SHC's libm, recompiled): calling it keeps them bit for bit,
+ * where the host acosf differs between the desktop and newlib (PSP). */
+void fn_8c10d008(sh4_ctx *c);
+static float guest_acosf(sh4_ctx *c, float x) {
+    c->fr[4] = x;
+    fn_8c10d008(c);
+    static int logged;
+    if (!logged++) sa1_log("njSetCamera: game acosf(%.9g) = %.9g (host acosf %.9g)", x, c->fr[0], acosf(x));
+    return c->fr[0];
+}
+void sdk_8c640540(sh4_ctx *c) {         /* njSetCamera(cam) */
+    HLE_ENTER(0x8c640540u, "njSetCamera");
+    uint32_t cam = ARG0;
+    float pos[3], dir[3]; v_load(cam + CAM_POS, pos); v_load(cam + CAM_DIR, dir);
+    uint32_t roll = hle_rd32(cam + CAM_ROLL);
+    float v[16]; m_unit(v);
+    m_rot_z(v, (uint32_t)(-(int32_t)roll));
+    float h = sqrtf(dir[0] * dir[0] + dir[2] * dir[2]);
+    float len = sqrtf(dir[1] * dir[1] + h * h);
+    if (len > 0.0f) {
+        float ca = h / len; if (ca > 1.0f) ca = 1.0f;
+        uint32_t a = rad_ang(guest_acosf(c, ca));
+        m_rot_x(v, dir[1] >= 0.0f ? a : (uint32_t)(-(int32_t)a));
+    }
+    if (h > 0.0f) {
+        float cb = dir[2] / h; if (cb > 1.0f) cb = 1.0f; if (cb < -1.0f) cb = -1.0f;
+        uint32_t b = rad_ang(guest_acosf(c, cb));
+        m_rot_y(v, dir[0] >= 0.0f ? (uint32_t)(-(int32_t)b) : b);
+    }
+    float np[3] = {-pos[0], -pos[1], -pos[2]};
+    m_translate(v, np);
+    m_store(c, cam, v);
+    hle_wr32(G_CAMERA, cam);
+    float s0[16]; m_mul(s0, DIAG_MM11, v);
+    uint32_t base = hle_rd32(G_BASE);
+    hle_wr32(G_DEPTH, 1); hle_wr32(G_PTR, base);
+    if (base) m_store(c, base, s0);
+    m_store(c, G_CAMVIEW, s0);
+    m_store(c, 0, s0);
+}
+
+void sdk_8c6404e4(sh4_ctx *c) {         /* njCameraRoll(cam, ang): roll += ang */
+    HLE_ENTER(0x8c6404e4u, "njCameraRoll");
+    uint32_t cam = cam_arg(ARG0); hle_wr32(cam + CAM_ROLL, hle_rd32(cam + CAM_ROLL) + ARG1);
+}
+void sdk_8c640454(sh4_ctx *c) {         /* njCameraPitch(cam, ang): rotate dir in y/z */
+    HLE_ENTER(0x8c640454u, "njCameraPitch");
+    uint32_t cam = cam_arg(ARG0); float s, co; ang_sc(ARG1, &s, &co);
+    float y = hle_rdf(cam + CAM_DIR + 4), z = hle_rdf(cam + CAM_DIR + 8);
+    hle_wrf(cam + CAM_DIR + 8, z * co + y * s); hle_wrf(cam + CAM_DIR + 4, y * co - z * s);
+}
+void sdk_8c64048c(sh4_ctx *c) {         /* njCameraYaw(cam, ang): rotate dir in x/z */
+    HLE_ENTER(0x8c64048cu, "njCameraYaw");
+    uint32_t cam = cam_arg(ARG0); float s, co; ang_sc(ARG1, &s, &co);
+    float x = hle_rdf(cam + CAM_DIR), z = hle_rdf(cam + CAM_DIR + 8);
+    hle_wrf(cam + CAM_DIR, x * co + z * s); hle_wrf(cam + CAM_DIR + 8, z * co - x * s);
+}
+void sdk_8c640684(sh4_ctx *c) {         /* njCameraTranslate(cam, x, y, z) */
+    HLE_ENTER(0x8c640684u, "njCameraTranslate");
+    uint32_t cam = cam_arg(ARG0);
+    for (int i = 0; i < 3; i++) hle_wrf(cam + CAM_POS + 4 * i, hle_rdf(cam + CAM_POS + 4 * i) + FARG(i));
+}
+void sdk_8c6404c8(sh4_ctx *c) {         /* roll = base roll + ang */
+    HLE_ENTER(0x8c6404c8u, "njCameraRollFromBase");
+    uint32_t cam = cam_arg(ARG0); hle_wr32(cam + CAM_ROLL, hle_rd32(cam + CAM_BROLL) + ARG1);
+}
+/* dir = base dir pitched about X by ang (the SDK body 0x8C64041C: the
+ * same y/z rotation as njCameraPitch, from the base copy).  The event
+ * scripts place their cameras with PosFromBase, DirFromBase (pitch),
+ * RollFromBase, then njCameraYaw and njSetCamera; the M2 body yawed here,
+ * which put the Chaos 0 cutscene camera under the police cars. */
+void sdk_8c64041c(sh4_ctx *c) {
+    HLE_ENTER(0x8c64041cu, "njCameraDirFromBase");
+    uint32_t cam = cam_arg(ARG0); float s, co; ang_sc(ARG1, &s, &co);
+    float x = hle_rdf(cam + CAM_BDIR), y = hle_rdf(cam + CAM_BDIR + 4), z = hle_rdf(cam + CAM_BDIR + 8);
+    hle_wrf(cam + CAM_DIR, x); hle_wrf(cam + CAM_DIR + 4, y * co - z * s); hle_wrf(cam + CAM_DIR + 8, z * co + y * s);
+}
+void sdk_8c64065c(sh4_ctx *c) {         /* pos = base pos + (x, y, z) */
+    HLE_ENTER(0x8c64065cu, "njCameraPosFromBase");
+    uint32_t cam = cam_arg(ARG0);
+    for (int i = 0; i < 3; i++) hle_wrf(cam + CAM_POS + 4 * i, hle_rdf(cam + CAM_BPOS + 4 * i) + FARG(i));
+}

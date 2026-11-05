@@ -1,0 +1,204 @@
+{
+  "schema": 1,
+  "scope": "External source/licence catalog; no dependency binaries are included",
+  "dependencies": [
+    {
+      "id": "cpython_3143",
+      "licence_summary": "PSF-2.0 + incorporated notices",
+      "source": "https://github.com/python/cpython/tree/v3.14.3",
+      "licence_url": "https://raw.githubusercontent.com/python/cpython/v3.14.3/LICENSE",
+      "status": "FETCHED",
+      "bytes": 13804,
+      "sha256": "b0e25a78cffb43f4d92de8b61ccfa1f1f98ecbc22330b54b5251e7b6ba010231"
+    },
+    {
+      "id": "pillow_1220",
+      "licence_summary": "MIT-CMU; wheel vendors have separate notices",
+      "source": "https://github.com/python-pillow/Pillow/tree/12.2.0",
+      "licence_url": "https://raw.githubusercontent.com/python-pillow/Pillow/12.2.0/LICENSE",
+      "status": "FETCHED",
+      "bytes": 1457,
+      "sha256": "15181e7363dca9aed78b79bebebc7fde7f1814b8bd311ea3b87ae8ccadfc185b"
+    },
+    {
+      "id": "pyelftools_032",
+      "licence_summary": "Unlicense/public-domain dedication",
+      "source": "https://github.com/eliben/pyelftools/tree/v0.32",
+      "licence_url": "https://raw.githubusercontent.com/eliben/pyelftools/v0.32/LICENSE",
+      "status": "FETCHED",
+      "bytes": 1534,
+      "sha256": "ae18bf4cb82f92af7547259177bc28bc48e4fc732518bcedfe690226288d3445"
+    },
+    {
+      "id": "construct_pyelftools_032",
+      "licence_summary": "MIT",
+      "source": "https://github.com/eliben/pyelftools/tree/v0.32/elftools/construct",
+      "licence_url": "https://raw.githubusercontent.com/eliben/pyelftools/v0.32/elftools/construct/LICENSE",
+      "status": "FETCHED",
+      "bytes": 1082,
+      "sha256": "f8d0c347a0dcc6ebe1671640dfae8d2411b6ded892e06a6764f8208b218b2af4"
+    },
+    {
+      "id": "pyside_6112",
+      "licence_summary": "LGPL-3.0-only path; module alternatives/third parties retain terms",
+      "source": "https://download.qt.io/official_releases/QtForPython/pyside6/PySide6-6.11.2-src/",
+      "licence_url": "https://raw.githubusercontent.com/pyside/pyside-setup/v6.11.2/LICENSES/LGPL-3.0-only.txt",
+      "status": "FETCHED",
+      "bytes": 7651,
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768"
+    },
+    {
+      "id": "qtbase_6112",
+      "licence_summary": "LGPL-3.0-only path; check shipped modules/dependencies",
+      "source": "https://download.qt.io/archive/qt/6.11/6.11.2/single/",
+      "licence_url": "https://code.qt.io/cgit/qt/qtbase.git/plain/LICENSES/LGPL-3.0-only.txt?h=v6.11.2",
+      "status": "FETCHED",
+      "bytes": 7651,
+      "sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768"
+    },
+    {
+      "id": "gcc_15_pin",
+      "licence_summary": "GPL-3.0-or-later compiler; see per-file runtime exception",
+      "source": "https://github.com/pspdev/gcc/tree/1a33997924916ff5a6f61b64179ff9c8921f46c6",
+      "licence_url": "https://raw.githubusercontent.com/pspdev/gcc/1a33997924916ff5a6f61b64179ff9c8921f46c6/COPYING3",
+      "status": "FETCHED",
+      "bytes": 35147,
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "id": "gcc_runtime_pin",
+      "licence_summary": "GCC Runtime Library Exception3.1 where file grants it",
+      "source": "https://github.com/pspdev/gcc/tree/1a33997924916ff5a6f61b64179ff9c8921f46c6",
+      "licence_url": "https://raw.githubusercontent.com/pspdev/gcc/1a33997924916ff5a6f61b64179ff9c8921f46c6/COPYING.RUNTIME",
+      "status": "FETCHED",
+      "bytes": 3324,
+      "sha256": "9d6b43ce4d8de0c878bf16b54d8e7a10d9bd42b75178153e3af6a815bdc90f74"
+    },
+    {
+      "id": "binutils_pin",
+      "licence_summary": "GPL-3.0-or-later + individual component terms",
+      "source": "https://github.com/pspdev/binutils-gdb/tree/a8b53fe2b5825fa86337623c743d21a19aeb0daf",
+      "licence_url": "https://raw.githubusercontent.com/pspdev/binutils-gdb/a8b53fe2b5825fa86337623c743d21a19aeb0daf/COPYING3",
+      "status": "FETCHED",
+      "bytes": 35147,
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+    },
+    {
+      "id": "newlib_pin",
+      "licence_summary": "Multiple permissive target-libc notices; do not label entire repo BSD",
+      "source": "https://github.com/pspdev/newlib/tree/9e0a073634ad73e8e088f2e071c55a9fe5d39709",
+      "licence_url": "https://raw.githubusercontent.com/pspdev/newlib/9e0a073634ad73e8e088f2e071c55a9fe5d39709/COPYING.NEWLIB",
+      "status": "FETCHED",
+      "bytes": 78261,
+      "sha256": "fcfb5ec69b6ab52676dcc4dab7cf4338c8000ef97812dadd35b8592a640a8419"
+    },
+    {
+      "id": "pspsdk_pin",
+      "licence_summary": "BSD-3-Clause SDK; PrxEncrypter subdir exception is excluded",
+      "source": "https://github.com/pspdev/pspsdk/tree/09f02b88b9f30055bea916c5ddbdbddcdef9e31f",
+      "licence_url": "https://raw.githubusercontent.com/pspdev/pspsdk/09f02b88b9f30055bea916c5ddbdbddcdef9e31f/LICENSE",
+      "status": "FETCHED",
+      "bytes": 1529,
+      "sha256": "2a72b3d563b8e080dd2be9a963f44c8396ca615421833d3cffb6d126101c1c82"
+    },
+    {
+      "id": "pthread_pin",
+      "licence_summary": "LGPL-2.1; exact library notices include exceptions/Vita MIT patches",
+      "source": "https://github.com/pspdev/pthread-embedded/tree/97fe4ce006b420894f2bcaeb530d1f1f53111fc2",
+      "licence_url": "https://raw.githubusercontent.com/pspdev/pthread-embedded/97fe4ce006b420894f2bcaeb530d1f1f53111fc2/COPYING",
+      "status": "FETCHED",
+      "bytes": 5789,
+      "sha256": "933dea73f8be52981372244bea77f4499418f577104b7fc522c1f3f130345352"
+    },
+    {
+      "id": "pspdev_pin",
+      "licence_summary": "MIT orchestration scripts, not blanket licence of installed compiler/libs",
+      "source": "https://github.com/pspdev/pspdev/tree/8d581609506117f6c8fa77893a2f38e4ad4b39fe",
+      "licence_url": "https://raw.githubusercontent.com/pspdev/pspdev/8d581609506117f6c8fa77893a2f38e4ad4b39fe/LICENSE",
+      "status": "FETCHED",
+      "bytes": 1081,
+      "sha256": "5773f549223985ea93a7ba11242a498c905ebd9bd1bf7c61b2f72c6f4f7756d4"
+    },
+    {
+      "id": "psptoolchain_allegrex_pin",
+      "licence_summary": "MIT orchestration scripts",
+      "source": "https://github.com/pspdev/psptoolchain-allegrex/tree/a95b7da838d9f506656092c3e0232dcf50389d89",
+      "licence_url": "https://raw.githubusercontent.com/pspdev/psptoolchain-allegrex/a95b7da838d9f506656092c3e0232dcf50389d89/LICENSE",
+      "status": "FETCHED",
+      "bytes": 1063,
+      "sha256": "77d67b1acc7e6c1471d26dea0e7f83ba8269524fb7202e1d0652e17bec6b25f8"
+    },
+    {
+      "id": "psptoolchain_extra_pin",
+      "licence_summary": "MIT orchestration scripts",
+      "source": "https://github.com/pspdev/psptoolchain-extra/tree/b5f01b00e428a604832e0dfb4bfbb991d1397e3f",
+      "licence_url": "https://raw.githubusercontent.com/pspdev/psptoolchain-extra/b5f01b00e428a604832e0dfb4bfbb991d1397e3f/LICENSE",
+      "status": "FETCHED",
+      "bytes": 1063,
+      "sha256": "77d67b1acc7e6c1471d26dea0e7f83ba8269524fb7202e1d0652e17bec6b25f8"
+    },
+    {
+      "id": "psplink_pin",
+      "licence_summary": "BSD-3-Clause",
+      "source": "https://github.com/pspdev/psplinkusb/tree/4b767c097e1f269b580758a7de0e386f5ad9a247",
+      "licence_url": "https://raw.githubusercontent.com/pspdev/psplinkusb/4b767c097e1f269b580758a7de0e386f5ad9a247/LICENSE",
+      "status": "FETCHED",
+      "bytes": 1621,
+      "sha256": "4e8bef614c667bc611ab4ea71e34d61652b3a469481e03fb81bd3f2261678c69"
+    },
+    {
+      "id": "dream_recomp_pin",
+      "licence_summary": "GPL-2.0; out-of-process historical discovery only",
+      "source": "https://github.com/phobos665/dream-recomp/tree/51a148c7bf9191fa8593e707c4996cf887076b33",
+      "licence_url": "https://raw.githubusercontent.com/phobos665/dream-recomp/51a148c7bf9191fa8593e707c4996cf887076b33/LICENSE",
+      "status": "FETCHED",
+      "bytes": 17337,
+      "sha256": "aaf135472f81c5b4a0dca9367e5bb5e9750032b5bebe5442b36e4c0a47430df3"
+    },
+    {
+      "id": "dcrecomp_current",
+      "licence_summary": "GPL-2.0; old MIT claim is stale; no source copied",
+      "source": "https://github.com/sp00nznet/dcrecomp",
+      "licence_url": "https://raw.githubusercontent.com/sp00nznet/dcrecomp/main/LICENSE",
+      "status": "FETCHED",
+      "bytes": 18093,
+      "sha256": "640d90f6ee401241ff62834d0d1b33f83049e99b8bfdfa04ed1b0a1635dde3e7"
+    },
+    {
+      "id": "ppsspp_optional",
+      "licence_summary": "GPL-2.0-or-later core; dependencies retain individual licences",
+      "source": "https://github.com/hrydgard/ppsspp",
+      "licence_url": "https://raw.githubusercontent.com/hrydgard/ppsspp/master/LICENSE.TXT",
+      "status": "FETCHED",
+      "bytes": 19740,
+      "sha256": "ff265754cbb2e0d3b674f90a79ef5bbaa1f7f1075aec9f5e241524520e5049fa"
+    },
+    {
+      "id": "flycast_optional",
+      "licence_summary": "GPL-2.0-or-later core; dependencies retain individual licences",
+      "source": "https://github.com/flyinghead/flycast",
+      "licence_url": "https://raw.githubusercontent.com/flyinghead/flycast/master/LICENSE",
+      "status": "FETCHED",
+      "bytes": 18092,
+      "sha256": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643"
+    },
+    {
+      "id": "ghidra_optional",
+      "licence_summary": "Apache-2.0 project with third-party components listed separately",
+      "source": "https://github.com/NationalSecurityAgency/ghidra",
+      "licence_url": "https://raw.githubusercontent.com/NationalSecurityAgency/ghidra/master/LICENSE",
+      "status": "FETCHED",
+      "bytes": 11357,
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "id": "capstone_optional",
+      "licence_summary": "BSD-3-Clause, verified5.0.3; individual architecture notices retained",
+      "source": "https://github.com/capstone-engine/capstone/tree/5.0.3",
+      "licence_url": "https://raw.githubusercontent.com/capstone-engine/capstone/5.0.3/LICENSE.TXT",
+      "status": "FETCHED",
+      "bytes": 1687,
+      "sha256": "65e9ed46a59976eda8f5bd1ea79a680dea38dd299c760bc9a8d87a764ef5029b"
+    }
+  ]
+}

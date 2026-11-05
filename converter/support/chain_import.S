@@ -1,0 +1,5 @@
+/* Own ABI import; no SystemCtrl implementation or library is included. */
+.set noreorder
+#include "pspimport.s"
+IMPORT_START "SystemCtrlForKernel", 0x00090000
+IMPORT_FUNC "SystemCtrlForKernel", 0x2D10FB28, sctrlKernelLoadExecVSHWithApitype
