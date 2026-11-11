@@ -2,7 +2,7 @@
 
 ## Start the portable converter
 
-1. [Download the Windows x64 ZIP](https://github.com/SandstoneDev/DCRC/releases/download/v0.1.0-preview.3/DCRC-Converter-Windows-x64-v0.1.0-preview.3.zip).
+1. [Download the Windows x64 ZIP](https://github.com/SandstoneDev/DCRC/releases/download/v0.1.0/DCRC-Converter-Windows-x64-v0.1.0.zip).
 2. Extract the entire archive into a writable folder.
 3. Open **DCRC Converter.exe**.
 
