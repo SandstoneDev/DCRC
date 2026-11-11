@@ -14,6 +14,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+import tempfile
 
 SOURCE_TREES = {
     'dcrc': {'.py', '.json', '.txt', '.policy'}, 'gui': {'.py', '.json'},
@@ -26,7 +27,7 @@ TOOLS = ('convert_assets.py', 'land_convert.py', 'prs.py', 'psp_world_textures.p
          'psp_hot_order.py', 'gen_overlay_registry.py', 'movie_pmfmux.py', 'movie_pmfinfo.py')
 ROOT_FILES = ('LICENSE', 'CMakeLists.txt', 'CREDITS.md', 'NOTICE.md',
               'LICENSES/sa1-psp-MIT.txt', 'LICENSES/PSPLink-BSD-3-Clause.txt',
-              'LICENSES/MAME-BSD-3-Clause.txt')
+              'LICENSES/MAME-BSD-3-Clause.txt', 'gui/assets/dcrc.ico', 'gui/assets/NOTICE.md')
 ATRAC_REQUIRED = {'atracdenc.exe','README.md','SOURCE.txt','licenses/LICENSE.LGPL-2.1.txt',
     'licenses/LICENSE.kissfft.BSD3.txt','licenses/LICENSE.libgha.BSD2.txt','licenses/NOTICE.FFmpeg.txt',
     'licenses/crt-COPYING','licenses/crt-COPYING.MinGW-w64-runtime.txt','licenses/crt-COPYING.MinGW-w64.txt',
@@ -37,7 +38,7 @@ ENTRY_POINTS = ('gui/run_gui.py', 'gui/app.py', 'gui/controller.py', 'dcrc/__mai
                 'dcrc/pipeline.py', 'dcrc/worker.py', 'dcrc/models.py', 'dcrc/native_build.py', 'converter/README.md',
                 'LICENSE', 'CMakeLists.txt', 'CREDITS.md', 'NOTICE.md',
                 'LICENSES/sa1-psp-MIT.txt', 'LICENSES/PSPLink-BSD-3-Clause.txt',
-                'LICENSES/MAME-BSD-3-Clause.txt')
+                'LICENSES/MAME-BSD-3-Clause.txt', 'gui/assets/dcrc.ico')
 SDK_REQUIRED = ('bin/psp-gcc.exe', 'bin/psp-fixup-imports.exe', 'bin/psp-prxgen.exe', 'bin/psp-strip.exe',
                 'psp/sdk/include/pspkernel.h', 'psp/sdk/include/pspimport.s', 'psp/sdk/lib/prxspecs',
                 'psp/sdk/lib/linkfile.prx', 'psp/sdk/lib/prxexports.o', 'psp/sdk/lib/libpspgu.a', 'psp/lib/libc.a',
@@ -142,6 +143,25 @@ def copy_ffmpeg_dependency(dependency, target):
     return verify_ffmpeg_dependency(target)
 
 
+def build_launcher(source, target, cc):
+    source = Path(source).resolve()
+    cc = Path(cc).resolve()
+    windres = cc.with_name('windres.exe' if os.name == 'nt' else 'windres')
+    if not windres.is_file():
+        raise ValueError('MinGW windres is required for the launcher icon')
+    env = dict(os.environ)
+    env['PATH'] = str(cc.parent) + os.pathsep + env.get('PATH', '')
+    with tempfile.TemporaryDirectory(prefix='dcrc-launcher-') as folder:
+        resource = Path(folder) / 'icon.rc'
+        resource_object = resource.with_suffix('.o')
+        resource.write_text('1 ICON "gui/assets/dcrc.ico"\n', encoding='utf8')
+        subprocess.run([str(windres), str(resource), '-O', 'coff', '-o', str(resource_object)],
+                       cwd=source, env=env, check=True)
+        subprocess.run([str(cc), '-O2', '-municode', '-mwindows', '-static',
+                        str(source / 'converter/launcher.c'), str(resource_object), '-o', str(Path(target).resolve())],
+                       env=env, check=True)
+
+
 def build(source, output, python_from, toolchain, licenses, cc=None, receipt=None, atrac_dependency=None, ffmpeg_dependency=None):
     source, output = Path(source).resolve(), Path(output).resolve()
     python_from, toolchain, licenses = map(lambda p: Path(p).resolve(), (python_from, toolchain, licenses))
@@ -237,10 +257,7 @@ def build(source, output, python_from, toolchain, licenses, cc=None, receipt=Non
     (output/'dcrc.cmd').write_text(preamble+'"%~dp0python\\python.exe" -B -m dcrc %*\r\n', encoding='utf8')
     shutil.copy2(source/'converter/README.md', output/'README.md')
     if cc:
-        env = dict(os.environ)
-        env['PATH'] = str(Path(cc).resolve().parent) + os.pathsep + env.get('PATH', '')
-        subprocess.run([str(cc), '-O2', '-municode', '-mwindows', '-static',
-                        str(source/'converter/launcher.c'), '-o', str(output/'DCRC Converter.exe')], env=env, check=True)
+        build_launcher(source, output/'DCRC Converter.exe', cc)
     manifest = {p.relative_to(output).as_posix(): digest(p) for p in sorted(output.rglob('*')) if p.is_file()}
     record = dict(status='PASS_STATIC_BUNDLE_REQUIRES_FUNCTIONAL_TEST', files=manifest,
                   source_manifest=source_manifest, game_data_included=False,

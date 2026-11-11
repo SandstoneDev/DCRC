@@ -1,0 +1,1 @@
+The DCRC Converter emblem is original AI-assisted artwork created for DCRC on 2026-11-04. The ICO contains seven Windows icon sizes. The README uses its 256 px PNG image. The emblem contains a generic handheld and an orange orbit.

@@ -82,19 +82,25 @@ def convert(options,event=None,cancel_event=None,*,log_path=None):
     if not isinstance(options,ConversionOptions):raise ConverterError('options','Expected ConversionOptions.')
     o=options.validate();start=time.monotonic();stop=cancel_event or threading.Event();callback=event or (lambda v:None);hits=[]
     border_blob=None
+    retained_border=None
+    existing_border=checked_path(o.output,'border.bin')
     if o.border_mode=='custom':
         from .border import encode_border
         border_blob=encode_border(o.border_image)
-        existing=checked_path(o.output,'border.bin')
-        if existing.exists():
+    if existing_border.exists():
+        if not existing_border.is_file():
+            raise ConverterError('foreign_content','The existing border path is not a file. Choose a new output folder.')
+        actual=file_digest(existing_border)
+        requested=None if border_blob is None else {
+            'bytes':len(border_blob),'sha256':hashlib.sha256(border_blob).hexdigest()}
+        if actual!=requested:
             from .package import _manifest
             previous=_manifest(o.output)['files'] if (o.output/MANIFEST).is_file() else {}
-            owned=previous.get('border.bin');actual=file_digest(existing)
-            requested={'bytes':len(border_blob),'sha256':hashlib.sha256(border_blob).hexdigest()}
-            if actual!=requested and (not owned or actual!={k:owned[k]for k in ('bytes','sha256')}):
+            owned=previous.get('border.bin')
+            if not owned or actual!={k:owned[k] for k in ('bytes','sha256')}:
                 raise ConverterError('foreign_content','Existing border is unowned or modified; choose a new output folder.')
-    elif (o.output/'border.bin').exists():
-        raise ConverterError('border_image','Existing folder contains a border. Supply its source image or choose a new folder.')
+        if border_blob is None:
+            retained_border=actual
     def emit(value):
         if value.get('state')=='cached':hits.append(value['stage'])
         callback(value)
@@ -247,6 +253,11 @@ def convert(options,event=None,cancel_event=None,*,log_path=None):
     if movies and tree_files(Path(movies['data_root']))!=movies['files']:
         raise ConverterError('movies_changed','Verified movie output changed before packaging.')
     movie_sources=_movie_sources(o.output,movies)
+    if retained_border is not None:
+        existing_border=checked_path(o.output,'border.bin')
+        if not existing_border.is_file() or file_digest(existing_border)!=retained_border:
+            raise ConverterError('foreign_content','The existing border changed during conversion. It has been preserved.')
+        emit({'type':'message','stage':'package','message':'Reusing the verified existing 4:3 border.'})
     check_xmb_inputs();stage('package');claim_output(o.output,o.profile)
     payload=Path(converted['payload_root']);sources=dict(movie_sources)
     if border_blob is not None:
@@ -286,7 +297,7 @@ def convert(options,event=None,cancel_event=None,*,log_path=None):
     from .runtime_source import NOTICES
     for notice in NOTICES:
         sources[notice]=frozen/notice
-    expected={}
+    expected={'border.bin':retained_border} if retained_border is not None else {}
     for n,(rel,src) in enumerate(sorted(sources.items())):
         check();expected[rel]=file_digest(src);_copy(src,checked_path(o.output,rel),expected[rel])
         emit({'type':'progress','stage':'package','progress':(n+1)/len(sources),'message':rel})
@@ -312,9 +323,7 @@ def convert(options,event=None,cancel_event=None,*,log_path=None):
         'build_validation':compiled['validation'],'movies':{'enabled':o.movies,'input_fingerprint':movies['fingerprint'] if movies else None},'quality':{'world_textures':o.world_textures,'scope':'selected Emerald Coast world assets only','land_distance':o.land_distance},
         'content':None if content is None else {'count':len(content.get('entries',[])),'input_fingerprint':content['fingerprint'],'opaque_only':True,'guest_decoder_included':False,'gameplay_verified':False},
         'game_derived_output':True,'processing':'local-only','hardware_acceptance':'not established by conversion'}
-    check();m=write_manifest(o.output,metadata,owned=expected)
-    for rel,e in expected.items():
-        if {k:m['files'][rel][k] for k in ('bytes','sha256')}!=e:raise ConverterError('write_readback',f'Payload changed during manifest creation: {rel}')
+    check();write_manifest(o.output,metadata,owned=expected)
     stage('verify');result=verify_folder(o.output)
     if not result['ok']:raise ConverterError('write_readback','The PSP folder failed final full SHA256 verification.',str(result['problems']))
     check();emit({'type':'stage','stage':'complete','state':'done','message':f'Converted folder verified: {o.output}','progress':1.0})

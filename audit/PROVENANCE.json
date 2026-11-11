@@ -390,8 +390,8 @@
       }
     },
     "README.md": {
-      "sha256": "b35c7931dba6fb4c61def4c25d6b0927c71411a1930d798f803f672eec5f079b",
-      "bytes": 9408,
+      "sha256": "8988f59f95e06d27f2acd144f19c1f9c9e904f759cc60dec2116662d663823fb",
+      "bytes": 9635,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -1346,8 +1346,8 @@
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
     },
     "converter/README.md": {
-      "sha256": "357253ad71b9883c37876494d3079f0f96f5eab12d56417874c6c0121499154c",
-      "bytes": 4750,
+      "sha256": "1b1e71931a97d4f82d0bc9fa3043f4dff45cb6c96c049f032b83b0a2da8f3952",
+      "bytes": 4853,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -1368,8 +1368,8 @@
       }
     },
     "converter/build_bundle.py": {
-      "sha256": "be01a1c48867212eff7e33ab1d4a95230ca74e5d6806275d6486c9ed054320ea",
-      "bytes": 15850,
+      "sha256": "50ea525ea6a34b39638bf005f19b916b5c116c0c8295dbd654996a690fecf0ac",
+      "bytes": 16707,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -2440,8 +2440,8 @@
       }
     },
     "dcrc/package.py": {
-      "sha256": "8aa3be3e4691667171d9d22b6354f77684cca9822bc47dfe753aa61d41dadb69",
-      "bytes": 7178,
+      "sha256": "55a15c7bf196b5c7a3a30bf96bc2213acda1e62b6524fdbac0ef3dc1d82c84db",
+      "bytes": 7363,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -2462,8 +2462,8 @@
       }
     },
     "dcrc/pipeline.py": {
-      "sha256": "7f4b418a5b30e08753faa15c6a085eb82e0464bb9dfbee1778c9d81752fd945b",
-      "bytes": 22699,
+      "sha256": "370d46db156de8d5da5fdfe678c5754c5d2adc58641efcb61c519f5fa4fc192c",
+      "bytes": 23143,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -2910,8 +2910,8 @@
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
     "gui/app.py": {
-      "sha256": "8ed6377b4560c56feef52d55342bf956a9901bcd796824748f405765af7c6680",
-      "bytes": 55446,
+      "sha256": "f921798d11ac66799535b2cb4d7ef239e72f5bef67b64a24a5f85e0da4e8186b",
+      "bytes": 55527,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -2942,6 +2942,42 @@
       "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation.",
       "sha256": "aacbacdefb6480323d629f5a7210263b8be200d4b034114fe7a09788f69dcd2f",
       "bytes": 2628
+    },
+    "gui/assets/NOTICE.md": {
+      "sha256": "883afaa2738f2b316e5082e87adbc1b3603aaf2aa718382f9f3b63b48e406e45",
+      "bytes": 231,
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-11",
+        "path": "gui/assets/NOTICE.md"
+      },
+      "review": "Original DCRC emblem or its notice, reviewed for the Windows launcher and README."
+    },
+    "gui/assets/dcrc.ico": {
+      "sha256": "3828692b9ecac7a597a4b150f8bc73bf0daa2daf323a7da541f95a0dab1575e4",
+      "bytes": 89390,
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-11",
+        "path": "gui/assets/dcrc.ico"
+      },
+      "review": "Original DCRC emblem or its notice, reviewed for the Windows launcher and README."
+    },
+    "gui/assets/dcrc.png": {
+      "sha256": "59ed5b87082fdc1d2a6411205de6cf98473db601e6a7a02e5e7b8fd4b3398827",
+      "bytes": 58889,
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-11",
+        "path": "gui/assets/dcrc.png"
+      },
+      "review": "Original DCRC emblem or its notice, reviewed for the Windows launcher and README."
     },
     "gui/controller.py": {
       "sha256": "d2989cbca583e844bc78583e564f3656e2c2bf7dcc641e62457e7ac673fa63f3",
@@ -3010,8 +3046,8 @@
         "path": "gui/lang/ru.json"
       },
       "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation.",
-      "sha256": "a618b30a5b6bd62e6ed665459ef0e2f7e2b5767213421b5902d221cdd60b777c",
-      "bytes": 18547
+      "sha256": "392cea0b40638b63af85cd1292a6d640fd9fa0978689dbf3107fba2fc373e183",
+      "bytes": 18640
     },
     "gui/media_picker.py": {
       "category": "O",
@@ -5396,8 +5432,8 @@
         "path": "tests/converter/test_border.py"
       },
       "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
-      "sha256": "c24a99cad965217a8ceeeda5271f041a1da04c064aa50197f07f1fea2c86b783",
-      "bytes": 2888
+      "sha256": "3c5818315543f9a4a005abfac18a1ac17ada066d3916787fbf7c901f614506e5",
+      "bytes": 4924
     },
     "tests/converter/test_bundle.py": {
       "sha256": "2f862bec86400293292c623d5e92291da8d4fe288bc00776cea209b079f43123",

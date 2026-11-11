@@ -1,8 +1,17 @@
 # DCRC Converter
 
-The [release archive](https://github.com/SandstoneDev/DCRC/releases) contains the
-Windows converter source and runtime. Extract the complete archive, open a
-terminal in the extracted `DCRC` folder, then run:
+## Start the portable converter
+
+1. [Download the Windows x64 ZIP](https://github.com/SandstoneDev/DCRC/releases/download/v0.1.0-preview.3/DCRC-Converter-Windows-x64-v0.1.0-preview.3.zip).
+2. Extract the entire archive into a writable folder.
+3. Open **DCRC Converter.exe**.
+
+The archive includes Python, Qt, the native PSP toolchain, FFmpeg, FFprobe
+and the ATRAC encoder. It is ready to run from the extracted folder.
+
+## Run from source
+
+For a source checkout, open a terminal in the repository folder.
 
 ```powershell
 python -m pip install -r requirements-gui.txt
@@ -10,14 +19,10 @@ python -B gui/run_gui.py
 ```
 
 Use [the dependency guide](../docs/DEPENDENCIES.md) to install a compatible native
-Windows PSP toolchain. Configure it through `DCRC_TOOLCHAIN` or the advanced
-settings before building a PSP folder. CLI-only use needs `requirements.txt`.
-The local portable build recipe below is available for separately acquired tools.
+Windows PSP toolchain for source builds. Configure it through `DCRC_TOOLCHAIN`
+or the advanced settings. CLI-only source use needs `requirements.txt`.
 
 ## Use the window
-
-Run `python -B gui/run_gui.py`, or open **DCRC Converter.exe** in a locally built
-portable package. Opening the window does not start a game build.
 
 1. **Disc:** choose the supported US V1.005 GDI and its tracks. Identity is checked
    automatically and summarized in readable form. An extracted directory is an
@@ -29,8 +34,8 @@ portable package. Opening the window does not start a game build.
    complete portable layout; advanced fields permit explicit overrides.
 3. **Appearance:** edit the local title, browse images from the supplied game or
    local files, audition music and choose its start/1–10 second clip. A custom
-   side image is an optional local 4:3 setting. No private/default game art is
-   part of this source distribution.
+   side image is an optional local 4:3 setting. When converting into an existing
+   DCRC output, the converter can keep a border that matches its manifest.
 4. **Settings:** choose original or explicitly reduced world textures, aspect,
    audio/voice, frame skip and mips. This public TA profile requires full static
    distance100. Supported movie/border/dither controls follow the actual

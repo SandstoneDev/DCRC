@@ -1,5 +1,7 @@
 # DCRC
 
+<img src="gui/assets/dcrc.png" alt="DCRC Converter icon" width="96" height="96">
+
 **An open-source platform for porting Dreamcast games to PSP.** DCRC includes a
 Windows converter, an SH-4 recompiler, a PSP runtime, and guides and agent skills
 for researching and developing new ports. The converter builds a PSP folder
@@ -13,13 +15,23 @@ See [CREDITS.md](CREDITS.md), [NOTICE.md](NOTICE.md) and [LICENSE](LICENSE).
 The converter workflow was inspired by [PS2RC](https://github.com/SandstoneDev/PS2RC);
 its custom-licensed implementation is not copied here.
 
+## Quick start on Windows
+
+1. [Download the Windows x64 ZIP](https://github.com/SandstoneDev/DCRC/releases/download/v0.1.0-preview.3/DCRC-Converter-Windows-x64-v0.1.0-preview.3.zip) from the [latest release](https://github.com/SandstoneDev/DCRC/releases/latest).
+2. Extract the entire archive into a writable folder and run **DCRC Converter.exe**.
+3. Select your own **Sonic Adventure Dreamcast USA V1.005** GDI and keep its track files alongside it.
+4. Choose an output folder, then click **Convert** on the last tab.
+5. Copy the generated game folder into `PSP/GAME` on your PSP and launch it from the PSP menu.
+
+The portable ZIP includes **Python and the PSP toolchain**, along with Qt,
+FFmpeg, FFprobe and the ATRAC encoder. Everything needed for conversion runs
+from the extracted folder.
+
 ## Status
 
-This is a source-first preview. The first compatibility profile is **Sonic
-Adventure, Dreamcast USA V1.005**, supplied as a GDI with its track files. Other
-games and disc revisions require their own porting work. Download the Windows
-converter source package from [GitHub Releases](https://github.com/SandstoneDev/DCRC/releases).
-Each game build is generated locally from your own supported disc.
+This is a public preview. The first compatibility profile is **Sonic Adventure,
+Dreamcast USA V1.005**. Other games and disc revisions require their own porting
+work. The converter builds the PSP game locally from your own disc.
 
 The reviewed source profile deliberately uses locally translated original
 functions instead of several handwritten native accelerators. Its supported
@@ -30,33 +42,19 @@ issues remain; real PSP validation is required for speed and quality claims.
 
 ## What you need
 
-- Your own supported GDI and its track files; the converter checks executable
-  and overlay hashes before creating output. A hash identifies a version.
-- Windows x64 and Python3.11+ for the current native Windows build adapter.
-- A separately installed native PSP homebrew SDK containing `psp-gcc.exe`,
-  PSPSDK headers/libraries and import/PRX tools. See [dependencies](docs/DEPENDENCIES.md).
-- A PSP-2000/3000-class64MB target that runs homebrew. PSP-1000 is not supported
-  by the current memory configuration. Hardware acceptance of a new build is
-  separate from a successful local conversion.
+- Windows 10 or 11 (x64).
+- A PSP with 64 MB of RAM that can run homebrew, such as a PSP-2000 or
+  PSP-3000. **PSP-1000 is unsupported** because it has 32 MB of RAM.
 - Several gigabytes of free local work space, plus the generated PSP folder.
 
-## Convert your own disc
+### Recommended PSP settings
 
-Install the source dependencies from the official Python package index:
+We recommend **ARK-5** for this preview. In its custom firmware settings,
+set **CPU Clock in Game** to **443 MHz** and **Use Extra Memory** to **MAX**.
+The 443 MHz overclock is optional. If your PSP is unstable at that setting,
+use 333 MHz. Report your PSP model, CPU clock and memory setting with test results.
 
-```sh
-python -m pip install -r requirements.txt
-python -B -m dcrc doctor --toolchain "<native-PSP-SDK>"
-python -B -m dcrc identify "<your-disc.gdi>"
-python -B -m dcrc convert "<your-disc.gdi>" --out "<new-PSP-folder>" --toolchain "<native-PSP-SDK>"
-```
-
-For the optional window:
-
-```sh
-python -m pip install -r requirements-gui.txt
-python -B gui/run_gui.py
-```
+## Converter options
 
 The six steps are Disc, Output, Appearance, Settings, Controls and Convert.
 Selecting a disc checks its version automatically; Convert also performs the
@@ -74,12 +72,10 @@ buttons to Dreamcast actions; physical HOME and the DCRC menu chord remain avail
 
 Movie playback, custom borders and dithering depend on the reviewed runtime
 capabilities, not just visible controls. See [profile support](docs/COMPATIBILITY.md)
-and [converter usage](converter/README.md). FFmpeg/ffprobe and an ATRAC encoder
-are separate optional dependencies for the media operations that require them.
+and [converter usage](converter/README.md) for the available options.
 
-The resulting folder contains `EBOOT.PBP`, helpers and `data/`. Copy the complete
-folder into `PSP/GAME` on your own device. Every game-derived result stays local;
-do not share the generated PSP folder, generated C, saves or game captures.
+The resulting folder contains `EBOOT.PBP`, helpers and `data/`. Keep generated
+game files, saves and captures private.
 
 In the PSP game, **L+R+Cross+Down** opens the control menu. Release all buttons,
 then use L/R for pages and the D-pad to edit. Settings, bounded cheats, startup
@@ -90,16 +86,32 @@ retrieve selected events into local work; checked events are prepared before
 Convert. Failure/cancellation stops the job. This is opaque import, not a promise
 of playable DLC; see the menu guide and profile support limits.
 
-The release archive includes the converter and its runtime source. Install the
-Python dependencies and select a native Windows PSP toolchain to use it.
-[Converter setup and local packaging](converter/README.md) covers both workflows.
+## Run from source
+
+Install the source dependencies from the official Python package index:
+
+```sh
+python -m pip install -r requirements.txt
+python -B -m dcrc doctor --toolchain "<native-PSP-SDK>"
+python -B -m dcrc identify "<your-disc.gdi>"
+python -B -m dcrc convert "<your-disc.gdi>" --out "<new-PSP-folder>" --toolchain "<native-PSP-SDK>"
+```
+
+For the optional window:
+
+```sh
+python -m pip install -r requirements-gui.txt
+python -B gui/run_gui.py
+```
 
 ## Settings, resume and recovery
 
-```sh
-python -B -m dcrc verify "<PSP-folder>"
-python -B -m dcrc configure "<PSP-folder>" --stage normal --voice en
-python -B -m dcrc repair "<PSP-folder>" --source "<your-disc.gdi>" --toolchain "<native-PSP-SDK>"
+Open a terminal in the extracted portable folder to use the command-line tools.
+
+```powershell
+.\dcrc.cmd verify "<PSP-folder>"
+.\dcrc.cmd configure "<PSP-folder>" --stage normal --voice en
+.\dcrc.cmd repair "<PSP-folder>" --source "<your-disc.gdi>"
 ```
 
 GUI and CLI use the same core. Complete stages are reused only after content

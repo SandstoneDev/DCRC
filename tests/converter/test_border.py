@@ -57,3 +57,57 @@ def test_border_alpha_flattens_on_black_before_existing_resize(tmp_path):
     assert pixels[20]==0  # Hidden transparent red must not become an opaque red field.
     assert pixels[64+20]==1024  # Half-alpha green is composited against black.
     assert file_digest(path)==before
+
+@pytest.mark.parametrize('changed', [False, True])
+def test_resume_legacy_owned_border(tmp_path, monkeypatch, changed):
+    from dcrc import disc
+    from dcrc.border import encode_border
+    from dcrc.package import claim_output, write_manifest
+    from dcrc.pipeline import convert
+
+    class IdentifyReached(Exception):
+        pass
+
+    def stop_after_preflight(*args, **kwargs):
+        raise IdentifyReached
+
+    disc_path = tmp_path / 'own.gdi'
+    disc_path.touch()
+    image = tmp_path / 'old.png'
+    Image.new('RGB', (16, 16), 'blue').save(image)
+    output = tmp_path / 'output'
+    claim_output(output, 'sa1_us_1005')
+    border = output / 'border.bin'
+    original = encode_border(image)
+    border.write_bytes(original)
+    write_manifest(output, {'profile': 'sa1_us_1005', 'options': {'border_mode': 'default'}})
+    if changed:
+        border.write_bytes(original[:-1] + bytes([original[-1] ^ 1]))
+    before = border.read_bytes()
+    monkeypatch.setattr(disc, 'inspect_source', stop_after_preflight)
+    options = ConversionOptions(disc_path, output, border_mode='none')
+    if changed:
+        with pytest.raises(ConverterError) as error:
+            convert(options)
+        assert error.value.code == 'foreign_content'
+    else:
+        with pytest.raises(IdentifyReached):
+            convert(options)
+    assert border.read_bytes() == before
+
+
+def test_changed_payload_keeps_previous_manifest(tmp_path):
+    from dcrc.package import MANIFEST, write_manifest
+    from dcrc.storage import file_digest
+
+    border = tmp_path / 'border.bin'
+    border.write_bytes(b'original border')
+    metadata = {'profile': 'sa1_us_1005'}
+    write_manifest(tmp_path, metadata)
+    saved = (tmp_path / MANIFEST).read_bytes()
+    expected = {'border.bin': file_digest(border)}
+    border.write_bytes(b'changed border')
+    with pytest.raises(ConverterError) as error:
+        write_manifest(tmp_path, metadata, owned=expected)
+    assert error.value.code == 'write_readback'
+    assert (tmp_path / MANIFEST).read_bytes() == saved

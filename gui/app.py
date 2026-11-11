@@ -24,7 +24,7 @@ class Window(W.QMainWindow):
     def __init__(self, settings_path=None, session_log=None):
         super().__init__()
         self.setWindowTitle('DCRC Converter')
-        # Source distribution does not carry private branding assets.
+        self.setWindowIcon(QtGui.QIcon(str(Path(__file__).parent / 'assets' / 'dcrc.ico')))
         self.resize(1200, 760)
         self.setMinimumSize(860, 560)
         self.job = None
@@ -270,7 +270,7 @@ class Window(W.QMainWindow):
         note=W.QLabel('Choose any start point. PSP menu music supports clips up to 10 seconds. The preview plays the selected cut.')
         note.setWordWrap(True);f.addRow(note)
         f=form_page('4:3 border')
-        self.combo(f,'Border','border_mode',[('No border','none'),('Own image','custom')] if PROFILE_CAPABILITIES['custom_border'] else [('Unavailable in public TA runtime','none')])
+        self.combo(f,'Border','border_mode',[('Keep existing border (if present)','none'),('Own image','custom')] if PROFILE_CAPABILITIES['custom_border'] else [('Unavailable in public TA runtime','none')])
         self.path(f,'Border image','border_image',file=True,file_filter='Images (*.png *.jpg *.jpeg *.bmp)')
         self.controls['border_mode'].setEnabled(PROFILE_CAPABILITIES['custom_border'])
         self.controls['border_image'].parentWidget().setEnabled(PROFILE_CAPABILITIES['custom_border'])
@@ -774,7 +774,7 @@ class Window(W.QMainWindow):
                 work=Path(values['work']) if self.advanced.isChecked() and values['work'] else None,
                 toolchain=Path(values['toolchain']) if self.advanced.isChecked() and values['toolchain'] else None,
                 dlc_dir=Path(values['dlc_dir']) if values.get('dlc_dir') else None,
-                border_image=Path(values['border_image']) if values.get('border_image') else None,
+                border_image=Path(values['border_image']) if typed['border_mode']=='custom' and values.get('border_image') else None,
                 ffmpeg=Path(values['ffmpeg']) if self.advanced.isChecked() and values.get('ffmpeg') else None,
                 profile=self.identity.get('profile', 'sa1_us_1005'),
                 **{key:Path(values[key]) if values.get(key) and (key!='xmb_encoder' or self.advanced.isChecked()) else None for key in

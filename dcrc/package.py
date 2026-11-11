@@ -36,7 +36,10 @@ def write_manifest(folder,metadata,mutable=None,owned=None):
         if rel in (MANIFEST,OWNER) or rel.startswith('vmu/'):continue
         p=checked_path(folder,rel)
         if not p.is_file():raise ConverterError('manifest',f'Missing payload while creating manifest: {rel}')
-        result[rel]=dict(file_digest(p),mutable=rel in mutable)
+        actual=file_digest(p)
+        if isinstance(owned,dict) and actual!=owned[rel]:
+            raise ConverterError('write_readback',f'Payload changed before manifest publication: {rel}')
+        result[rel]=dict(actual,mutable=rel in mutable)
     m=dict(metadata,format='DCRC_PACKAGE_V1',files=result)
     write_json(folder/MANIFEST,m)
     return m
