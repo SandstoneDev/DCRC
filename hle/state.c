@@ -21,6 +21,10 @@ struct hle_state_io {
     int ring_next;
 };
 
+void hle_state_fail(hle_state_io *io,const char *message) {
+    if(io&&!io->error[0])snprintf(io->error,sizeof io->error,"%s",message);
+}
+
 int hle_state_loading(const hle_state_io *io) { return io->loading; }
 const char *hle_state_error(const hle_state_io *io) { return io->error[0] ? io->error : NULL; }
 int hle_state_at_end(const hle_state_io *io) {
@@ -69,6 +73,7 @@ static int fail(hle_state_io *io, const char *fmt, const char *name, uint32_t a,
 }
 
 static int put(hle_state_io *io, const void *p, size_t n) {
+    if (!n) return 0;
     if (io->f) {
         if (fwrite(p, 1, n, io->f) != n) return fail(io, "write error writing %s (%u bytes)", "state", (uint32_t)n, 0);
         io->len += n;
@@ -144,6 +149,39 @@ void hle_state_blob(hle_state_io *io, const char *name, void *p, uint32_t n) {
     if (!src) return;
     if (len != n) { fail(io, "state chunk %s is %u bytes, this build expects %u", name, len, n); return; }
     memcpy(p, src, n);
+}
+
+int hle_state_optional_blob(hle_state_io *io,const char *name,void *p,uint32_t n) {
+    if (!io || io->error[0]) return -1;
+    if (!name || !*name || strlen(name) >= NAME_LEN || (!p && n)) {
+        hle_state_fail(io,"invalid optional state field"); return -1;
+    }
+    if (!io->loading) {
+        hle_state_blob(io,name,p,n); return io->error[0] ? -1 : 1;
+    }
+    char expected[NAME_LEN]={0},tag[NAME_LEN];
+    memcpy(expected,name,strlen(name));
+    if (io->f) {
+        fpos_t start;
+        if (fgetpos(io->f,&start)) { hle_state_fail(io,"optional state stream cannot seek"); return -1; }
+        size_t got=fread(tag,1,NAME_LEN,io->f);
+        int bad=ferror(io->f);
+        if (fsetpos(io->f,&start)) { hle_state_fail(io,"optional state stream cannot rewind"); return -1; }
+        if (bad || (got && got!=NAME_LEN)) { hle_state_fail(io,"truncated optional state header"); return -1; }
+        if (!got || memcmp(tag,expected,NAME_LEN)) return 0;
+    } else {
+        if (io->pos==io->len) return 0;
+        if (io->pos>io->len || io->len-io->pos<NAME_LEN) { hle_state_fail(io,"truncated optional state header"); return -1; }
+        if (memcmp(io->buf+io->pos,expected,NAME_LEN)) return 0;
+    }
+    /* Read into a bounded caller-size temporary; short stream reads cannot
+     * leave partially restored handles, generations or error state behind. */
+    void *temporary=malloc(n?n:1);
+    if (!temporary) { hle_state_fail(io,"no memory for optional state field"); return -1; }
+    hle_state_blob(io,name,temporary,n);
+    int ok=!io->error[0];
+    if (ok && n) memcpy(p,temporary,n);
+    free(temporary); return ok?1:-1;
 }
 
 const void *hle_state_var(hle_state_io *io, const char *name, const void *p, uint32_t *n) {

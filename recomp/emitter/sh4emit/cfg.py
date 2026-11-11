@@ -67,16 +67,29 @@ class Block:
 class Env:
     """What the CFG builder needs to know about the surrounding program."""
 
-    def __init__(self, image, code_lo, code_hi, entries, patched=frozenset()):
+    def __init__(self, image, code_lo, code_hi, entries, patched=frozenset(), code_ranges=None):
         self.image = image
         self.code_lo = phys(code_lo)
         self.code_hi = phys(code_hi)
         self.entries = set(phys(e) for e in entries)
         self.patched = set(patched)   # pool words never to fold
+        self.code_ranges = None
+        if code_ranges is not None:
+            ranges = sorted((phys(lo), phys(hi)) for lo, hi in code_ranges)
+            if not ranges or any(lo & 1 or hi & 1 or not self.code_lo <= lo < hi <= self.code_hi
+                                 or not image.contains(lo, hi - lo) for lo, hi in ranges):
+                raise ValueError("invalid selected code ranges")
+            if any(left[1] > right[0] for left, right in zip(ranges, ranges[1:])):
+                raise ValueError("overlapping selected code ranges")
+            self.code_ranges = tuple(ranges)
+            if any(not self.in_code(e) for e in self.entries):
+                raise ValueError("function entry outside selected code ranges")
 
     def in_code(self, addr):
         a = phys(addr)
-        return self.code_lo <= a < self.code_hi
+        if self.code_ranges is None:
+            return self.code_lo <= a < self.code_hi
+        return any(lo <= a < hi for lo, hi in self.code_ranges)
 
     def pool_word(self, ins):
         """Folded value of a PC-relative load, or None when it must read memory."""

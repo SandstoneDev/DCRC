@@ -5,7 +5,7 @@ from dcrc.generate import generate
 
 ROOT=Path(__file__).resolve().parents[2]
 class GenerateTests(unittest.TestCase):
- def test_explicit_input_all58_and_no_source_update(self):
+ def test_explicit_input_all77_and_no_source_update(self):
   calls=[]
   def run(argv,**kwargs):
    calls.append(argv);self.assertNotIn('--update-hle',argv);out=Path(argv[argv.index('--out')+1]);out.mkdir(parents=True,exist_ok=True)
@@ -20,7 +20,10 @@ class GenerateTests(unittest.TestCase):
     from dcrc.profiles import load_profile
     for ov in load_profile()['overlays']:(data/ov['file']).write_bytes(b'x')
     result=generate(data,root/'gen',ROOT,jobs=2)
-   self.assertEqual(len(calls),59);self.assertEqual(result['overlays'],58);self.assertTrue(result['files']);self.assertTrue(all('--functions'in a for a in calls))
+   self.assertEqual(len(calls),78);self.assertEqual(result['overlays'],77);self.assertTrue(result['files']);self.assertTrue(all('--functions'in a for a in calls))
+   main_call,*overlay_calls=calls
+   self.assertEqual(Path(main_call[main_call.index('--sdk-functions')+1]).name,'ninja_chao.json')
+   self.assertTrue(all('--sdk-functions' not in call for call in overlay_calls))
  def test_existing_output_rejected_before_process(self):
   with tempfile.TemporaryDirectory()as d:
    p=Path(d);out=p/'out';out.mkdir();(out/'mine').write_text('keep')

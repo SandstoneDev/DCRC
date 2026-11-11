@@ -311,6 +311,10 @@ static inline int draw_cpu_tri(const float *m, const draw_mesh_vertex *a, const 
 }
 
 uint32_t draw_texture_create(int width, int height, int fmt, const void *pixels, int clut_fmt, const void *clut);
+/* Mark an explicit UI service texture immediately after creation, before any
+ * further texture allocation. Retains its current base; does not restore an
+ * already discarded level. 0 live valid handle, -1 invalid/retired. */
+int draw_texture_protect_ui(uint32_t handle);
 void draw_texture_destroy(uint32_t handle);
 /* Debug: dump the current frame buffer as a PPM (desktop only; PSP returns -1). */
 int  draw_screenshot(const char *path);

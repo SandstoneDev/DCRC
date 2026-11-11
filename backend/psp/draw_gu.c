@@ -362,6 +362,16 @@ static void texture_detail_protect(uint32_t h, int sky) {
     }
 }
 static void texture_ui_protect(uint32_t h) { texture_detail_protect(h, 0); }
+int draw_texture_protect_ui(uint32_t h) {
+    if (!h || h >= TEX_MAX || !texs[h].mem || texs[h].dying || !texs[h].w) return -1;
+    if (texs[h].hidden) {
+        uint32_t p = texs[h].parent; int k = texs[h].pk;
+        if (!p || p >= TEX_MAX || k < 1 || k > 3 || !texs[p].mem || texs[p].dying || texs[p].hidden || texs[p].mirror[k] != h) return -1;
+    }
+    texture_ui_protect(h);
+    return 0;
+}
+
 static int texture_hud_detail(uint32_t h) {
     if (!h || h >= TEX_MAX) return 0;
     const gtex *t = &texs[h];
@@ -854,6 +864,19 @@ void draw_texture_destroy(uint32_t handle) {
  * the textures and builds the saved ones under their handles, which guest
  * RAM refers to (mip levels and mirrors are derived again). */
 #include "state.h"
+/* Raw owners were restored before backend pixels. A failed rebuild must
+ * revoke that numeric handle before an ordinary texture can reuse its slot. */
+extern int texture_raw_restore_valid(uint32_t,int,int,int,uint32_t,uint32_t);
+extern void texture_raw_restore_finish(hle_state_io *);
+static int texture_restore_raw_error(hle_state_io *io,uint32_t handle) {
+    extern int texture_raw_ui_handle(uint32_t);
+    extern void texture_raw_restore_failed(uint32_t);
+    if (!texture_raw_ui_handle(handle)) return 0;
+    texture_raw_restore_failed(handle);
+    hle_state_fail(io,"cannot restore raw UI texture");
+    texture_raw_restore_finish(io);
+    return 1;
+}
 typedef struct tex_rec { uint32_t handle, pix_n, clut_n; int32_t w, h, fmt, clut_fmt; } tex_rec;
 static uint32_t src_row_bytes(int w, int bits) { uint32_t r = row_bytes(w, bits); return r ? r : 1; }
 
@@ -862,26 +885,38 @@ void draw_gu_texture_state(hle_state_io *io) {
     if (!hle_state_loading(io)) for (int i = 1; i < TEX_MAX; i++) count += texs[i].w && !texs[i].hidden && !texs[i].dying;
     hle_state_blob(io, "textures", &count, sizeof count);
     if (hle_state_loading(io)) {
-        if (hle_state_error(io)) return;
+        if (hle_state_error(io)) { texture_raw_restore_finish(io);return; }
         ge_wait();                    /* nothing is freed under a running list */
         for (int i = 1; i < TEX_MAX; i++) if (texs[i].mem && !texs[i].hidden) texture_release((uint32_t)i);
         for (int i = 1; i < TEX_MAX; i++) if (texs[i].mem) texture_release((uint32_t)i);
         nfree_later = 0; bound_tex = 0; cur_valid = 0;
         for (uint32_t k = 0; k < count; k++) {
-            tex_rec r;
+            tex_rec r={0};
             hle_state_blob(io, "tex", &r, sizeof r);
             uint32_t pn = 0, cn = 0;
             const void *pix = hle_state_var(io, "tex.pix", NULL, &pn);
             const void *clut = hle_state_var(io, "tex.clut", NULL, &cn);
-            if (hle_state_error(io)) return;
+            if (hle_state_error(io)) { texture_restore_raw_error(io,r.handle);texture_raw_restore_finish(io);return; }
+            extern int texture_raw_ui_handle(uint32_t);
+            int raw_owned=texture_raw_ui_handle(r.handle);
+            if (raw_owned && (!pix || r.handle>=TEX_MAX || r.pix_n!=pn || r.clut_n!=cn ||
+                !texture_raw_restore_valid(r.handle,r.w,r.h,r.fmt,pn,cn))) {
+                texture_restore_raw_error(io,r.handle);return;
+            }
             uint16_t *cl = NULL;
             if (cn) { cl = memalign(16, cn < 32 ? 32 : cn); if (cl) memcpy(cl, clut, cn); }
             if (!pix || r.handle == 0 || r.handle >= TEX_MAX || texture_build((int)r.handle, r.w, r.h, r.fmt, pix, r.clut_fmt, cl, cl != NULL, 0) != 0) {
                 sa1_log("draw: cannot rebuild texture %u (%dx%d fmt %d) from the state", r.handle, r.w, r.h, r.fmt);
+                if (texture_restore_raw_error(io,r.handle)) return;
                 continue;
             }
+            /* Raw service metadata is loaded before backend pixels. Protect
+             * this incarnation before rebuilding the next texture can reclaim. */
+            extern int texture_raw_ui_handle(uint32_t);
+            if (raw_owned && draw_texture_protect_ui(r.handle)<0) { texture_restore_raw_error(io,r.handle);return; }
             stats.textures_alive++; stats.texture_bytes += texs[r.handle].bytes;
         }
+        texture_raw_restore_finish(io);
         return;
     }
     for (int i = 1; i < TEX_MAX; i++) {
@@ -3344,7 +3379,7 @@ static void model_report(void) {
 
 /* Own paused-menu pass. Reuses the completed frame's list, with no framebuffer
  * CPU writes or live game vertex/texture allocation. SDK font remains external. */
-int draw_debug_ready(void) { return !headless && !list_open; }
+int draw_debug_ready(void) { return !headless && !list_open && !movie_display_active; }
 int draw_gu_fps_enabled(void) { return fps_hud_on; }
 int draw_gu_mip_limit(void) { return max_levels; }
 void draw_debug_reset_meter(void) {
@@ -3352,8 +3387,9 @@ void draw_debug_reset_meter(void) {
     cur_valid=0;cur_proj=-1;bound_tex=0;tex_su=tex_sv=-1;
     sh_reset(&sh);
 }
-void draw_debug_screen(const DebugDrawLine *lines,unsigned count,int highlight_y) {
-    if(!draw_debug_ready() || !lines || count>24) return;
+void draw_debug_screen(const DebugDrawLine *lines, unsigned count,
+                       const DebugDrawRect *rects, unsigned rect_count) {
+    if (!draw_debug_ready() || !lines || count > 32 || !rects || rect_count > 24) return;
     static uint8_t atlas[128*64/2] __attribute__((aligned(64)));
     static uint32_t palette[16] __attribute__((aligned(64)));
     static int font_ready;
@@ -3377,12 +3413,17 @@ void draw_debug_screen(const DebugDrawLine *lines,unsigned count,int highlight_y
     sceGuScissor(0,0,SCR_W,SCR_H);
     sceGuDisable(GU_DEPTH_TEST);sceGuDisable(GU_FOG);sceGuDisable(GU_CULL_FACE);
     sceGuDisable(GU_ALPHA_TEST);sceGuDisable(GU_TEXTURE_2D);sceGuDepthMask(GU_TRUE);
-    sceGuClearColor(0xff24160fu);sceGuClear(GU_COLOR_BUFFER_BIT);
+    sceGuDisable(GU_BLEND);
+    sceGuClearColor(0xff15120fu);sceGuClear(GU_COLOR_BUFFER_BIT);
     typedef struct { uint32_t color; int16_t x,y,z,pad; } Box;
-    if(highlight_y>=0 && highlight_y<SCR_H-12) {
+    for (unsigned i = 0; i < rect_count; i++) {
+        const DebugDrawRect *r = &rects[i];
+        if (r->x < 0 || r->y < 0 || r->width <= 0 || r->height <= 0 ||
+            r->width > SCR_W - r->x || r->height > SCR_H - r->y) continue;
         Box *b=sceGuGetMemory(2*sizeof *b);
-        b[0]=(Box){0xff66502au,12,(int16_t)highlight_y,0,0};
-        b[1]=(Box){0xff66502au,468,(int16_t)(highlight_y+12),0,0};
+        if (!b) break;
+        b[0]=(Box){r->color,(int16_t)r->x,(int16_t)r->y,0,0};
+        b[1]=(Box){r->color,(int16_t)(r->x+r->width),(int16_t)(r->y+r->height),0,0};
         sceGuDrawArray(GU_SPRITES,GU_COLOR_8888|GU_VERTEX_16BIT|GU_TRANSFORM_2D,2,NULL,b);
     }
     sceGuEnable(GU_TEXTURE_2D);sceGuEnable(GU_BLEND);
@@ -3394,7 +3435,10 @@ void draw_debug_screen(const DebugDrawLine *lines,unsigned count,int highlight_y
     typedef struct { uint16_t u,v;uint32_t color;int16_t x,y,z,pad; } Glyph;
     for(unsigned line=0;line<count;line++) {
         const DebugDrawLine *l=&lines[line];if(!l->text)continue;
-        unsigned len=0;while(l->text[len]&&len<58)len++;
+        if (l->x < 0 || l->x >= SCR_W || l->y < 0 || l->y > SCR_H - 8) continue;
+        unsigned limit = (unsigned)(SCR_W-l->x)/8;
+        unsigned len=0;while(len<limit && l->text[len])len++;
+        if (!len) continue;
         Glyph *v=sceGuGetMemory((int)(len*2*sizeof *v));if(!v)break;
         for(unsigned i=0;i<len;i++) {
             unsigned ch=(unsigned char)l->text[i];if(ch>=128)ch='?';

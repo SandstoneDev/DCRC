@@ -124,6 +124,33 @@ static int overlay_remove(const char *name){
     if(event_name(name))return -1;
     int rc=base->remove(name);listed_valid=0;return rc;
 }
+/* Keep the optional typed VMU extension through the read-only event view. */
+static int overlay_base_stat(const char *name,vmu_file_info *info) {
+    if (base->stat) return base->stat(name,info);
+    if (!base->list) return -2;
+    for (int k=0;k<=200;k++) {
+        char n[13]={0};uint32_t bytes=0;int rc=base->list(k,n,&bytes);
+        if (rc) return rc==-1?-1:-2;
+        if (k==200 || !memchr(n,0,sizeof n) || !n[0] || !bytes || bytes>102400u) return -2;
+        if (!strcmp(name,n)) { *info=(vmu_file_info){bytes,VMU_STORE_DATA,0,0};return 0; }
+    }
+    return -2;
+}
+static int overlay_stat(const char *name,vmu_file_info *info) {
+    if (!info) return -2;
+    if (same(name,canonical)) { *info=(vmu_file_info){image_bytes,VMU_STORE_DATA,0,0};return 0; }
+    if (event_name(name)) return -1;
+    return overlay_base_stat(name,info);
+}
+static int overlay_typed(const char *name,const void *buf,uint32_t n,const vmu_file_info *info) {
+    listed_valid=0; /* A failed attempt can still leave a committed base journal. */
+    if (event_name(name)) return -1;
+    if (!info || n!=info->size) return -2;
+    if (base->write_typed) return base->write_typed(name,buf,n,info);
+    /* Four-operation stores describe DATA only; never erase EXEC metadata. */
+    if (info->type!=VMU_STORE_DATA || info->header_block || info->copy_flag || !n || n>102400u || !buf || !base->write) return -2;
+    return base->write(name,buf,n);
+}
 static void list_add(const char name[13],uint32_t size){
     memcpy(listed[listed_count].name,name,13);listed[listed_count++].size=size;
 }
@@ -131,11 +158,12 @@ static int list_refresh(void){
     int inserted=0;listed_count=0;
     for(int i=0;i<=200;i++){
         char n[13]={0};uint32_t z=0;
-        if(base->list(i,n,&z)!=0)break;
+        int rc=base->list(i,n,&z);
+        if(rc==-1)break;
+        if(rc){listed_count=0;return -2;}
         /* A VMU contract has at most200 physical files. Never overrun the
          * fixed snapshot if a foreign backend violates that bound. */
-        if(i==200){listed_count=0;return -1;}
-        n[12]=0;
+        if(i==200||!memchr(n,0,sizeof n)||!n[0]){listed_count=0;return -2;}
         if(!inserted&&strcmp(canonical,n)<0){list_add(canonical,image_bytes);inserted=1;}
         if(!event_name(n))list_add(n,z);
     }
@@ -148,11 +176,11 @@ static int overlay_list(int index,char name[13],uint32_t *size){
      * observed. Later indices use one stable snapshot. Delegated writes
      * and removes invalidate even on failure (a backend may partly write). */
     if(index==0)listed_valid=0;
-    if(!listed_valid&&list_refresh())return -1;
+    if(!listed_valid&&list_refresh())return -2;
     if((unsigned)index>=listed_count)return -1;
     memcpy(name,listed[index].name,13);*size=listed[index].size;return 0;
 }
-static const vmu_store_ops overlay={overlay_read,overlay_write,overlay_remove,overlay_list};
+static const vmu_store_ops overlay={overlay_read,overlay_write,overlay_remove,overlay_list,overlay_stat,overlay_typed};
 int hle_content_count(void){return count;}
 const char *hle_content_label(int index){return index>=0&&index<count?catalog[index].label:NULL;}
 int hle_content_selected(void){return selected;}

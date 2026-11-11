@@ -167,7 +167,28 @@ static int begin_material(sh4_ctx *c, uint32_t flags, uint32_t texid, int textur
 static tv_t tvs[MAX_VERTS];
 static sv_t svs[MAX_VERTS];
 
-static void draw_basic_model(sh4_ctx *c, uint32_t model) {
+static sh4_ctx *action_context;
+static sa1_coro *action_owner;
+
+static int valid_material(uint32_t address) {
+    return !(address & 3) && address <= UINT32_MAX - 19 &&
+           hle_in_ram(address) && hle_in_ram(address + 19);
+}
+
+static uint32_t action_color(uint32_t diffuse, uint32_t control) {
+    if (!(control & 0x30u)) return diffuse;
+    float a = hle_rdf(NJ_G_CONST_MAT), r = hle_rdf(NJ_G_CONST_MAT + 4);
+    float g = hle_rdf(NJ_G_CONST_MAT + 8), b = hle_rdf(NJ_G_CONST_MAT + 12);
+    if (!(control & 0x10u)) {
+        a += ((diffuse >> 24) & 255u) / 255.0f;
+        r += ((diffuse >> 16) & 255u) / 255.0f;
+        g += ((diffuse >> 8) & 255u) / 255.0f;
+        b += (diffuse & 255u) / 255.0f;
+    }
+    return nj_pack_argb(a, r, g, b);
+}
+
+static void draw_basic_model_material(sh4_ctx *c, uint32_t model, int simple_action) {
     env_t e; env_setup(c, &e);
     uint32_t points = hle_rd32(model), normals = hle_rd32(model + 4), np = hle_rd32(model + 8);
     uint32_t meshsets = hle_rd32(model + 12), mats = hle_rd32(model + 16);
@@ -196,11 +217,14 @@ static void draw_basic_model(sh4_ctx *c, uint32_t model) {
         uint32_t meshes = hle_rd32(ms + 4), vcol = hle_rd32(ms + 16), vuv = hle_rd32(ms + 20);
         uint32_t type = tm >> 14, matid = tm & 0x3FFF;
         uint32_t diffuse = 0xFFFFFFFFu, flags = 0, texid = 0;
-        if (mats && matid < nmat) {
+        if (mats && (matid < nmat ||
+                     (simple_action && nmat == 0 && matid == 0 && valid_material(mats)))) {
             uint32_t m = mats + matid * 20;
             diffuse = hle_rd32(m); flags = hle_rd32(m + 16); texid = hle_rd32(m + 12) & 0x3FFF;
         }
-        if (e.ctrl & 0x2) {        /* constant material */
+        if (simple_action) {
+            diffuse = action_color(diffuse, e.ctrl);
+        } else if (e.ctrl & 0x10u) {  /* constant material */
             diffuse = nj_pack_argb(hle_rdf(NJ_G_CONST_MAT) / 255.0f, hle_rdf(NJ_G_CONST_MAT + 4) / 255.0f, hle_rdf(NJ_G_CONST_MAT + 8) / 255.0f, hle_rdf(NJ_G_CONST_MAT + 12) / 255.0f);
         }
         int textured = vuv != 0;
@@ -272,6 +296,10 @@ static void m_rot(float *m, int axis, uint32_t a) {
         else if (axis == 1) { float c0 = m[i], c2 = m[8 + i]; m[i] = co * c0 - s * c2; m[8 + i] = s * c0 + co * c2; }
         else { float c0 = m[i], c1 = m[4 + i]; m[i] = co * c0 + s * c1; m[4 + i] = co * c1 - s * c0; }
     }
+}
+
+static void draw_basic_model(sh4_ctx *c, uint32_t model) {
+    draw_basic_model_material(c, model, 0);
 }
 
 typedef void (*model_fn)(sh4_ctx *c, uint32_t model);
@@ -426,8 +454,9 @@ static void draw_cnk_model(sh4_ctx *c, uint32_t model) {
 /* ---- entries -------------------------------------------------------------------------- */
 void sdk_8c611028(sh4_ctx *c) { HLE_ENTER(0x8c611028u, "njDrawModel"); if (ARG0) draw_basic_model(c, ARG0); }
 void sdk_8c61103c(sh4_ctx *c) { HLE_ENTER(0x8c61103cu, "njDrawObject"); draw_object(c, ARG0, draw_basic_model, 0); }
-void sdk_8c638e4e(sh4_ctx *c) { HLE_ENTER(0x8c638e4eu, "njDrawModel (lit)"); if (ARG0) draw_basic_model(c, ARG0); }
-void sdk_8c638dec(sh4_ctx *c) { HLE_ENTER(0x8c638decu, "njDrawObject (lit)"); draw_object(c, ARG0, draw_basic_model, 0); }
+/* US 1.005 passes a BASIC model to DEC and an OBJECT hierarchy to E4E. */
+void sdk_8c638e4e(sh4_ctx *c) { HLE_ENTER(0x8c638e4eu, "njDrawObject (lit)"); draw_object(c, ARG0, draw_basic_model, 0); }
+void sdk_8c638dec(sh4_ctx *c) { HLE_ENTER(0x8c638decu, "njDrawModel (lit)"); if (ARG0) draw_basic_model(c, ARG0); }
 /* SA1 (Dreamcast) models are all in the basic format; the 0x8C6215xx
  * family is the lit basic draw (its bodies start by turning the first
  * light into view space).  A model whose first word is not a pointer is
@@ -437,8 +466,28 @@ static int looks_chunk(uint32_t model) {
     return hle_in_ram(a) && hle_in_ram(b) && !hle_in_ram(hle_rd32(model + 12)) && hle_rd32(model + 8) > 100000u;
 }
 static void draw_any_model(sh4_ctx *c, uint32_t model) { if (looks_chunk(model)) draw_cnk_model(c, model); else draw_basic_model(c, model); }
-void sdk_8c6215d6(sh4_ctx *c) { HLE_ENTER(0x8c6215d6u, "njDrawModel (lit, 0x8C6215D6)"); if (ARG0) draw_any_model(c, ARG0); }
-void sdk_8c621574(sh4_ctx *c) { HLE_ENTER(0x8c621574u, "njDrawObject (lit, 0x8C621574)"); draw_object(c, ARG0, draw_any_model, 0); }
+void sdk_8c6215d6(sh4_ctx *c) { HLE_ENTER(0x8c6215d6u, "njDrawObject (lit, 0x8C6215D6)"); draw_object(c, ARG0, draw_any_model, 0); }
+void sdk_8c621574(sh4_ctx *c) {
+    HLE_ENTER(0x8c621574u, "njDrawModel (lit, 0x8C621574)");
+    uint32_t model = ARG0;
+    if (!model) return;
+    if (looks_chunk(model)) draw_cnk_model(c, model);
+    else draw_basic_model_material(c, model, c == action_context && sa1_plat_coro_current() == action_owner);
+}
+
+/* The converter emits the motion evaluator and traversal from the user's
+ * verified boot image. This wrapper scopes only our renderer's material mode. */
+void fn_8c60e49a_orig(sh4_ctx *c);
+void fn_8c60e49a(sh4_ctx *c) {
+    HLE_ENTER(0x8c60e49au, "njSimpleAction");
+    sh4_ctx *previous_context = action_context;
+    sa1_coro *previous_owner = action_owner;
+    action_context = c;
+    action_owner = sa1_plat_coro_current();
+    fn_8c60e49a_orig(c);
+    action_context = previous_context;
+    action_owner = previous_owner;
+}
 
 /* 0x8C610CF8 / 0x8C610D30 / 0x8C610D3E: draw parameters the SDK's model
  * renderer kept at 0x8C8901F8 and 0x8C6735A8 (stores only). */

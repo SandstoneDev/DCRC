@@ -64,9 +64,58 @@ static int slot_of_handle(uint32_t h) {
 static uint32_t total_bytes;
 static int ntex;
 static uint32_t palette[1024];        /* KAMUI palette RAM, ARGB8888 */
+/* Own UI services (for example the SDK print atlas) have a separate lifetime
+ * from njInitTexture's ordinary memory list. Never recycle a retired slot
+ * before the queued TA was parsed or explicitly discarded. */
+#define RAW_SERVICES 4
+typedef struct {
+    uint32_t token, handle, tcw, tsp;
+    uint16_t w, h;
+    uint8_t pixfmt, alpha, amin, retired;
+    char name[20];
+} raw_service;
+static raw_service raw_services[RAW_SERVICES];
+static uint32_t raw_generation;
+static raw_service *raw_of_handle(uint32_t h) {
+    if (!h) return NULL;
+    for (unsigned i=0;i<RAW_SERVICES;i++)
+        if(raw_services[i].token && raw_services[i].handle==h)return &raw_services[i];
+    return NULL;
+}
+int texture_raw_ui_handle(uint32_t h) { return raw_of_handle(h)!=NULL; }
+/* The backend failed to reconstruct this saved resource. Its numeric handle
+ * may be reused later; drop metadata without destroying an absent resource. */
+void texture_raw_restore_failed(uint32_t h) {
+    raw_service *s=raw_of_handle(h);if(s)memset(s,0,sizeof *s);
+}
+int texture_raw_restore_valid(uint32_t h,int w,int height,int fmt,uint32_t pixels,uint32_t clut) {
+    const raw_service *s=raw_of_handle(h);
+    if(!s)return 0;
+    int expected=s->pixfmt==0?DRAW_FMT_5551:s->pixfmt==1?DRAW_FMT_5650:DRAW_FMT_4444;
+    return w==s->w && height==s->h && fmt==expected &&
+        pixels==(uint32_t)s->w*s->h*2u && clut==0;
+}
+void texture_raw_restore_finish(hle_state_io *io) {
+    if(!hle_state_error(io))for(unsigned i=0;i<RAW_SERVICES;i++)if(raw_services[i].token &&
+            draw_texture_protect_ui(raw_services[i].handle)!=0){
+        hle_state_fail(io,"raw UI texture missing after backend restore");
+        break;
+    }
+    /* A partial restore cannot grant ownership to any numeric backend handle. */
+    if(hle_state_error(io))memset(raw_services,0,sizeof raw_services);
+}
 
-uint32_t texture_memory_bytes(void) { return total_bytes; }
-int texture_count(void) { return ntex; }
+uint32_t texture_memory_bytes(void) {
+    uint32_t bytes=total_bytes;
+    for(unsigned i=0;i<RAW_SERVICES;i++)if(raw_services[i].token)
+        bytes+=(uint32_t)raw_services[i].w*raw_services[i].h*2u;
+    return bytes;
+}
+int texture_count(void) {
+    int count=ntex;
+    for(unsigned i=0;i<RAW_SERVICES;i++)count+=raw_services[i].token!=0;
+    return count;
+}
 
 /* ---- PVR decoding (pvr_decode.c does the texels) ----------------------------- */
 static uint32_t rd32le(const uint8_t *p) { return p[0] | p[1] << 8 | p[2] << 16 | (uint32_t)p[3] << 24; }
@@ -221,6 +270,53 @@ static uint32_t size_code(int w, int h) {
     return (cu & 7) << 3 | (cv & 7);
 }
 
+int texture_raw_acquire(uint32_t address,uint32_t width,uint32_t height,
+                        uint32_t type,const char *label,texture_raw_ref *out) {
+    unsigned slot;
+    for(slot=0;slot<RAW_SERVICES;slot++)if(!raw_services[slot].token)break;
+    uint32_t off=address&0x1fffffffu, pixel=type&255u, layout=type>>8;
+    if(!out || slot==RAW_SERVICES || raw_generation>=0x1fffffffu ||
+       width<8 || height<8 || width>512 || height>512 ||
+       (width&(width-1)) || (height&(height-1)) || pixel>2 || (layout!=1 && layout!=9) ||
+       (address!=off && address!=(off|0x80000000u) && address!=(off|0xa0000000u)) ||
+       off<0x0c000000u || off>=0x0d200000u || width*height*2u>0x0d200000u-off)return 0;
+    int w,h,fmt;uint32_t bytes;
+    decode_name=label?label:"UI service";
+    uint32_t handle=decode_raw(RAMP(address,0),width*height*2u,width,height,(int)pixel,(int)layout,
+                               PVR_NO_GINDEX,&w,&h,&fmt,&bytes);
+    if(!handle)return 0;
+    /* Live handles are unique by backend contract. Never destroy an already
+     * owned handle if a malformed backend violates that contract. */
+    if(raw_of_handle(handle) || slot_of_handle(handle)>=0){sa1_log("raw UI: duplicate backend handle");return 0;}
+    if(handle>0x1fffffu || draw_texture_protect_ui(handle)<0){draw_texture_destroy(handle);return 0;}
+    raw_service value;memset(&value,0,sizeof value);
+    value.token=(++raw_generation<<3)|(slot+1u);value.handle=handle;
+    value.tcw=(uint32_t)fmt<<27|1u<<26|handle;value.tsp=size_code(w,h);
+    value.w=(uint16_t)w;value.h=(uint16_t)h;value.pixfmt=(uint8_t)fmt;
+    value.alpha=(uint8_t)decode_alpha;value.amin=(uint8_t)decode_amin;
+    snprintf(value.name,sizeof value.name,"%s",decode_name);
+    raw_services[slot]=value;
+    *out=(texture_raw_ref){value.token,value.tcw,value.tsp};return 1;
+}
+int texture_raw_get(uint32_t token,texture_raw_ref *out) {
+    unsigned i=(token&7u)-1u;
+    if(!out || !token || i>=RAW_SERVICES || raw_services[i].token!=token || raw_services[i].retired)return 0;
+    *out=(texture_raw_ref){token,raw_services[i].tcw,raw_services[i].tsp};return 1;
+}
+void texture_raw_release(uint32_t token) {
+    unsigned i=(token&7u)-1u;
+    if(token && i<RAW_SERVICES && raw_services[i].token==token)raw_services[i].retired=1;
+}
+void texture_raw_collect(void) {
+    for(unsigned i=0;i<RAW_SERVICES;i++)if(raw_services[i].token && raw_services[i].retired){
+        draw_texture_destroy(raw_services[i].handle);memset(&raw_services[i],0,sizeof raw_services[i]);
+    }
+}
+void texture_raw_reset(void) {
+    for(unsigned i=0;i<RAW_SERVICES;i++)if(raw_services[i].token)raw_services[i].retired=1;
+    texture_raw_collect(); /* generation deliberately survives a cold reset */
+}
+
 /* Loads the PVR-T at host memory p into a memlist entry; returns the entry
  * index or -1.  raw_w/raw_h non-zero: p holds bare texels of that size in
  * format raw_fmt (pixel format low byte, data format high byte). */
@@ -291,13 +387,16 @@ int texture_describe(uint32_t handle, char *buf, unsigned n) {
         snprintf(buf, n, "%04u %s %s %ux%u h%u", slots[i].index, pixfmt_name(slots[i].pixfmt), datafmt_name(slots[i].datafmt), slots[i].w, slots[i].h, handle);
         return 1;
     }
+    const raw_service *raw=raw_of_handle(handle);
+    if(raw){snprintf(buf,n,"UI %s %ux%u h%u",raw->name,raw->w,raw->h,handle);return 1;}
     snprintf(buf, n, "handle %u?", handle);
     return 0;
 }
 
 const char *texture_name(uint32_t handle) {
     int i = slot_of_handle(handle);
-    return i >= 0 ? slots[i].name : "?";
+    if(i>=0)return slots[i].name;
+    const raw_service *raw=raw_of_handle(handle);return raw?raw->name:"?";
 }
 int texture_alpha_info(uint32_t handle, int *amin) {
     int i = slot_of_handle(handle);
@@ -305,13 +404,15 @@ int texture_alpha_info(uint32_t handle, int *amin) {
         if (amin) *amin = slots[i].amin;
         return slots[i].alpha;
     }
+    const raw_service *raw=raw_of_handle(handle);
+    if(raw){if(amin)*amin=raw->amin;return raw->alpha;}
     if (amin) *amin = 255;
     return -1;
 }
 
 uint32_t texture_from_tcw(uint32_t tcw) {
     uint32_t h = tcw & 0x1FFFFFu;
-    return slot_of_handle(h) >= 0 ? h : 0;
+    return slot_of_handle(h)>=0 || raw_of_handle(h) ? h : 0;
 }
 
 /* njInitTexture resets the list: whatever it still held is gone for the
@@ -556,5 +657,26 @@ void texture_state(hle_state_io *io) {
     hle_state_blob(io, "tex.n", &ntex, sizeof ntex);
     hle_state_blob(io, "tex.palette", palette, sizeof palette);
     hle_state_blob(io, "tex.index", &decode_index, sizeof decode_index);
+    raw_service raw[RAW_SERVICES];uint32_t generation;
+    if(hle_state_loading(io)){memset(raw,0,sizeof raw);generation=0;}
+    else{memcpy(raw,raw_services,sizeof raw);generation=raw_generation;}
+    int a=hle_state_optional_blob(io,"tex.rawslots",raw,sizeof raw);
+    int b=hle_state_optional_blob(io,"tex.rawgen",&generation,sizeof generation);
+    if(hle_state_loading(io) && !hle_state_error(io)){
+        int valid=a==b && generation<=0x1fffffffu;
+        for(unsigned i=0;i<RAW_SERVICES;i++){
+            const raw_service *s=&raw[i];
+            if(!s->token){raw_service zero={0};if(memcmp(s,&zero,sizeof zero))valid=0;continue;}
+            if((s->token&7u)!=i+1u || !(s->token>>3) || (s->token>>3)>generation ||
+               !s->handle || s->handle>0x1fffffu || s->w<8 || s->h<8 || s->w>512 || s->h>512 ||
+               (s->w&(s->w-1)) || (s->h&(s->h-1)) || s->pixfmt>2 || s->retired>1 ||
+               s->alpha>TEX_ALPHA_USED || !memchr(s->name,0,sizeof s->name) ||
+               s->tcw!=((uint32_t)s->pixfmt<<27|1u<<26|s->handle) || s->tsp!=size_code(s->w,s->h))valid=0;
+            for(unsigned j=0;j<i;j++)if(raw[j].token && raw[j].handle==s->handle)valid=0;
+            for(unsigned j=0;j<MAX_ENTRIES;j++)if(slots[j].used && slots[j].handle==s->handle)valid=0;
+        }
+        if(!valid)hle_state_fail(io,"invalid raw UI texture state");
+        else{memcpy(raw_services,raw,sizeof raw);raw_generation=generation;}
+    }
     hmap_rebuild();
 }

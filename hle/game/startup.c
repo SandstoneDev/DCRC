@@ -13,7 +13,7 @@ typedef struct {
     uint16_t level, act, preset_act, mode, character;
 } startup_options;
 static startup_options startup_ini, startup_cli, startup_active;
-static int startup_armed;
+static int startup_armed, startup_action_applied;
 
 /* The raw LEVEL:ACT:MODE syntax remains the advanced US1.005 escape hatch.
  * Aliases cover the existing Sonic survey, not a promise every character
@@ -104,7 +104,7 @@ static void layer(startup_options *out,const startup_options *s) {
     if (s->set&START_CHARACTER) { out->character=s->character; out->bad=(out->bad&~START_CHARACTER)|(s->bad&START_CHARACTER); }
 }
 void hle_startup_prepare(int resuming) {
-    memset(&startup_active,0,sizeof startup_active); startup_armed=0;
+    memset(&startup_active,0,sizeof startup_active); startup_armed=0; startup_action_applied=0;
     layer(&startup_active,&startup_ini); layer(&startup_active,&startup_cli);
     /* An invalid stage can have enabled=0; report the error before off. */
     if (startup_active.bad) { sa1_log("startup: invalid start setting mask=%u; no warp",startup_active.bad); return; }
@@ -124,8 +124,18 @@ void hle_startup_frame(uint32_t frame) {
     hle_wr16(0x8c7493bau,startup_active.level); hle_wr16(0x8c7493bcu,startup_active.act);
     hle_wr16(0x8c7493beu,startup_active.level); hle_wr16(0x8c7493c0u,startup_active.act);
     hle_wr32(0x8c760970u,startup_active.mode);
+    startup_action_applied=startup_active.mode==4 && startup_active.level!=0;
     sa1_log("startup: applied level=%u act=%u character=%u mode=%u frame=%u",
         startup_active.level,startup_active.act,startup_active.character,startup_active.mode,frame);
+}
+int hle_startup_missing_return(uint32_t frame) {
+    if (!startup_action_applied || frame<=12 || hle_rd16(0x8c7493bau)
+        || hle_rd16(0x8c7493bcu) || hle_rd32(0x8c760970u)!=4) return 0;
+    /* The live stage now resolves to STG00, which has no compiled overlay in
+     * this profile. Previous and return fields can already have changed as
+     * part of that transition. Only the live destination controls recovery. */
+    startup_action_applied=0;
+    return 1;
 }
 int hle_startup_get(uint16_t *level,uint16_t *act,uint16_t *character,int *enabled) {
     if(startup_active.bad || !level || !act || !character || !enabled)return -1;

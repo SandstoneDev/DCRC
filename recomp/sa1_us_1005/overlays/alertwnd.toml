@@ -1,0 +1,22 @@
+# Own US1.005 identity/address facts; bounded C116 private activation.
+[game]
+id = "sa1_ovl_alertwnd"
+title = "Sonic Adventure overlay ALERTWND"
+region = "USA"
+[binary]
+path = "../../../../private/overlays/sa1_us_1005/ALERTWND.bin"
+load_address = 0x8C900000
+link_address = 0x0C900000
+entry = 0x8C900020
+[functions]
+pointers = false
+sweep = false
+extra = [0x0C900020, 0x0C900096, 0x0C9000A6, 0x0C9014A0, 0x0C9015C0, 0x0C9015D8, 0x0C900DC0]
+exclude = []
+[sa1_overlay]
+file = "SONICADV/ALERTWND.PRS"
+slot = 0x8C900000
+code_lo = 0x8C900020
+code_hi = 0x8C90160C
+size = 8558
+sha256 = "3ef36829097471c5d4cfbf586b4cc84a4be56a068e859470b66e8f347ba91fad"

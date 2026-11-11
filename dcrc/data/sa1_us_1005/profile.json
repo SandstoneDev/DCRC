@@ -82,6 +82,66 @@
       "config": "recomp/sa1_us_1005/overlays/advertise.toml"
     },
     {
+      "name": "al_garden00",
+      "file": "SONICADV/AL_GARDEN00.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868864,
+      "code_hi": 2360872480,
+      "bytes": 85824,
+      "sha256": "865a0200328999ddea41ccd0a6aceac08c9b39559c3690d18cc91111fbebb520",
+      "config": "recomp/sa1_us_1005/overlays/al_garden00.toml"
+    },
+    {
+      "name": "al_garden01",
+      "file": "SONICADV/AL_GARDEN01.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868864,
+      "code_hi": 2360869536,
+      "bytes": 67740,
+      "sha256": "ea9b6e7e2ff38829a74bedf965a13d80428a8ae259102e21cd046442bf56a890",
+      "config": "recomp/sa1_us_1005/overlays/al_garden01.toml"
+    },
+    {
+      "name": "al_garden02",
+      "file": "SONICADV/AL_GARDEN02.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868864,
+      "code_hi": 2360871424,
+      "bytes": 114556,
+      "sha256": "fe26255954f3d6f1e26608597ff68a69bf68b21dbd79edc8e4c3a0f658a664d1",
+      "config": "recomp/sa1_us_1005/overlays/al_garden02.toml"
+    },
+    {
+      "name": "al_main",
+      "file": "SONICADV/AL_MAIN.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247424,
+      "code_hi": 2358357056,
+      "bytes": 2226368,
+      "sha256": "b1f1affe981e754de512b4ffd1b10a70c29ce80caf3706227407f63d51b52467",
+      "config": "recomp/sa1_us_1005/overlays/al_main.toml"
+    },
+    {
+      "name": "al_race",
+      "file": "SONICADV/AL_RACE.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868864,
+      "code_hi": 2360967456,
+      "bytes": 343956,
+      "sha256": "ea9ea8ddaaa96c5d67af8d5daa785edb0368b11477abd58d9179db8bb2579e84",
+      "config": "recomp/sa1_us_1005/overlays/al_race.toml"
+    },
+    {
+      "name": "alertwnd",
+      "file": "SONICADV/ALERTWND.PRS",
+      "slot": 2358247424,
+      "code_lo": 2358247456,
+      "code_hi": 2358253068,
+      "bytes": 8558,
+      "sha256": "3ef36829097471c5d4cfbf586b4cc84a4be56a068e859470b66e8f347ba91fad",
+      "config": "recomp/sa1_us_1005/overlays/alertwnd.toml"
+    },
+    {
       "name": "b_chaos0",
       "file": "SONICADV/B_CHAOS0.PRS",
       "slot": 2358247424,
@@ -452,6 +512,136 @@
       "config": "recomp/sa1_us_1005/overlays/ev002b.toml"
     },
     {
+      "name": "ev0165",
+      "file": "SONICADV/EV0165.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360871026,
+      "bytes": 44668,
+      "sha256": "6ec11da85b506178507cffa01f489eb538896ffa31d40788129bcbf77390849e",
+      "config": "recomp/sa1_us_1005/overlays/ev0165.toml"
+    },
+    {
+      "name": "ev0166",
+      "file": "SONICADV/EV0166.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360871506,
+      "bytes": 49436,
+      "sha256": "fe15d4ff8e05b8d42913532148ae92461bf5d2dbe0642f16b26fef10beccd100",
+      "config": "recomp/sa1_us_1005/overlays/ev0166.toml"
+    },
+    {
+      "name": "ev0167",
+      "file": "SONICADV/EV0167.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360873970,
+      "bytes": 58740,
+      "sha256": "0a7ae42b9d4746414945cd1dbfcb9ab142cd03537a7671229d95f5d6cfacdf53",
+      "config": "recomp/sa1_us_1005/overlays/ev0167.toml"
+    },
+    {
+      "name": "ev0168",
+      "file": "SONICADV/EV0168.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360871026,
+      "bytes": 40724,
+      "sha256": "6cd01e8531df14434694c5c7d7021461587730c28b0a028d257326608f3e7ddd",
+      "config": "recomp/sa1_us_1005/overlays/ev0168.toml"
+    },
+    {
+      "name": "ev0169",
+      "file": "SONICADV/EV0169.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360870994,
+      "bytes": 39912,
+      "sha256": "b31dfb834dc0ba49d77955aea80c99157bfb3bd8410fc4bdc232fe58dd4c92f7",
+      "config": "recomp/sa1_us_1005/overlays/ev0169.toml"
+    },
+    {
+      "name": "ev016a",
+      "file": "SONICADV/EV016A.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360883330,
+      "bytes": 61816,
+      "sha256": "0b4c86b968cd8419ada3194e84b802ec093310ac94bfe76a97454097c576cc77",
+      "config": "recomp/sa1_us_1005/overlays/ev016a.toml"
+    },
+    {
+      "name": "ev016b",
+      "file": "SONICADV/EV016B.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360883298,
+      "bytes": 62776,
+      "sha256": "0bf592f09b6c10dd3b6d6a56251b481741f24cc62dc89735c58d34151e8f81fb",
+      "config": "recomp/sa1_us_1005/overlays/ev016b.toml"
+    },
+    {
+      "name": "ev016c",
+      "file": "SONICADV/EV016C.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360883298,
+      "bytes": 59772,
+      "sha256": "0f2e88fe868fa5d03086087444de2266f9329354505d9772fa4e90c1e514b559",
+      "config": "recomp/sa1_us_1005/overlays/ev016c.toml"
+    },
+    {
+      "name": "ev016d",
+      "file": "SONICADV/EV016D.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360883202,
+      "bytes": 60452,
+      "sha256": "2051079a623e38ebf74345ea64c6d7e2f43abdc004a20a0eb5184d35df3e7a0f",
+      "config": "recomp/sa1_us_1005/overlays/ev016d.toml"
+    },
+    {
+      "name": "ev016e",
+      "file": "SONICADV/EV016E.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360883266,
+      "bytes": 63204,
+      "sha256": "a45848641f7827323159c68e17e1431033ee2df9769371aae42cc88ca7963954",
+      "config": "recomp/sa1_us_1005/overlays/ev016e.toml"
+    },
+    {
+      "name": "ev016f",
+      "file": "SONICADV/EV016F.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360883266,
+      "bytes": 61468,
+      "sha256": "dfdcba6ddad0aa02139babecd76db8fc64a94b883fc9abea363f8ec06aac1227",
+      "config": "recomp/sa1_us_1005/overlays/ev016f.toml"
+    },
+    {
+      "name": "ev0170",
+      "file": "SONICADV/EV0170.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360883202,
+      "bytes": 62168,
+      "sha256": "a05f476481bed4818a995da38d0939fd219db593c4b809e618ba124e17fd9835",
+      "config": "recomp/sa1_us_1005/overlays/ev0170.toml"
+    },
+    {
+      "name": "ev0171",
+      "file": "SONICADV/EV0171.PRS",
+      "slot": 2360868864,
+      "code_lo": 2360868896,
+      "code_hi": 2360883202,
+      "bytes": 62484,
+      "sha256": "2c310d244ee17bd09043e974c21427809da83350fff9bd0f076212cc61345897",
+      "config": "recomp/sa1_us_1005/overlays/ev0171.toml"
+    },
+    {
       "name": "ev0180",
       "file": "SONICADV/EV0180.PRS",
       "slot": 2360868864,
@@ -593,12 +783,6 @@
     }
   ],
   "catalogs": {
-    "main": {
-      "file": "functions/main.json",
-      "sha256": "ebbbd6f1f256838359ae4cef210f59876e2b81e4657f6e245909fdd7b03e22e5",
-      "rows": 9756,
-      "discovery_metadata_sha256": "887dffe83eb3463639561058d3f445085f31d2dea47b439200867844107d0ce7"
-    },
     "adv00": {
       "file": "functions/adv00.json",
       "sha256": "978c8d23391f4c828736640bd7ec6a04b96501520760f1b75cd8c42f46e9cfbb",
@@ -640,6 +824,49 @@
       "sha256": "7353400ace4802286fb3dd599c1d6b3309746e301ffb70cb9ae24dddb711c8b4",
       "rows": 384,
       "discovery_metadata_sha256": "09a63ac544d29bb7c7b29e9dc0ea109aff493cae41b8627fc483f26d74715723"
+    },
+    "al_garden00": {
+      "file": "functions/al_garden00.json",
+      "sha256": "b4d1e83c647e20fe4fe53cc1bf4b140a99cb949e3e1da3afb5121ef5510892cb",
+      "rows": 38,
+      "discovery_metadata_sha256": "e34f83f2d511a46c783f7849b5ba749417a33f6acbe632cb141fcfd70a2e4c0c",
+      "discovery_method": "DCRC own Python bounded strong/weak and co-resident pointer discovery"
+    },
+    "al_garden01": {
+      "file": "functions/al_garden01.json",
+      "sha256": "7e2a60ebfdb0b12f8029d75fb172c538b2b30630ab7661dc939b542fccbaf1a3",
+      "rows": 3,
+      "discovery_metadata_sha256": "f40d7aeaa9b9322eccec1314fd539df6e9d7220d469a722a1a238fb2ffc3445f",
+      "discovery_method": "DCRC own Python bounded strong/weak and co-resident pointer discovery"
+    },
+    "al_garden02": {
+      "file": "functions/al_garden02.json",
+      "sha256": "6eb24621aa00e72141fff418390fe5b21d27066605903553bb1a500547d64849",
+      "rows": 11,
+      "discovery_metadata_sha256": "cdb38115e2693c6a9284a9e31191a9c1dc89b38c507dacfa47c0cad2bb544f03",
+      "discovery_method": "DCRC own Python bounded strong/weak and co-resident pointer discovery"
+    },
+    "al_main": {
+      "file": "functions/al_main.json",
+      "sha256": "78b14faa77c331d91f5e4717d70f458a4033f20af8578f38efc940d11e1f2da3",
+      "rows": 406,
+      "discovery_metadata_sha256": "1ae24a9d623552935add158a36ae22ea391eb9d3880de5b917f9f49a9b92a00a",
+      "discovery_method": "DCRC own Python bounded strong/weak and co-resident pointer discovery"
+    },
+    "al_race": {
+      "file": "functions/al_race.json",
+      "sha256": "5500ecbfa25a8a4ccbca6f5cf2d4223efb245a08c4302c2faccb520b12b0fb0f",
+      "rows": 551,
+      "discovery_metadata_sha256": "af56299c142712b0041725c131bd330e221292224df9f09ccb7c4a2f0c479189",
+      "discovery_method": "DCRC own Python bounded strong/weak and co-resident pointer discovery"
+    },
+    "alertwnd": {
+      "file": "functions/alertwnd.json",
+      "sha256": "aae6209d9759a0a02d2a8a2985a0f49f3d140d1eff98c21b9445326f76c6378c",
+      "rows": 25,
+      "discovery_metadata_sha256": "ff722f6a2ba38c71e08c6b381162eab1749e8e546047688aef07846bc007813b",
+      "discovery_method": "Own US six header entries, used literal callbacks and descriptor+4 callback closure; seed/call/pointer labels normalized from reviewed candidate",
+      "source_candidate_sha256": "83ad7ae874f74af376e3c1d55b8fd1abb007cecab51afa607025ffb47ef2cbb9"
     },
     "b_chaos0": {
       "file": "functions/b_chaos0.json",
@@ -869,6 +1096,15 @@
       "rows": 46,
       "discovery_metadata_sha256": "6492bf3b4f69df0166338b5ad0dc54e0b9ff8258260f79be071b7fc8c3a06fe1"
     },
+    "main": {
+      "file": "functions/main.json",
+      "sha256": "706146fbcfb3c486d757f1afa642b14f0dfe683f416726bcf18f2a620abf0677",
+      "rows": 9771,
+      "discovery_metadata_sha256": "bcc96b01381d2e66dc4a7b3c245b5d9cd59dda85c4bcc009bd3daf28bacace1e",
+      "base_discovery_metadata_sha256": "887dffe83eb3463639561058d3f445085f31d2dea47b439200867844107d0ce7",
+      "discovery_method": "Original separate discovery plus fourteen own Python current-disc Chao dependency entry walks plus one own-US upgrade-scene dependency walk",
+      "upgrade_dependency_metadata_sha256": "f07c2ea593980b8c4e567c427be8c0896c388af299af6e107bc0557a75380423"
+    },
     "shooting": {
       "file": "functions/shooting.json",
       "sha256": "9049f2a58e94f70311493040f6d7735181eb3cf2049bf449328df45ae04b0665",
@@ -946,6 +1182,77 @@
       "sha256": "d14b28e0376c5a4864c62288eddce5392c67909a916b52327da3e8bd21d7c6aa",
       "rows": 86,
       "discovery_metadata_sha256": "01a1cfe36edb16d89e6ec141af9b463b37eb4bf9acdbb5d8d824d67559cfef58"
+    },
+    "ev0166": {
+      "file": "functions/ev0166.json",
+      "sha256": "37d1d3f5d9de54d097a1322bae5508949337adcab4a02d38e093a7ca1690f12c",
+      "rows": 13
+    },
+    "ev0165": {
+      "file": "functions/ev0165.json",
+      "sha256": "8620353e8ab6282216bfc7d0b1e0d57acbd01c131dadc679faee83d28c252e7c",
+      "rows": 12
+    },
+    "ev0167": {
+      "file": "functions/ev0167.json",
+      "sha256": "025d5e568cff981d562d8634e4d26112dec355106e964f079c26bcce4043819f",
+      "rows": 20
+    },
+    "ev0168": {
+      "file": "functions/ev0168.json",
+      "sha256": "db587d4e27dd0b5a70e24076d70c5fce123b9dabe7bd92dc1406aa4e0c5a13a9",
+      "rows": 12
+    },
+    "ev0169": {
+      "file": "functions/ev0169.json",
+      "sha256": "eb5841936416945988f8a738495b03d7c49e9b2a73662133c68f59cde3e49eaf",
+      "rows": 12
+    },
+    "ev016a": {
+      "file": "functions/ev016a.json",
+      "sha256": "2faaf4f29ce2f683a67ad601a303179eae1a3c3248368bb821a1d26d949d0cf0",
+      "rows": 11
+    },
+    "ev016b": {
+      "file": "functions/ev016b.json",
+      "sha256": "880a70b6e8e0aef7534cb28cc6c55f1ebd8b90aba6e50b0e713c04aceab495fa",
+      "rows": 10
+    },
+    "ev016c": {
+      "file": "functions/ev016c.json",
+      "sha256": "fefe2dc9f7e66da2575f499c35d0e732a1f8382e453f7d172945f2248b0df661",
+      "rows": 11
+    },
+    "ev016d": {
+      "file": "functions/ev016d.json",
+      "sha256": "48ee389b0521b2cf352475a1dc9b6b5400d6c9f0eb293bbbabee32f2398d84bb",
+      "rows": 10
+    },
+    "ev016e": {
+      "file": "functions/ev016e.json",
+      "sha256": "ab22a8bb132f91c60bfdbe409f0857172bcca35a6c41618ebb999f041e07c839",
+      "rows": 10
+    },
+    "ev016f": {
+      "file": "functions/ev016f.json",
+      "sha256": "e582c9fc515757115db3fa4f611f7983e0708d88bb7edb65a9a6beab87f0da47",
+      "rows": 10
+    },
+    "ev0170": {
+      "file": "functions/ev0170.json",
+      "sha256": "b5be36072dcf7afff01bea9a13dd9db78d5e2698c30ee42090153123819686b8",
+      "rows": 11
+    },
+    "ev0171": {
+      "file": "functions/ev0171.json",
+      "sha256": "254f52e6e1abdbbdcd0dfeaa05f73a7006d922312c35895885e6def9e9aeed78",
+      "rows": 11
     }
+  },
+  "sdk_fallback": {
+    "file": "sdk/ninja_chao.json",
+    "sha256": "36fa2ba81198972e4aa056433a68da734ae339cb00f6831b14484ec87d1e38ce",
+    "rows": 45,
+    "image_sha256": "45bc5d3c25dcfe2cc2c5701311d46783f33e4daa44a951cd9896724d66f0367a"
   }
 }

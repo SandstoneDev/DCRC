@@ -162,11 +162,14 @@ def build_launcher(source, target, cc):
                        env=env, check=True)
 
 
-def build(source, output, python_from, toolchain, licenses, cc=None, receipt=None, atrac_dependency=None, ffmpeg_dependency=None):
+def build(source, output, python_from, toolchain, licenses, cc=None, receipt=None, atrac_dependency=None,
+          ffmpeg_dependency=None, *, release_revision=None):
     source, output = Path(source).resolve(), Path(output).resolve()
     python_from, toolchain, licenses = map(lambda p: Path(p).resolve(), (python_from, toolchain, licenses))
     if output.exists():
         raise FileExistsError('New output required: ' + str(output))
+    if release_revision is not None and (type(release_revision) is not int or not 1 <= release_revision < 2**31):
+        raise ValueError('Release revision must be a positive 31-bit integer')
     if receipt and Path(receipt).resolve().is_relative_to(output):
         raise ValueError('Private build receipt must be outside the user bundle')
     ffmpeg_files=verify_ffmpeg_dependency(ffmpeg_dependency) if ffmpeg_dependency else None
@@ -259,10 +262,13 @@ def build(source, output, python_from, toolchain, licenses, cc=None, receipt=Non
     if cc:
         build_launcher(source, output/'DCRC Converter.exe', cc)
     manifest = {p.relative_to(output).as_posix(): digest(p) for p in sorted(output.rglob('*')) if p.is_file()}
-    record = dict(status='PASS_STATIC_BUNDLE_REQUIRES_FUNCTIONAL_TEST', files=manifest,
+    record = dict(format='DCRC_PORTABLE_WINDOWS_X64_V1',
+                  status='PASS_STATIC_BUNDLE_REQUIRES_FUNCTIONAL_TEST', files=manifest,
                   source_manifest=source_manifest, game_data_included=False,
                   launcher_built=bool(cc), standalone_atrac_tool=bool(atrac_files), standalone_ffmpeg_tools=bool(ffmpeg_files),
                   binary_distribution_clearance=False)
+    if release_revision is not None:
+        record['release_revision'] = release_revision
     (output/'BUNDLE_MANIFEST.json').write_text(json.dumps(record, indent=2)+'\n', encoding='utf8')
     if receipt:
         receipt = Path(receipt)
@@ -283,8 +289,10 @@ def main(argv=None):
     parser.add_argument('--receipt', type=Path, help='Private provenance path OUTSIDE the user bundle')
     parser.add_argument('--atrac-dependency',type=Path,help='Local verified encoder with licences and complete corresponding source; not release clearance.')
     parser.add_argument('--ffmpeg-dependency',type=Path,help='Local verified FFmpeg/ffprobe with licence/provenance inventory; not release clearance.')
+    parser.add_argument('--release-revision', type=int, help='Monotonic GitHub archive revision for a publication candidate.')
     a = parser.parse_args(argv)
-    record = build(a.source, a.out, a.python_from, a.toolchain, a.licenses, a.cc, a.receipt, a.atrac_dependency, a.ffmpeg_dependency)
+    record = build(a.source, a.out, a.python_from, a.toolchain, a.licenses, a.cc, a.receipt,
+                   a.atrac_dependency, a.ffmpeg_dependency, release_revision=a.release_revision)
     print(json.dumps({'status': record['status'], 'files': len(record['files']), 'output': str(a.out)}))
 
 

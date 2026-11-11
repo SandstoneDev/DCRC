@@ -162,8 +162,8 @@
       }
     },
     ".agents/skills/dcrc-release-audit/references/release-boundaries.md": {
-      "sha256": "b07f5fdeee39839f144f9ff9b353be396fa5602d2f32bba7f0d24bcd881c2fac",
-      "bytes": 2862,
+      "sha256": "092d2acd42bd26b610c1395088044e60572b75a574de409b899be1ac57d8e0c1",
+      "bytes": 2873,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -171,17 +171,28 @@
         "revision": "uncommitted-source-preparation",
         "path": ".agents/skills/dcrc-release-audit/references/release-boundaries.md"
       },
-      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "review": "Own release review and route-specific evidence guidance.",
       "local_modification": {
         "category": "O",
         "license": "MIT",
         "source": {
           "url": "https://github.com/SandstoneDev/DCRC",
-          "revision": "uncommitted-public-source-review-2026-11-06",
+          "revision": "local-source-review-2026-11-11",
           "path": ".agents/skills/dcrc-release-audit/references/release-boundaries.md"
-        },
-        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+        }
       }
+    },
+    ".gitattributes": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": ".gitattributes"
+      },
+      "bytes": 166,
+      "sha256": "d22591448eb3465d99414878a14d2a5c0517de7f4a71c6fb315e479c54a37301",
+      "review": "Canonical LF for compatibility metadata identified by SHA256."
     },
     ".githooks/pre-commit": {
       "sha256": "6ea5b17fb5f0d6b2f93b07524c4c5379bca5c5be86894c21a4a80bda88a1a03d",
@@ -471,6 +482,18 @@
       },
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
+    "backend/audio_realtime.h": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "backend/audio_realtime.h"
+      },
+      "bytes": 375,
+      "sha256": "ecdb89ba1b8482d0574aa1ebf18c966b9741eeed4a7a7a3c8005d0b746c73144",
+      "review": "Own mixer worker interface and platform FPU rounding configuration."
+    },
     "backend/border_image.h": {
       "category": "O",
       "license": "MIT",
@@ -532,8 +555,8 @@
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
     "backend/debug_menu.c": {
-      "sha256": "e11881e08960834b92b8c5f26bef3069a3e4567b307cff3f84d6016faf28ccd4",
-      "bytes": 7610,
+      "sha256": "48e709721638f9888f5954cbfb2bf150bb10d89b77f849e2bc9341f1b43eb5e2",
+      "bytes": 8622,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -541,11 +564,20 @@
         "revision": "uncommitted-source-preparation",
         "path": "backend/debug_menu.c"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own menu navigation, dither options and independent candidate versus active DLC state.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "backend/debug_menu.c"
+        }
+      }
     },
     "backend/debug_menu.h": {
-      "sha256": "92851301d4d72395291aba7993fb60f06ebb90be2f9aae9b7ab521c1dfdacb7a",
-      "bytes": 3391,
+      "sha256": "98f781474566ef1e71a25e7711b50c7d02d5f72278e92abd3eddc0213ae60ddb",
+      "bytes": 3689,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -553,7 +585,16 @@
         "revision": "uncommitted-source-preparation",
         "path": "backend/debug_menu.h"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own controller state and request interfaces.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "backend/debug_menu.h"
+        }
+      }
     },
     "backend/desktop/CMakeLists.txt": {
       "sha256": "9515a46cfe67cd8e4b4e0d882d18a28f8e7d0a08bf6de33e7848e3dca466c66e",
@@ -604,8 +645,8 @@
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
     },
     "backend/desktop/draw_gl.c": {
-      "sha256": "92bd83bd2ca5641d2691b9dc233545c4629236a920f40456e62ad3da604008ff",
-      "bytes": 49667,
+      "sha256": "42abd4aa2468b51775d96f0becca8abfa052a071957e81ccb4b5ffbdc73d4912",
+      "bytes": 51445,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -613,7 +654,16 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "backend/desktop/draw_gl.c"
       },
-      "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
+      "review": "Own desktop retention and restore logic for explicit UI resources.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "backend/desktop/draw_gl.c"
+        }
+      }
     },
     "backend/desktop/hello.c": {
       "sha256": "48fd311430445769e6f41ed81642e47bcea29d4150b517145c8625d482ac4322",
@@ -736,8 +786,8 @@
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
     },
     "backend/desktop/vmu_store_desktop.c": {
-      "sha256": "89fcc83bff8c0cecbb387e228de7d25231e97cfc6ee7cf2fbf605bdda063a629",
-      "bytes": 4576,
+      "sha256": "99ead2d589d158ae4793bc74ed5bfe79cc4cc5584c9fe087045a04fc2482a533",
+      "bytes": 6308,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -745,7 +795,16 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "backend/desktop/vmu_store_desktop.c"
       },
-      "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
+      "review": "Own file and typed transaction adapter.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "backend/desktop/vmu_store_desktop.c"
+        }
+      }
     },
     "backend/display_aspect.h": {
       "sha256": "01a1d0b6889c0a82651691fd9c1bb03d0fa3e6fe352f9d885d09ec09a689499e",
@@ -760,8 +819,8 @@
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
     "backend/draw.h": {
-      "sha256": "537ccb392157f8a2676556868604c6e300f3bdd544b4c0947f44d903c97902b8",
-      "bytes": 19754,
+      "sha256": "73fc34ceae0ebe2d2f456a4dc011372a1362cb23d011d9a7a27a0bfe3a39f73d",
+      "bytes": 20027,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -769,7 +828,16 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "backend/draw.h"
       },
-      "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
+      "review": "Own UI texture retention interface.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "backend/draw.h"
+        }
+      }
     },
     "backend/game_cheats.h": {
       "sha256": "b450a60ecb0edbdbcf0af5cab08c88fe69ca5eddf210c2664fc37f7976df3c0e",
@@ -844,8 +912,8 @@
       "bytes": 282
     },
     "backend/psp/audio_psp.c": {
-      "sha256": "7cbf97d9bf0b87ea66982b7eb9d5bb268720b0d9c61549bbaa6f37ddf356a945",
-      "bytes": 10720,
+      "sha256": "f273e8cca98557d5cab27731f09fbfb1b391116366ad0f403c585728134db150",
+      "bytes": 13368,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -853,16 +921,15 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "backend/psp/audio_psp.c"
       },
-      "review": "Modified upstream MIT source; original upstream source and notices retained. Reviewed own generic integration only; no imported game/SDK implementation or private native accelerators.",
+      "review": "Own wall-clock PCM worker, output ownership and shutdown protocol; public PSPSDK interfaces.",
       "local_modification": {
         "category": "O",
         "license": "MIT",
         "source": {
           "url": "https://github.com/SandstoneDev/DCRC",
-          "revision": "uncommitted-public-source-review-2026-11-06",
+          "revision": "local-source-review-2026-11-11",
           "path": "backend/psp/audio_psp.c"
-        },
-        "review": "Preserve the existing recorded origin/category; review current own changes separately. O: own generic integration/control/parser/ownership changes; retain original upstream revision, licence and applicable attribution"
+        }
       }
     },
     "backend/psp/chain/Makefile": {
@@ -992,8 +1059,8 @@
       "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
     },
     "backend/psp/debug_display.h": {
-      "sha256": "ba4bb57f2de082ed2256969db961454ca842beb2dec9bec1372848bac861270f",
-      "bytes": 391,
+      "sha256": "17557854bbc01477424a4c73d933d46e5b82226f5372b1ddd31c8302b2fb7018",
+      "bytes": 520,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -1001,11 +1068,20 @@
         "revision": "uncommitted-source-preparation",
         "path": "backend/psp/debug_display.h"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own bounded GE rectangle and text menu interface.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "backend/psp/debug_display.h"
+        }
+      }
     },
     "backend/psp/debug_psp.c": {
-      "sha256": "20f84720933351f19702817fa47459f4f00efc3b031caeb7c75dec5346991d29",
-      "bytes": 15851,
+      "sha256": "54f594cfa222eb924dc6f28f4fa2ee89be8a27c4005f5d601e508b4ccddc033f",
+      "bytes": 17266,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -1013,21 +1089,20 @@
         "revision": "uncommitted-source-preparation",
         "path": "backend/psp/debug_psp.c"
       },
-      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "review": "Own tabbed GE presentation, setting application and restart after modal cleanup.",
       "local_modification": {
         "category": "O",
         "license": "MIT",
         "source": {
           "url": "https://github.com/SandstoneDev/DCRC",
-          "revision": "uncommitted-public-source-review-2026-11-06",
+          "revision": "local-source-review-2026-11-11",
           "path": "backend/psp/debug_psp.c"
-        },
-        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+        }
       }
     },
     "backend/psp/debug_psp.h": {
-      "sha256": "4d1563918140afd83c09bf9dfc61aa3517b1a625b333375acca18de41d0aac55",
-      "bytes": 394,
+      "sha256": "1ea56aba9f0022dd08fd70bc85acdee306866a6255493a5854717a88068b5277",
+      "bytes": 509,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -1035,7 +1110,16 @@
         "revision": "uncommitted-source-preparation",
         "path": "backend/psp/debug_psp.h"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own verified normal startup option update interface.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "backend/psp/debug_psp.h"
+        }
+      }
     },
     "backend/psp/display_counter.h": {
       "sha256": "3cadb873bc8fe7bee227b2e78022639cdffd42fc80a86cc3732c479237803013",
@@ -1050,8 +1134,8 @@
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
     "backend/psp/draw_gu.c": {
-      "sha256": "98f60d7e4b00afdbc1fa9df803bde0e9cec7bd662eafae9932400735b6c62958",
-      "bytes": 184529,
+      "sha256": "1087bb7c366eca76bce53bc34f5761ddf3918fdc1baaad08e633b9a05d15aa6a",
+      "bytes": 187039,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -1059,16 +1143,15 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "backend/psp/draw_gu.c"
       },
-      "review": "Modified upstream MIT source; original upstream source and notices retained. Reviewed own generic integration only; no imported game/SDK implementation or private native accelerators.",
+      "review": "Own explicit UI texture retention and save restore; existing TA and boot sampler retained.",
       "local_modification": {
         "category": "O",
         "license": "MIT",
         "source": {
           "url": "https://github.com/SandstoneDev/DCRC",
-          "revision": "uncommitted-public-source-review-2026-11-06",
+          "revision": "local-source-review-2026-11-11",
           "path": "backend/psp/draw_gu.c"
-        },
-        "review": "Preserve the existing recorded origin/category; review current own changes separately. O: own generic integration/control/parser/ownership changes; retain original upstream revision, licence and applicable attribution F: exact live texture names/dimensions/formats; no pixels or universal coverage claim"
+        }
       }
     },
     "backend/psp/exc/Makefile": {
@@ -1132,8 +1215,8 @@
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
     },
     "backend/psp/main_psp.c": {
-      "sha256": "8accde01528f824d9d65d2ff436397538de6c0962e01006242032451db6f8b9a",
-      "bytes": 53146,
+      "sha256": "de1938f203fc2a5f765e2adafa1428f8b9f49dbd819e20c82b3ae2c064c92440",
+      "bytes": 54847,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -1141,16 +1224,15 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "backend/psp/main_psp.c"
       },
-      "review": "Modified upstream MIT source; original upstream source and notices retained. Reviewed own generic integration only; no imported game/SDK implementation or private native accelerators.",
+      "review": "Own audio shutdown guard and title-specific VMU selection.",
       "local_modification": {
         "category": "O",
         "license": "MIT",
         "source": {
           "url": "https://github.com/SandstoneDev/DCRC",
-          "revision": "uncommitted-public-source-review-2026-11-06",
+          "revision": "local-source-review-2026-11-11",
           "path": "backend/psp/main_psp.c"
-        },
-        "review": "Preserve the existing recorded origin/category; review current own changes separately. O: own generic integration/control/parser/ownership changes; retain original upstream revision, licence and applicable attribution"
+        }
       }
     },
     "backend/psp/me/Makefile": {
@@ -1238,8 +1320,8 @@
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
     "backend/psp/platform_psp.c": {
-      "sha256": "be6215d45400a4c2cf46d40bb938447c21de2d2ac0db5dab7cb997b94f0ad802",
-      "bytes": 19274,
+      "sha256": "35af80a84c425efd3d714b44e3a70bb6f5f9f6560e128a70c21c277dc03a77cc",
+      "bytes": 19390,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -1247,7 +1329,16 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "backend/psp/platform_psp.c"
       },
-      "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
+      "review": "Own read-ahead slot initialization, before accessing descriptor ownership metadata.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "backend/psp/platform_psp.c"
+        }
+      }
     },
     "backend/psp/platform_psp.h": {
       "sha256": "14a7360e5754df2209bf43f0d8dd5bf6bdedb1f4d4cbe061c66056ac4ecb8cc8",
@@ -1297,9 +1388,30 @@
       },
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
     },
+    "backend/psp/vmu_default_path.h": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "backend/psp/vmu_default_path.h"
+      },
+      "bytes": 504,
+      "sha256": "8d6034d4480dda93ac7eb878760bc30ff78c05fe2483e836873a19e7b431fd9b",
+      "review": "Own bounded legacy and title-specific VMU path selection.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "backend/psp/vmu_default_path.h"
+        }
+      }
+    },
     "backend/psp/vmu_store_psp.c": {
-      "sha256": "76d37f2ad31f13fa826412fb64e8544172c1527033e34963501dbddd306b1930",
-      "bytes": 4140,
+      "sha256": "2cf45fc530219faf47deb383891c05c755d4f4d8db6a76d6d869aa1541d894e7",
+      "bytes": 9627,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -1307,7 +1419,16 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "backend/psp/vmu_store_psp.c"
       },
-      "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
+      "review": "Own durable journal adapter using public PSP file APIs.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "backend/psp/vmu_store_psp.c"
+        }
+      }
     },
     "backend/sega_tile_sampler.h": {
       "sha256": "7b70378b439f64ab7e3039afcd45500bc19dc9ea9d0bf402a35a6f69abc46fde",
@@ -1345,9 +1466,21 @@
       },
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
     },
+    "backend/vmu_transaction.h": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "backend/vmu_transaction.h"
+      },
+      "bytes": 8746,
+      "sha256": "fb3c12498205b42e355271dec2e41cd8894a92b6f09a50f9ab506da66df987a2",
+      "review": "Own journal, CRC and transaction recovery; no save data."
+    },
     "converter/README.md": {
-      "sha256": "b1f2b118baa45ef3e304da6693f0ce84fb747c1f2a19158e72339be6418fcf77",
-      "bytes": 4833,
+      "sha256": "59ed83823a0d933aaaf06bddd65cdb04a89b1e670819253d73170eac0759bc66",
+      "bytes": 5220,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -1355,21 +1488,20 @@
         "revision": "uncommitted-source-preparation",
         "path": "converter/README.md"
       },
-      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "review": "Own portable converter instructions for explicitly checked updates.",
       "local_modification": {
         "category": "O",
         "license": "MIT",
         "source": {
           "url": "https://github.com/SandstoneDev/DCRC",
-          "revision": "v0.1.0-preview.1-source-review",
+          "revision": "local-source-review-2026-11-11",
           "path": "converter/README.md"
-        },
-        "review": "Project-authored release and contributor guidance; preserves upstream and third-party attribution."
+        }
       }
     },
     "converter/build_bundle.py": {
-      "sha256": "50ea525ea6a34b39638bf005f19b916b5c116c0c8295dbd654996a690fecf0ac",
-      "bytes": 16707,
+      "sha256": "4d3432289c81d251778f50a51d6daf364e492ffaa2d1f55b6e42649d5f58c7bd",
+      "bytes": 17567,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -1377,16 +1509,15 @@
         "revision": "uncommitted-source-preparation",
         "path": "converter/build_bundle.py"
       },
-      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "review": "Own portable manifest format and explicit monotonically numbered release metadata.",
       "local_modification": {
         "category": "O",
         "license": "MIT",
         "source": {
           "url": "https://github.com/SandstoneDev/DCRC",
-          "revision": "uncommitted-public-source-review-2026-11-06",
+          "revision": "local-source-review-2026-11-11",
           "path": "converter/build_bundle.py"
-        },
-        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+        }
       }
     },
     "converter/launcher.c": {
@@ -1568,8 +1699,8 @@
       "bytes": 1206
     },
     "dcrc/data/sa1_us_1005/NOTICE.txt": {
-      "sha256": "0aaa2809ee1407c38102e933aa9bc4e5aee42c31dc264c14d104e4d47dcf8e6d",
-      "bytes": 1241,
+      "sha256": "00ed1c8e0257efeed1ec78fe46c730fc76083f7d5ba6bf905c5365f31c159f27",
+      "bytes": 1739,
       "category": "F",
       "license": "Factual compatibility metadata; project selection/format MIT",
       "source": {
@@ -1577,7 +1708,16 @@
         "revision": "uncommitted-source-preparation",
         "path": "dcrc/data/sa1_us_1005/NOTICE.txt"
       },
-      "review": "Reviewed addresses/bounds/hashes/configuration or input sequences only; no game instruction bodies, assets or copied disassembly. Historical discovery credited separately."
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes.",
+      "local_modification": {
+        "category": "F",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "dcrc/data/sa1_us_1005/NOTICE.txt"
+        }
+      }
     },
     "dcrc/data/sa1_us_1005/functions/adv00.json": {
       "sha256": "978c8d23391f4c828736640bd7ec6a04b96501520760f1b75cd8c42f46e9cfbb",
@@ -1662,6 +1802,78 @@
         "path": "dcrc/data/sa1_us_1005/functions/advertise.json"
       },
       "review": "Reviewed addresses/bounds/hashes/configuration or input sequences only; no game instruction bodies, assets or copied disassembly. Historical discovery credited separately."
+    },
+    "dcrc/data/sa1_us_1005/functions/al_garden00.json": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "dcrc/data/sa1_us_1005/functions/al_garden00.json"
+      },
+      "bytes": 2304,
+      "sha256": "b4d1e83c647e20fe4fe53cc1bf4b140a99cb949e3e1da3afb5121ef5510892cb",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
+    },
+    "dcrc/data/sa1_us_1005/functions/al_garden01.json": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "dcrc/data/sa1_us_1005/functions/al_garden01.json"
+      },
+      "bytes": 190,
+      "sha256": "7e2a60ebfdb0b12f8029d75fb172c538b2b30630ab7661dc939b542fccbaf1a3",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
+    },
+    "dcrc/data/sa1_us_1005/functions/al_garden02.json": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "dcrc/data/sa1_us_1005/functions/al_garden02.json"
+      },
+      "bytes": 660,
+      "sha256": "6eb24621aa00e72141fff418390fe5b21d27066605903553bb1a500547d64849",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
+    },
+    "dcrc/data/sa1_us_1005/functions/al_main.json": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "dcrc/data/sa1_us_1005/functions/al_main.json"
+      },
+      "bytes": 24368,
+      "sha256": "78b14faa77c331d91f5e4717d70f458a4033f20af8578f38efc940d11e1f2da3",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
+    },
+    "dcrc/data/sa1_us_1005/functions/al_race.json": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "dcrc/data/sa1_us_1005/functions/al_race.json"
+      },
+      "bytes": 32784,
+      "sha256": "5500ecbfa25a8a4ccbca6f5cf2d4223efb245a08c4302c2faccb520b12b0fb0f",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
+    },
+    "dcrc/data/sa1_us_1005/functions/alertwnd.json": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "dcrc/data/sa1_us_1005/functions/alertwnd.json"
+      },
+      "bytes": 2339,
+      "sha256": "aae6209d9759a0a02d2a8a2985a0f49f3d140d1eff98c21b9445326f76c6378c",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
     },
     "dcrc/data/sa1_us_1005/functions/b_chaos0.json": {
       "sha256": "3005556bf1196937dd0d5256412b95e6711c4d72d4946a6871e426760bf9826a",
@@ -2107,6 +2319,279 @@
       },
       "review": "Reviewed addresses/bounds/hashes/configuration or input sequences only; no game instruction bodies, assets or copied disassembly. Historical discovery credited separately."
     },
+    "dcrc/data/sa1_us_1005/functions/ev0165.json": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "dcrc/data/sa1_us_1005/functions/ev0165.json"
+      },
+      "bytes": 727,
+      "sha256": "8620353e8ab6282216bfc7d0b1e0d57acbd01c131dadc679faee83d28c252e7c",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes.",
+      "local_modification": {
+        "category": "F",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "dcrc/data/sa1_us_1005/functions/ev0165.json"
+        }
+      }
+    },
+    "dcrc/data/sa1_us_1005/functions/ev0166.json": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "dcrc/data/sa1_us_1005/functions/ev0166.json"
+      },
+      "bytes": 1220,
+      "sha256": "37d1d3f5d9de54d097a1322bae5508949337adcab4a02d38e093a7ca1690f12c",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes.",
+      "local_modification": {
+        "category": "F",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "dcrc/data/sa1_us_1005/functions/ev0166.json"
+        }
+      }
+    },
+    "dcrc/data/sa1_us_1005/functions/ev0167.json": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "dcrc/data/sa1_us_1005/functions/ev0167.json"
+      },
+      "bytes": 1209,
+      "sha256": "025d5e568cff981d562d8634e4d26112dec355106e964f079c26bcce4043819f",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes.",
+      "local_modification": {
+        "category": "F",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "dcrc/data/sa1_us_1005/functions/ev0167.json"
+        }
+      }
+    },
+    "dcrc/data/sa1_us_1005/functions/ev0168.json": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "dcrc/data/sa1_us_1005/functions/ev0168.json"
+      },
+      "bytes": 727,
+      "sha256": "db587d4e27dd0b5a70e24076d70c5fce123b9dabe7bd92dc1406aa4e0c5a13a9",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes.",
+      "local_modification": {
+        "category": "F",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "dcrc/data/sa1_us_1005/functions/ev0168.json"
+        }
+      }
+    },
+    "dcrc/data/sa1_us_1005/functions/ev0169.json": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "dcrc/data/sa1_us_1005/functions/ev0169.json"
+      },
+      "bytes": 727,
+      "sha256": "eb5841936416945988f8a738495b03d7c49e9b2a73662133c68f59cde3e49eaf",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes.",
+      "local_modification": {
+        "category": "F",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "dcrc/data/sa1_us_1005/functions/ev0169.json"
+        }
+      }
+    },
+    "dcrc/data/sa1_us_1005/functions/ev016a.json": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "dcrc/data/sa1_us_1005/functions/ev016a.json"
+      },
+      "bytes": 663,
+      "sha256": "2faaf4f29ce2f683a67ad601a303179eae1a3c3248368bb821a1d26d949d0cf0",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes.",
+      "local_modification": {
+        "category": "F",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "dcrc/data/sa1_us_1005/functions/ev016a.json"
+        }
+      }
+    },
+    "dcrc/data/sa1_us_1005/functions/ev016b.json": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "dcrc/data/sa1_us_1005/functions/ev016b.json"
+      },
+      "bytes": 605,
+      "sha256": "880a70b6e8e0aef7534cb28cc6c55f1ebd8b90aba6e50b0e713c04aceab495fa",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes.",
+      "local_modification": {
+        "category": "F",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "dcrc/data/sa1_us_1005/functions/ev016b.json"
+        }
+      }
+    },
+    "dcrc/data/sa1_us_1005/functions/ev016c.json": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "dcrc/data/sa1_us_1005/functions/ev016c.json"
+      },
+      "bytes": 663,
+      "sha256": "fefe2dc9f7e66da2575f499c35d0e732a1f8382e453f7d172945f2248b0df661",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes.",
+      "local_modification": {
+        "category": "F",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "dcrc/data/sa1_us_1005/functions/ev016c.json"
+        }
+      }
+    },
+    "dcrc/data/sa1_us_1005/functions/ev016d.json": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "dcrc/data/sa1_us_1005/functions/ev016d.json"
+      },
+      "bytes": 605,
+      "sha256": "48ee389b0521b2cf352475a1dc9b6b5400d6c9f0eb293bbbabee32f2398d84bb",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes.",
+      "local_modification": {
+        "category": "F",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "dcrc/data/sa1_us_1005/functions/ev016d.json"
+        }
+      }
+    },
+    "dcrc/data/sa1_us_1005/functions/ev016e.json": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "dcrc/data/sa1_us_1005/functions/ev016e.json"
+      },
+      "bytes": 605,
+      "sha256": "ab22a8bb132f91c60bfdbe409f0857172bcca35a6c41618ebb999f041e07c839",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes.",
+      "local_modification": {
+        "category": "F",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "dcrc/data/sa1_us_1005/functions/ev016e.json"
+        }
+      }
+    },
+    "dcrc/data/sa1_us_1005/functions/ev016f.json": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "dcrc/data/sa1_us_1005/functions/ev016f.json"
+      },
+      "bytes": 605,
+      "sha256": "e582c9fc515757115db3fa4f611f7983e0708d88bb7edb65a9a6beab87f0da47",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes.",
+      "local_modification": {
+        "category": "F",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "dcrc/data/sa1_us_1005/functions/ev016f.json"
+        }
+      }
+    },
+    "dcrc/data/sa1_us_1005/functions/ev0170.json": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "dcrc/data/sa1_us_1005/functions/ev0170.json"
+      },
+      "bytes": 663,
+      "sha256": "b5be36072dcf7afff01bea9a13dd9db78d5e2698c30ee42090153123819686b8",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes.",
+      "local_modification": {
+        "category": "F",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "dcrc/data/sa1_us_1005/functions/ev0170.json"
+        }
+      }
+    },
+    "dcrc/data/sa1_us_1005/functions/ev0171.json": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "dcrc/data/sa1_us_1005/functions/ev0171.json"
+      },
+      "bytes": 663,
+      "sha256": "254f52e6e1abdbbdcd0dfeaa05f73a7006d922312c35895885e6def9e9aeed78",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes.",
+      "local_modification": {
+        "category": "F",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "dcrc/data/sa1_us_1005/functions/ev0171.json"
+        }
+      }
+    },
     "dcrc/data/sa1_us_1005/functions/ev0180.json": {
       "sha256": "c24fa42768da986da5b93b02c939d0bc7c86d702c9b325c9d50aef4fc133f678",
       "bytes": 2723,
@@ -2120,8 +2605,8 @@
       "review": "Reviewed addresses/bounds/hashes/configuration or input sequences only; no game instruction bodies, assets or copied disassembly. Historical discovery credited separately."
     },
     "dcrc/data/sa1_us_1005/functions/main.json": {
-      "sha256": "ebbbd6f1f256838359ae4cef210f59876e2b81e4657f6e245909fdd7b03e22e5",
-      "bytes": 582080,
+      "sha256": "706146fbcfb3c486d757f1afa642b14f0dfe683f416726bcf18f2a620abf0677",
+      "bytes": 582950,
       "category": "F",
       "license": "Factual compatibility metadata; project selection/format MIT",
       "source": {
@@ -2129,7 +2614,16 @@
         "revision": "uncommitted-source-preparation",
         "path": "dcrc/data/sa1_us_1005/functions/main.json"
       },
-      "review": "Reviewed addresses/bounds/hashes/configuration or input sequences only; no game instruction bodies, assets or copied disassembly. Historical discovery credited separately."
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes.",
+      "local_modification": {
+        "category": "F",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "dcrc/data/sa1_us_1005/functions/main.json"
+        }
+      }
     },
     "dcrc/data/sa1_us_1005/functions/shooting.json": {
       "sha256": "9049f2a58e94f70311493040f6d7735181eb3cf2049bf449328df45ae04b0665",
@@ -2288,8 +2782,8 @@
       "review": "Reviewed addresses/bounds/hashes/configuration or input sequences only; no game instruction bodies, assets or copied disassembly. Historical discovery credited separately."
     },
     "dcrc/data/sa1_us_1005/profile.json": {
-      "sha256": "64a55309fd0d38f020d97d7bee6de53c1e71d76aabf9eadbc0d47936e08606b2",
-      "bytes": 35741,
+      "sha256": "3a0011219e94d72907732580a49e393ea11027e39f4b8c6d614719266082b7f5",
+      "bytes": 46126,
       "category": "F",
       "license": "Factual compatibility metadata; project selection/format MIT",
       "source": {
@@ -2297,7 +2791,28 @@
         "revision": "uncommitted-source-preparation",
         "path": "dcrc/data/sa1_us_1005/profile.json"
       },
-      "review": "Reviewed addresses/bounds/hashes/configuration or input sequences only; no game instruction bodies, assets or copied disassembly. Historical discovery credited separately."
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes.",
+      "local_modification": {
+        "category": "F",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "dcrc/data/sa1_us_1005/profile.json"
+        }
+      }
+    },
+    "dcrc/data/sa1_us_1005/sdk/ninja_chao.json": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "dcrc/data/sa1_us_1005/sdk/ninja_chao.json"
+      },
+      "bytes": 4625,
+      "sha256": "36fa2ba81198972e4aa056433a68da734ae339cb00f6831b14484ec87d1e38ce",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
     },
     "dcrc/data/sa1_us_1005/world_textures.policy": {
       "sha256": "dc4d51ac57c267c5e1dedf867035ca196dd4dbfea8ff233f29be665a4af68e3c",
@@ -2348,8 +2863,8 @@
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
     "dcrc/generate.py": {
-      "sha256": "0bea37824acf6c8b75448e0fa5c7e58353e1b9e3974bf9650736f1be91b35df2",
-      "bytes": 4579,
+      "sha256": "d0366241492ce7d2849693853c0685a83d4e5dbe5881d2f4996294693a1dbb4e",
+      "bytes": 4740,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -2357,7 +2872,16 @@
         "revision": "uncommitted-source-preparation",
         "path": "dcrc/generate.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own worker passes verified address facts to the local SDK emitter.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "dcrc/generate.py"
+        }
+      }
     },
     "dcrc/media.py": {
       "category": "O",
@@ -2462,8 +2986,8 @@
       }
     },
     "dcrc/pipeline.py": {
-      "sha256": "370d46db156de8d5da5fdfe678c5754c5d2adc58641efcb61c519f5fa4fc192c",
-      "bytes": 23143,
+      "sha256": "e5a54e3f0a486b12be225738e831c7336a334aa6659405ba3e21be6f08dd673e",
+      "bytes": 23590,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -2471,16 +2995,15 @@
         "revision": "uncommitted-source-preparation",
         "path": "dcrc/pipeline.py"
       },
-      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "review": "Own conversion log binds runtime and profile fingerprints.",
       "local_modification": {
         "category": "O",
         "license": "MIT",
         "source": {
           "url": "https://github.com/SandstoneDev/DCRC",
-          "revision": "uncommitted-public-source-review-2026-11-06",
+          "revision": "local-source-review-2026-11-11",
           "path": "dcrc/pipeline.py"
-        },
-        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+        }
       }
     },
     "dcrc/process.py": {
@@ -2506,8 +3029,8 @@
       }
     },
     "dcrc/profiles.py": {
-      "sha256": "ea9358587c148cac903445bffb7edb6ee0999babd1b529e9c5c839ffae91d080",
-      "bytes": 5185,
+      "sha256": "857aca6bc1e1baaa43269469af006404b7e9a3d54817392e4ed3cdc17d820dbe",
+      "bytes": 7913,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -2515,7 +3038,16 @@
         "revision": "uncommitted-source-preparation",
         "path": "dcrc/profiles.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own validation of address-only SDK ranges, revision, overlays and file digests.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "dcrc/profiles.py"
+        }
+      }
     },
     "dcrc/runtime_source.py": {
       "sha256": "0661a44da2cfeb1b1e9ce1834e3cd0b91f569c575cd1a89747393b49a4007384",
@@ -2571,6 +3103,27 @@
           "path": "dcrc/toolchain.py"
         },
         "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
+    },
+    "dcrc/updater.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "dcrc/updater.py"
+      },
+      "bytes": 20251,
+      "sha256": "faf08f005809e0b0c1fe491a3961eaac39b231b208064b06f2d83507c415e94a",
+      "review": "Own GitHub stable release client, SHA256 verification and bounded sibling-folder installation.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "dcrc/updater.py"
+        }
       }
     },
     "dcrc/worker.py": {
@@ -2771,9 +3324,18 @@
         "revision": "uncommitted-public-source-review-2026-11-06",
         "path": "docs/COMPATIBILITY.md"
       },
-      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation.",
-      "sha256": "24f61d60f2cae62afbafdeeeb5e974151e245af82e136f6403a44af787fa194e",
-      "bytes": 2678
+      "review": "Own compatibility and verification-scope documentation.",
+      "sha256": "6f06510c61c56cf6024c867f75dbe4c8aad1768e6188033fcdb96421049ab185",
+      "bytes": 3125,
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "docs/COMPATIBILITY.md"
+        }
+      }
     },
     "docs/DEPENDENCIES.md": {
       "sha256": "320b4128265a908541431b3741a7abc66582d7e82de8ceca907d96d983173696",
@@ -2820,8 +3382,8 @@
       }
     },
     "docs/IN_GAME_MENU.md": {
-      "sha256": "1b6f6fa1f8117203a810ed8e6e3e5e8b67d8d53277a1ca5bb10cbebee1c67c43",
-      "bytes": 5382,
+      "sha256": "320f6cf9512b32468a60b615269850a6fab5110299a47708c9b57bf75e4150d1",
+      "bytes": 5792,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -2829,21 +3391,20 @@
         "revision": "uncommitted-source-preparation",
         "path": "docs/IN_GAME_MENU.md"
       },
-      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "review": "Own device and game-menu behavior guidance.",
       "local_modification": {
         "category": "O",
         "license": "MIT",
         "source": {
           "url": "https://github.com/SandstoneDev/DCRC",
-          "revision": "uncommitted-public-source-review-2026-11-06",
+          "revision": "local-source-review-2026-11-11",
           "path": "docs/IN_GAME_MENU.md"
-        },
-        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+        }
       }
     },
     "docs/PROVENANCE.md": {
-      "sha256": "7091e16ee71befccb6b14a31c63046b4a0a875efca4f3b59233a3dff0b6351d7",
-      "bytes": 5105,
+      "sha256": "6ca2e7b73a4add9f3bd3de84877508dd72498514c1bbdd7ae321a30354737796",
+      "bytes": 5814,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -2851,16 +3412,15 @@
         "revision": "uncommitted-source-preparation",
         "path": "docs/PROVENANCE.md"
       },
-      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "review": "Own description of local generation, host material scope and unchanged third-party notices.",
       "local_modification": {
         "category": "O",
         "license": "MIT",
         "source": {
           "url": "https://github.com/SandstoneDev/DCRC",
-          "revision": "uncommitted-public-source-review-2026-11-06",
+          "revision": "local-source-review-2026-11-11",
           "path": "docs/PROVENANCE.md"
-        },
-        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+        }
       }
     },
     "docs/RELEASE_AUDIT.md": {
@@ -2910,8 +3470,8 @@
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
     "gui/app.py": {
-      "sha256": "f921798d11ac66799535b2cb4d7ef239e72f5bef67b64a24a5f85e0da4e8186b",
-      "bytes": 55527,
+      "sha256": "4a2b903e9634fad360ad11118f38a0f6432249b89eff0fc3ed0b24de78a126f0",
+      "bytes": 59700,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -2919,16 +3479,15 @@
         "revision": "uncommitted-source-preparation",
         "path": "gui/app.py"
       },
-      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "review": "Own update check/download/open actions using the existing worker, translation and settings lifecycle.",
       "local_modification": {
         "category": "O",
         "license": "MIT",
         "source": {
           "url": "https://github.com/SandstoneDev/DCRC",
-          "revision": "uncommitted-public-source-review-2026-11-06",
+          "revision": "local-source-review-2026-11-11",
           "path": "gui/app.py"
-        },
-        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+        }
       }
     },
     "gui/art_preview.py": {
@@ -3045,9 +3604,18 @@
         "revision": "uncommitted-public-source-review-2026-11-06",
         "path": "gui/lang/ru.json"
       },
-      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation.",
-      "sha256": "392cea0b40638b63af85cd1292a6d640fd9fa0978689dbf3107fba2fc373e183",
-      "bytes": 18640
+      "review": "Own UI translations.",
+      "sha256": "2dd995bf2aa6a93b2395919d522b9a1d45afa3670926ba82c9058c3f0326a812",
+      "bytes": 19686,
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "gui/lang/ru.json"
+        }
+      }
     },
     "gui/media_picker.py": {
       "category": "O",
@@ -3168,8 +3736,8 @@
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
     },
     "hle/game/optional_content.c": {
-      "sha256": "4e13e13e85b5cbc69f8781eb8669c0397e0905611623020648d72ec59b4bc4cc",
-      "bytes": 10099,
+      "sha256": "2fb75d96c07f83fc76b2537a0d7415b2fd6aca28f78cdff5ef82d494c94e6a4e",
+      "bytes": 11652,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -3177,11 +3745,20 @@
         "revision": "uncommitted-source-preparation",
         "path": "hle/game/optional_content.c"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own typed VMU pass-through for opaque user content, retaining excluded decoder policy.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "hle/game/optional_content.c"
+        }
+      }
     },
     "hle/game/startup.c": {
-      "sha256": "ad9d37529885a7e00314935875c919289920176b7a64c83918c930bab66117b5",
-      "bytes": 6508,
+      "sha256": "4e125f12589bf4c7463f7a32b5104ab535b0166dd56fedac85d33457770ec956",
+      "bytes": 7107,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -3189,11 +3766,20 @@
         "revision": "uncommitted-source-preparation",
         "path": "hle/game/startup.c"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own narrow direct-warp return guard using confirmed US1.005 level-state facts.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "hle/game/startup.c"
+        }
+      }
     },
     "hle/game/startup.h": {
-      "sha256": "c821c5c6634889dbc9505b1cabb46ca45dda6b775c2f2540d1042d21b1940225",
-      "bytes": 650,
+      "sha256": "a7311127797abc64ee8f5f19424652a0cf0ecb5884de5e0ac07e6856bbf5efc6",
+      "bytes": 777,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -3201,7 +3787,16 @@
         "revision": "uncommitted-source-preparation",
         "path": "hle/game/startup.h"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own direct startup guard interface.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "hle/game/startup.h"
+        }
+      }
     },
     "hle/game/tasks.c": {
       "sha256": "9e15aa4c3d25ab40c677b7ea8bb85096bba83cebeb149764c2d7cd1f4991e8c4",
@@ -3216,8 +3811,8 @@
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
     },
     "hle/hle.h": {
-      "sha256": "9a44b7193f5a92018bf60e49f13d9849f62b0c43565886d61207422fdb4e57a1",
-      "bytes": 9529,
+      "sha256": "b7a30fd61e6665948f682556c7e259928bd91b8696f62c4a2f3d9623417c7388",
+      "bytes": 9723,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -3225,11 +3820,20 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "hle/hle.h"
       },
-      "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
+      "review": "Own common coroutine interface declaration used to scope host render state.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "hle/hle.h"
+        }
+      }
     },
     "hle/hle_init.c": {
-      "sha256": "d5b7ed0d1068ddca9e1c2bd2264a209a31616cf51b32e6c2dd364b6c7c4d764d",
-      "bytes": 3267,
+      "sha256": "a2f411164013303e79fc90bea0deb588eed954d279acab10451dd2cb1922ee22",
+      "bytes": 3445,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -3237,7 +3841,16 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "hle/hle_init.c"
       },
-      "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
+      "review": "Own reset and state hooks for raw texture ownership.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "hle/hle_init.c"
+        }
+      }
     },
     "hle/ninja/draw2d.c": {
       "sha256": "b63f966c885a5afdc9cf1de98a2c45aab1e11500e51000e2d0b4bf18094b1c13",
@@ -3252,8 +3865,8 @@
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
     },
     "hle/ninja/kamui.c": {
-      "sha256": "de6c654f9e930ca5dbc8b87270472a219fe429840202f9c505852f4f224e85b4",
-      "bytes": 71327,
+      "sha256": "45813cafb095916ee14df60eeeff47af3d8cca5f1e52f48efca519fd547f41e2",
+      "bytes": 71774,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -3261,7 +3874,16 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "hle/ninja/kamui.c"
       },
-      "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
+      "review": "Own bounded TA submission and retirement hooks, no guest-body replacement.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "hle/ninja/kamui.c"
+        }
+      }
     },
     "hle/ninja/land_distance.h": {
       "sha256": "648f12cfca9ba793cba1836861c486b0b59e350215ff57454a4d1094db8e75f7",
@@ -3300,8 +3922,8 @@
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
     },
     "hle/ninja/model.c": {
-      "sha256": "0dcf459fad56cf64052f73c80fb6c198f0ec23ff1e33c49f3e57ba35ba4330c4",
-      "bytes": 26995,
+      "sha256": "fec55249630bb9249218bccb8f0d6da320e4cad49c0448b9e26f060bbd10dc8f",
+      "bytes": 28848,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -3309,7 +3931,16 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "hle/ninja/model.c"
       },
-      "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
+      "review": "Reviewed upstream model adapter with own BASIC/OBJECT ABI fixes and material scope around locally generated traversal.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "hle/ninja/model.c"
+        }
+      }
     },
     "hle/ninja/native_land.c": {
       "sha256": "841d3de9bde44dadd15b63fe79bfe2fc98ceca0b1bfb00a8bd117538073d08bd",
@@ -3324,8 +3955,8 @@
       "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
     },
     "hle/ninja/ninja.h": {
-      "sha256": "a0dc0445dbd1b3b5f164f1d6cba8d5b046a8e8a1fc4f9e432acee3975d07bca8",
-      "bytes": 7592,
+      "sha256": "23a115375085debc6fcc6c9dc06945c58eeb57153f9230857524534511de4273",
+      "bytes": 8905,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -3333,7 +3964,40 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "hle/ninja/ninja.h"
       },
-      "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
+      "review": "Own raw texture and TA capacity interfaces.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "hle/ninja/ninja.h"
+        }
+      }
+    },
+    "hle/ninja/print.c": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "hle/ninja/print.c"
+      },
+      "bytes": 5235,
+      "sha256": "7400f84900fa51df258fc08563b0a31d4c63e6a7d1150555cc2d768e8d7a5b34",
+      "review": "Own digit-render adapter using observable ABI and geometry; default atlas is read from user guest RAM."
+    },
+    "hle/ninja/print.h": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "hle/ninja/print.h"
+      },
+      "bytes": 160,
+      "sha256": "751ee8705798d4b2a56e7d5879f2b8afd42b837343bb9385ebb6567970f6ac24",
+      "review": "Own screen print state/ownership declarations."
     },
     "hle/ninja/pvr_decode.c": {
       "sha256": "d7ec502cb4b362706fda3c3bf1481a2b053936d1afe960582151ecfeabcf1f5b",
@@ -3372,8 +4036,8 @@
       "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
     },
     "hle/ninja/texture.c": {
-      "sha256": "1906110c61a77fc0905ed724291e524c7b3030d1e20fac4892b25de76da41981",
-      "bytes": 30021,
+      "sha256": "6d6f9ddf5c83a3b916f7e8c6b986c8199f44278dbdd047c92846bfad943343f7",
+      "bytes": 36629,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -3381,7 +4045,16 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "hle/ninja/texture.c"
       },
-      "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
+      "review": "Own raw texture ownership, source/shape validation and optional state.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "hle/ninja/texture.c"
+        }
+      }
     },
     "hle/overlay/movie.c": {
       "sha256": "c9501de6e35b726f09a1d0832b550ab0a9c5c14b2b6475ae782df869ca63af28",
@@ -3454,8 +4127,8 @@
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
     },
     "hle/overlay/overlay_registry.c": {
-      "sha256": "13eb1cf779a60c6492b6962f688775e47f7d56cd50691c0c13874fd2c55d87b0",
-      "bytes": 12111,
+      "sha256": "5eb5f92ad01b8ee3e86cabde741580507fcafd77ec1eb2b4a5cafd1f1c7393bc",
+      "bytes": 16122,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -3463,11 +4136,20 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "hle/overlay/overlay_registry.c"
       },
-      "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
+      "review": "Registry generated from compatible names, sizes, SHA256 and own overlay ABI declarations.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "hle/overlay/overlay_registry.c"
+        }
+      }
     },
     "hle/seam.h": {
-      "sha256": "3ba3b9dda57331f013695f0ba1d02239fe99d2eb6b4cb89dc11dc79d5ec5e737",
-      "bytes": 27751,
+      "sha256": "e05fe308b030cf2e79c763792345baf6d8d6352cc41413d2422d8046e966b8d8",
+      "bytes": 28128,
       "category": "F",
       "license": "Factual compatibility metadata; project selection/format MIT",
       "source": {
@@ -3475,11 +4157,20 @@
         "revision": "uncommitted-source-preparation",
         "path": "hle/seam.h"
       },
-      "review": "Reviewed addresses/bounds/hashes/configuration or input sequences only; no game instruction bodies, assets or copied disassembly. Historical discovery credited separately."
+      "review": "Reviewed SDK declarations and compatibility address facts for host VMU and print entrypoints.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "hle/seam.h"
+        }
+      }
     },
     "hle/seam_stubs.c": {
-      "sha256": "fb288ba03244e1bfb97c03822c881decb03fd4c16e5d26f5b4c9bf15deca0470",
-      "bytes": 37897,
+      "sha256": "fb9118babfa13e1404c8b8d61d9a7dedaa25bf7f3224daf9ade4d48161f485d0",
+      "bytes": 39150,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -3487,7 +4178,16 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "hle/seam_stubs.c"
       },
-      "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
+      "review": "Own dispatch changes for strong VMU/print services and local original action body.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "hle/seam_stubs.c"
+        }
+      }
     },
     "hle/settings.c": {
       "sha256": "9b69801a13fe6bcee0f8d5a33f796977386d6f33aa0b111c6a2c8debbb86085c",
@@ -3512,8 +4212,8 @@
       }
     },
     "hle/shinobi/cfg.c": {
-      "sha256": "d5706a2239b15eef47e546195eddf9f7bcb58cafb841eaeaca7f5c02f5962110",
-      "bytes": 14751,
+      "sha256": "ed00081dbfa05defe513ddbc83680e8295bb5e46e352c56405284430a9ee306c",
+      "bytes": 23262,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -3521,7 +4221,16 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "hle/shinobi/cfg.c"
       },
-      "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
+      "review": "Own bounded VMU catalogue, range/type and completion services derived from observed contracts.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "hle/shinobi/cfg.c"
+        }
+      }
     },
     "hle/shinobi/chain.c": {
       "sha256": "a7c7233ee897019632ca7477b3e5e1272bc162a970e3abc9af31aae9ef20af4e",
@@ -3620,8 +4329,8 @@
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
     },
     "hle/shinobi/vmu_store.h": {
-      "sha256": "3b1ebc2460188f1a4906480761ad0c9b6567e7b730892a204bacf543ef78afc1",
-      "bytes": 1451,
+      "sha256": "dcc7a681bb13ef0600f53f344876994b50c0a5acb3336b26bc063b1b72154ba7",
+      "bytes": 2218,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -3629,7 +4338,16 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "hle/shinobi/vmu_store.h"
       },
-      "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
+      "review": "Own typed storage interface.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "hle/shinobi/vmu_store.h"
+        }
+      }
     },
     "hle/shinobi/vsync.c": {
       "sha256": "2ece209acd8cb1a3cb0a5b0b9db529b6ed9608addf87584b4ca0b9c92e411c5b",
@@ -3692,8 +4410,8 @@
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
     },
     "hle/sound/sd.c": {
-      "sha256": "dfdfd50ca309b9649d9915201045eebf8e13f85d509f90c98cb9c63e8c3d6f38",
-      "bytes": 10126,
+      "sha256": "dfd1d1e0d7c7db1208f3de7ef7d9a2d5cff1c71f876c550850f6fa3f4609b55b",
+      "bytes": 10537,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -3701,16 +4419,15 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "hle/sound/sd.c"
       },
-      "review": "Modified upstream MIT source; original upstream source and notices retained. Reviewed own generic integration only; no imported game/SDK implementation or private native accelerators.",
+      "review": "Own sound bank publication and state locking around existing sequence adapter.",
       "local_modification": {
         "category": "O",
         "license": "MIT",
         "source": {
           "url": "https://github.com/SandstoneDev/DCRC",
-          "revision": "uncommitted-public-source-review-2026-11-06",
+          "revision": "local-source-review-2026-11-11",
           "path": "hle/sound/sd.c"
-        },
-        "review": "Preserve the existing recorded origin/category; review current own changes separately. O: own generic integration/control/parser/ownership changes; retain original upstream revision, licence and applicable attribution"
+        }
       }
     },
     "hle/sound/snd_core.c": {
@@ -3758,8 +4475,8 @@
       }
     },
     "hle/sound/snd_host.c": {
-      "sha256": "cd9963e9afb5ec3bd601936ec941c197a6adf83a7dcfe645fa3d47c21a410cf6",
-      "bytes": 11466,
+      "sha256": "a6d7570510b31a890ef6eb270300b876f4fd3b85722fb373442eb993f38d7140",
+      "bytes": 16670,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -3767,11 +4484,20 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "hle/sound/snd_host.c"
       },
-      "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
+      "review": "Own real-time PCM producer, state locks and guest-time handover; public LFO unchanged.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "hle/sound/snd_host.c"
+        }
+      }
     },
     "hle/sound/snd_host.h": {
-      "sha256": "c88c5c43f7b1f6b8bcd704e528ba218b389d6fef6856105e02f6ce79c5767f5a",
-      "bytes": 2662,
+      "sha256": "fe38a0b20952414f7deb02a2adbef294261e630dcb0c2d6590f165b6e3e3a9f8",
+      "bytes": 3722,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -3779,7 +4505,16 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "hle/sound/snd_host.h"
       },
-      "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
+      "review": "Own host mixer synchronization declarations.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "hle/sound/snd_host.h"
+        }
+      }
     },
     "hle/sound/snd_sequence.h": {
       "category": "O",
@@ -3818,8 +4553,8 @@
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
     },
     "hle/state.c": {
-      "sha256": "89abc3bd4a2ee1cf8948e5005ce7ab9c285f6f55bac05fd018d93139235b1a96",
-      "bytes": 6276,
+      "sha256": "560d21883541fb7fe2276e497f7b630552daf3f5ad3011c444339828c5a54b0b",
+      "bytes": 8073,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -3827,11 +4562,20 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "hle/state.c"
       },
-      "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
+      "review": "Own bounded optional chunk parsing, first error retention and serialization.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "hle/state.c"
+        }
+      }
     },
     "hle/state.h": {
-      "sha256": "78cdfa55ffce9692bd92d3569ebc6619d3c4a4d32231ea406dd0734f879a1869",
-      "bytes": 3442,
+      "sha256": "c9aee3a86f42f9807605f8e15178c9baeb98d0ac816390e4c4118b3c0cd08ad7",
+      "bytes": 3907,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -3839,7 +4583,16 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "hle/state.h"
       },
-      "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
+      "review": "Own optional state interface.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "hle/state.h"
+        }
+      }
     },
     "recomp/emitter/README.md": {
       "sha256": "38c9ccb7721e5f24e76d97f26c40e332f1c1383fa85fd9e2f63b70314f49ef38",
@@ -3866,8 +4619,8 @@
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
     },
     "recomp/emitter/emit_sa1.py": {
-      "sha256": "bbd279f6bfcec3cae74cdda67c5ab9264cd36183b62ca1ce801a35716ba64a55",
-      "bytes": 5023,
+      "sha256": "25eb2b076d1fe2ef4f08c3793305fd4193205a6702e0ec670e6f6943314d0101",
+      "bytes": 5747,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -3875,7 +4628,16 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "recomp/emitter/emit_sa1.py"
       },
-      "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
+      "review": "Own SDK fallback integration in the local emitter.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "recomp/emitter/emit_sa1.py"
+        }
+      }
     },
     "recomp/emitter/runtime/sh4_rt.c": {
       "sha256": "f044adbcf8cfc24878772bc8bc0c5a1254013e7259b8f97685d650e9e95634f8",
@@ -3923,6 +4685,18 @@
         "review": "Own comment-only correction removes the excluded dumper reference and states the existing libm fallback. Executable code is unchanged."
       }
     },
+    "recomp/emitter/sdk_codegen.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "recomp/emitter/sdk_codegen.py"
+      },
+      "bytes": 4368,
+      "sha256": "79eb359fda533239618048676c5cef3be67934fd48cb58e9f2dd8b32df8ba4bf",
+      "review": "Own local instruction-coverage and control-flow validation using user-supplied bytes."
+    },
     "recomp/emitter/sh4emit/__init__.py": {
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "bytes": 0,
@@ -3948,8 +4722,8 @@
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
     },
     "recomp/emitter/sh4emit/cfg.py": {
-      "sha256": "3eb5db1b75e6eb2471474599818201fad304a731421e4dbcac9913f2cad8cabb",
-      "bytes": 23360,
+      "sha256": "c144c35e31d07393b3bd2b437939073e3cd565e8517daf9d2ed8580613c6e238",
+      "bytes": 24220,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -3957,7 +4731,16 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "recomp/emitter/sh4emit/cfg.py"
       },
-      "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
+      "review": "Own graph membership checks for locally emitted SDK extents.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "recomp/emitter/sh4emit/cfg.py"
+        }
+      }
     },
     "recomp/emitter/sh4emit/decode.py": {
       "sha256": "87fd3d5541700f20d8dfde30312ad0a3cedc853147451a0324e36fec291c57c1",
@@ -3972,8 +4755,8 @@
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
     },
     "recomp/emitter/sh4emit/emit.py": {
-      "sha256": "660ab3061361eba2c63adf98033c1a5cb636a648d2504321485547a9da10af3b",
-      "bytes": 28417,
+      "sha256": "b8f7f5292cc6045f2689b9d672be5b87aa45ba2f99ca0aff735cd5e172f5c290",
+      "bytes": 29330,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -3981,7 +4764,16 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "recomp/emitter/sh4emit/emit.py"
       },
-      "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
+      "review": "Own bounded local code emission and SDK control transfer handling.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "recomp/emitter/sh4emit/emit.py"
+        }
+      }
     },
     "recomp/emitter/sh4emit/image.py": {
       "sha256": "79199303d0b7b596c36fd1eca6943d690c86665a9a0a785fb631f3b570fcf805",
@@ -4056,8 +4848,8 @@
       "review": "Reviewed addresses/bounds/hashes/configuration or input sequences only; no game instruction bodies, assets or copied disassembly. Historical discovery credited separately."
     },
     "recomp/sa1_us_1005/hle_wraps.tsv": {
-      "sha256": "20dadf5cb17cbfb0b4ec1eb9754c15ca2749c88dd3f5d717d80e35aa0e6722c2",
-      "bytes": 5555,
+      "sha256": "c844522ddab9c4d12c3d721d6d594d09bdcc76563cb5e103d4e6bcf28accaf9f",
+      "bytes": 5698,
       "category": "F",
       "license": "Factual compatibility metadata; project selection/format MIT",
       "source": {
@@ -4065,7 +4857,16 @@
         "revision": "uncommitted-source-preparation",
         "path": "recomp/sa1_us_1005/hle_wraps.tsv"
       },
-      "review": "Reviewed addresses/bounds/hashes/configuration or input sequences only; no game instruction bodies, assets or copied disassembly. Historical discovery credited separately."
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes.",
+      "local_modification": {
+        "category": "F",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "recomp/sa1_us_1005/hle_wraps.tsv"
+        }
+      }
     },
     "recomp/sa1_us_1005/overlay_main_seeds.txt": {
       "sha256": "af93c4795f4e5753973229ed83503a0dedb3b068d52cb1ff03a29835f797997c",
@@ -4234,6 +5035,78 @@
         "path": "recomp/sa1_us_1005/overlays/advertise_seeds.txt"
       },
       "review": "Reviewed addresses/bounds/hashes/configuration or input sequences only; no game instruction bodies, assets or copied disassembly. Historical discovery credited separately."
+    },
+    "recomp/sa1_us_1005/overlays/al_garden00.toml": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "recomp/sa1_us_1005/overlays/al_garden00.toml"
+      },
+      "bytes": 669,
+      "sha256": "f98fc99721b6e334fa5d59ceb644e6ac8180c1a27a165c722c711f5542c3c46e",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
+    },
+    "recomp/sa1_us_1005/overlays/al_garden01.toml": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "recomp/sa1_us_1005/overlays/al_garden01.toml"
+      },
+      "bytes": 669,
+      "sha256": "0f7e1a877429be908c1bb638c50e84c9787df8f5e60ef95ded3f8cfeb5644a8d",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
+    },
+    "recomp/sa1_us_1005/overlays/al_garden02.toml": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "recomp/sa1_us_1005/overlays/al_garden02.toml"
+      },
+      "bytes": 670,
+      "sha256": "2b323b3a5f1d1f9601c8ae0cae61d29703ed45584cb8ed3f13dba736f07d2739",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
+    },
+    "recomp/sa1_us_1005/overlays/al_main.toml": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "recomp/sa1_us_1005/overlays/al_main.toml"
+      },
+      "bytes": 655,
+      "sha256": "477b9145565be0055714aa5bf84152aa4654f9337702e40284946f4df1088327",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
+    },
+    "recomp/sa1_us_1005/overlays/al_race.toml": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "recomp/sa1_us_1005/overlays/al_race.toml"
+      },
+      "bytes": 654,
+      "sha256": "3f16ebe319c754b0bf8581d3669e45187bc8e748c16fa9664f04199b9a555711",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
+    },
+    "recomp/sa1_us_1005/overlays/alertwnd.toml": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "recomp/sa1_us_1005/overlays/alertwnd.toml"
+      },
+      "bytes": 645,
+      "sha256": "77c1ad25c157ebdeae4b90db419af5f547117c24eb1faa18cf6628e85134396b",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
     },
     "recomp/sa1_us_1005/overlays/b_chaos0.toml": {
       "sha256": "86fc81fa163a43ca07264864b3d92a1751ae8585ba152bc0ef0a205f50b9ddc5",
@@ -4979,6 +5852,162 @@
       },
       "review": "Reviewed addresses/bounds/hashes/configuration or input sequences only; no game instruction bodies, assets or copied disassembly. Historical discovery credited separately."
     },
+    "recomp/sa1_us_1005/overlays/ev0165.toml": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "recomp/sa1_us_1005/overlays/ev0165.toml"
+      },
+      "bytes": 582,
+      "sha256": "2b029e147dc17a0eb90aaf5965a84b4a5d1f14e0816313ba0cf2f8d58d6d7dd3",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
+    },
+    "recomp/sa1_us_1005/overlays/ev0166.toml": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "recomp/sa1_us_1005/overlays/ev0166.toml"
+      },
+      "bytes": 609,
+      "sha256": "6b8caadbd1485d5c802298d7eebdb0809dd8f9194051a3eb0188d142a5278dab",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
+    },
+    "recomp/sa1_us_1005/overlays/ev0167.toml": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "recomp/sa1_us_1005/overlays/ev0167.toml"
+      },
+      "bytes": 582,
+      "sha256": "3179fdad0172949b095141f1f6f5ba19d8bd957719a75e614ada340e141df243",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
+    },
+    "recomp/sa1_us_1005/overlays/ev0168.toml": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "recomp/sa1_us_1005/overlays/ev0168.toml"
+      },
+      "bytes": 582,
+      "sha256": "9fa8665f4eded5c995445bbbda47cd462d59633d0b52a288c157a0ad519113a5",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
+    },
+    "recomp/sa1_us_1005/overlays/ev0169.toml": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "recomp/sa1_us_1005/overlays/ev0169.toml"
+      },
+      "bytes": 582,
+      "sha256": "092b5e2db14b6f0e995ea6a8cf159e055f2fb897367341711308fc346533d837",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
+    },
+    "recomp/sa1_us_1005/overlays/ev016a.toml": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "recomp/sa1_us_1005/overlays/ev016a.toml"
+      },
+      "bytes": 582,
+      "sha256": "35766df5a7f7e9a0ed3833e6ae63be9603b4c38dbc903ea504909fd38ce24a69",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
+    },
+    "recomp/sa1_us_1005/overlays/ev016b.toml": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "recomp/sa1_us_1005/overlays/ev016b.toml"
+      },
+      "bytes": 582,
+      "sha256": "ae42119e8eea08f5c3ea2eeefc960a973e741ec2dd156c27fa4d6e095dfa57b6",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
+    },
+    "recomp/sa1_us_1005/overlays/ev016c.toml": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "recomp/sa1_us_1005/overlays/ev016c.toml"
+      },
+      "bytes": 582,
+      "sha256": "cc72a1c8a6d518a911f25c569248b66bd24be47a2430427c9017ebfeb22163c7",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
+    },
+    "recomp/sa1_us_1005/overlays/ev016d.toml": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "recomp/sa1_us_1005/overlays/ev016d.toml"
+      },
+      "bytes": 582,
+      "sha256": "4d2ca9b09c2af49af0256d41c9f28e2d4a8b3c109c7af7429d7c2a413b3fb73d",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
+    },
+    "recomp/sa1_us_1005/overlays/ev016e.toml": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "recomp/sa1_us_1005/overlays/ev016e.toml"
+      },
+      "bytes": 582,
+      "sha256": "71758d4e63dbc9dbc09e8c360ab4ee745ac2a033c1590816f131d7f18f02f05d",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
+    },
+    "recomp/sa1_us_1005/overlays/ev016f.toml": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "recomp/sa1_us_1005/overlays/ev016f.toml"
+      },
+      "bytes": 582,
+      "sha256": "6a889b1907c7dd001fe5e20a7e58c61e75f6ad9810e10974d5350dddec4b406b",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
+    },
+    "recomp/sa1_us_1005/overlays/ev0170.toml": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "recomp/sa1_us_1005/overlays/ev0170.toml"
+      },
+      "bytes": 582,
+      "sha256": "7a12b8d4a0e056963d6f1490e59314f765c99df968a73b940f2b02294b50c9d3",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
+    },
+    "recomp/sa1_us_1005/overlays/ev0171.toml": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "recomp/sa1_us_1005/overlays/ev0171.toml"
+      },
+      "bytes": 582,
+      "sha256": "f66b1d416d84b6df869b3392d037ccee0b87acebab9bb3541ba0bd0c4458fc95",
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes."
+    },
     "recomp/sa1_us_1005/overlays/ev0180.toml": {
       "sha256": "89ad171e1cca93f051285dfe6db315b8145820092b0e6fe0f9980e5559dbc8d4",
       "bytes": 1564,
@@ -5328,8 +6357,8 @@
       "review": "Reviewed addresses/bounds/hashes/configuration or input sequences only; no game instruction bodies, assets or copied disassembly. Historical discovery credited separately."
     },
     "recomp/sa1_us_1005/sdk_entry_points.tsv": {
-      "sha256": "cf74562300f014c26e95fd9192ff4c5bb2910b57b50a30be21b8b6fce7463e94",
-      "bytes": 8477,
+      "sha256": "4e775b606b45ddfc412a206751b06a7cb2eaaab28a84e62de9310969453d9d47",
+      "bytes": 9495,
       "category": "F",
       "license": "Factual compatibility metadata; project selection/format MIT",
       "source": {
@@ -5337,7 +6366,16 @@
         "revision": "uncommitted-source-preparation",
         "path": "recomp/sa1_us_1005/sdk_entry_points.tsv"
       },
-      "review": "Reviewed addresses/bounds/hashes/configuration or input sequences only; no game instruction bodies, assets or copied disassembly. Historical discovery credited separately."
+      "review": "Canonical compatibility facts from the verified US V1.005 user input. Local generation consumes user image bytes.",
+      "local_modification": {
+        "category": "F",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "recomp/sa1_us_1005/sdk_entry_points.tsv"
+        }
+      }
     },
     "recomp/sa1_us_1005/trace_call_targets.txt": {
       "sha256": "28d11d6fea7c3ca2e461a7fec6d88020467a86e4f86c027bcd4fa535f725cbef",
@@ -5576,8 +6614,8 @@
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
     "tests/converter/test_generate.py": {
-      "sha256": "cdcdd91f8577d4ef6ef0aab64d92b95690e5311c7947c100fba96e8e4e9f79d7",
-      "bytes": 1951,
+      "sha256": "26ce70c715bdb08d911e54faaa1d52ed3a84eb08d58e8673ddb36bbbe388aade",
+      "bytes": 2196,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -5585,7 +6623,16 @@
         "revision": "uncommitted-source-preparation",
         "path": "tests/converter/test_generate.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own synthetic profile generation expectations.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "tests/converter/test_generate.py"
+        }
+      }
     },
     "tests/converter/test_gui.py": {
       "sha256": "aad03c3bd7b4defc2790b4c1e208c8627afeafc17bb7de6f8d91072b0e8f51b2",
@@ -5728,8 +6775,8 @@
       }
     },
     "tests/converter/test_profiles.py": {
-      "sha256": "6e2d2f8a94ac108c7a0c01206c8b4ecab40f71a9beb354eea7ffa63ea71a451e",
-      "bytes": 1941,
+      "sha256": "1f2e6eaed046ded09cde1c7d2896eb84a0cc461d710647279f28be0a7050b706",
+      "bytes": 3178,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -5737,7 +6784,16 @@
         "revision": "uncommitted-source-preparation",
         "path": "tests/converter/test_profiles.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own synthetic tests for rejected malformed SDK and game profile records.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "tests/converter/test_profiles.py"
+        }
+      }
     },
     "tests/converter/test_public_capabilities_c113.py": {
       "category": "O",
@@ -5797,6 +6853,27 @@
       },
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
+    "tests/converter/test_updater.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "local-source-review-2026-11-11",
+        "path": "tests/converter/test_updater.py"
+      },
+      "bytes": 7449,
+      "sha256": "0db4e331cbd0afbc10746a0a5d9cbfe7c22c5c19f00ed3c362fee1c44807bc1a",
+      "review": "Own synthetic release protocol and archive integrity tests.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "tests/converter/test_updater.py"
+        }
+      }
+    },
     "tests/converter/test_xmb.py": {
       "category": "O",
       "license": "MIT",
@@ -5844,8 +6921,8 @@
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
     },
     "tests/game/startup_test.c": {
-      "sha256": "c8949711ed6cdc2d77a8e002b3e5fbd2a2bc5184586d81487e1cb67504048474",
-      "bytes": 4849,
+      "sha256": "9867f8f3e9ea6adb33e5f5c7c88500f263b92ef80ff944c1023d9c0a2ffe2139",
+      "bytes": 5731,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -5853,7 +6930,16 @@
         "revision": "uncommitted-source-preparation",
         "path": "tests/game/startup_test.c"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own synthetic checks for direct and ordinary stage return state.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "tests/game/startup_test.c"
+        }
+      }
     },
     "tests/game/test_launch_cli.py": {
       "sha256": "bce761b2b937b0a1c3ac005730bb20b3207051a215abc0572ee25f0c40cbc637",
@@ -6568,8 +7654,8 @@
       "bytes": 1842
     },
     "tests/runtime/test_content_mount.c": {
-      "sha256": "beb1162483c493be681b1696685f0109cd443053fff5ebe8ea821d3d8c40354e",
-      "bytes": 10991,
+      "sha256": "97df8d1af41bdc998764a4f7f9ded10a49442da01fb08d61a40f1004cae584cd",
+      "bytes": 11780,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -6577,7 +7663,16 @@
         "revision": "uncommitted-source-preparation",
         "path": "tests/runtime/test_content_mount.c"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own synthetic typed VMU, legacy and opaque-content fixtures.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "tests/runtime/test_content_mount.c"
+        }
+      }
     },
     "tests/runtime/test_debug_chord.c": {
       "sha256": "47d0131deb65da574168026788685848e162fdd868293212992f013de6986116",
@@ -6604,8 +7699,8 @@
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
     "tests/runtime/test_debug_menu.c": {
-      "sha256": "9a267a8904fed5d2ea6983f06275deb8ef3e525990583cc3435f960fc2739fe0",
-      "bytes": 8259,
+      "sha256": "ddbd4ccde296ae378d9d8341113a18ae30ce29c087c08082facad3b06f062a4c",
+      "bytes": 10103,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -6613,7 +7708,16 @@
         "revision": "uncommitted-source-preparation",
         "path": "tests/runtime/test_debug_menu.c"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own synthetic checks for menu navigation and DLC activation.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "local-source-review-2026-11-11",
+          "path": "tests/runtime/test_debug_menu.c"
+        }
+      }
     },
     "tests/runtime/test_display_aspect.c": {
       "sha256": "fa4c7e4dc1e9362a93e196f98f00531eda6c0f94b3cda0c9e5b7ec877beaf9c2",

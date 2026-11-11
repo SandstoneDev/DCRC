@@ -20,6 +20,7 @@ static int *field(DebugMenuValues *v, int setting)
     case DM_RINGS_LOCK: return &v->rings_lock;
     case DM_LIVES_LOCK: return &v->lives_lock;
     case DM_DLC_CHOICE: return &v->dlc;
+    case DM_DITHER: return &v->dither;
     default: return NULL;
     }
 }
@@ -39,6 +40,7 @@ static void range(const DebugMenu *m, int setting, int *lo, int *hi)
     case DM_STAGE: *hi = m->stage_count ? m->stage_count - 1 : 0; break;
     case DM_CHARACTER: *hi = 5; break;
     case DM_DLC_CHOICE: *lo = -1; *hi = m->dlc_count - 1; break;
+    case DM_DITHER: *hi = 2; break;
     default: break;
     }
 }
@@ -56,7 +58,7 @@ static void normalize(const DebugMenu *m, DebugMenuValues *v)
 void debug_menu_init(DebugMenu *m, const DebugMenuValues *current,
                      const DebugMenuValues *defaults, int stage_count, int dlc_count)
 {
-    static const DebugMenuValues base = {1,1,0,8,1,-1,0,1,0,0,0,-1};
+    static const DebugMenuValues base = {1,1,0,8,1,-1,0,1,0,0,0,-1,0};
     memset(m, 0, sizeof *m);
     m->stage_count = stage_count > 0 ? stage_count : 0;
     m->dlc_count = dlc_count > 0 ? dlc_count : 0;
@@ -64,18 +66,19 @@ void debug_menu_init(DebugMenu *m, const DebugMenuValues *current,
     m->defaults = defaults ? *defaults : base;
     normalize(m, &m->values);
     normalize(m, &m->defaults);
+    m->dlc_candidate = m->values.dlc;
     m->opened = m->saved = m->values;
 }
-static const int rows[DM_PAGE_COUNT][4] = {
-    {DM_ASPECT,DM_FPS,DM_FRAME_SKIP,DM_MIPS},
-    {DM_SOUND,DM_VOICE,-1,-1},
-    {DM_STAGE,DM_ACT,DM_CHARACTER,DM_ROW_WARP},
-    {DM_RINGS_LOCK,DM_LIVES_LOCK,DM_ROW_ADD_RINGS,DM_ROW_ADD_LIVES},
-    {DM_DLC_CHOICE,-1,-1,-1}
+static const int rows[DM_PAGE_COUNT][5] = {
+    {DM_ASPECT,DM_FPS,DM_FRAME_SKIP,DM_MIPS,DM_DITHER},
+    {DM_SOUND,DM_VOICE,-1,-1,-1},
+    {DM_STAGE,DM_ACT,DM_CHARACTER,DM_ROW_WARP,-1},
+    {DM_RINGS_LOCK,DM_LIVES_LOCK,DM_ROW_ADD_RINGS,DM_ROW_ADD_LIVES,-1},
+    {DM_DLC_CHOICE,-1,-1,-1,-1}
 };
 int debug_menu_row_count(int page)
 {
-    static const int counts[DM_PAGE_COUNT] = {4,2,4,4,1};
+    static const int counts[DM_PAGE_COUNT] = {5,2,4,4,1};
     return page >= 0 && page < DM_PAGE_COUNT ? counts[page] : 0;
 }
 int debug_menu_row_id(int page, int index)
@@ -91,7 +94,7 @@ const char *debug_menu_row_label(int row)
 {
     static const char *const labels[] = {
         "Aspect ratio","FPS display","Frame skip","Mip levels","Sound","Voice language",
-        "Stage","Act","Character","Keep rings","Keep lives","DLC event",
+        "Stage","Act","Character","Keep rings","Keep lives","DLC event","Dithering",
         "Warp / restart stage","Add rings","Add lives"
     };
     return row >= 0 && row <= DM_ROW_ADD_LIVES ? labels[row] : "";
@@ -137,6 +140,15 @@ static DebugMenuEvent changed(DebugMenu *m, int setting, int value)
     if (p && *p != value) { *p = value; e.action = DM_CHANGED; e.changed = setting; }
     return e;
 }
+static DebugMenuEvent browse_dlc(DebugMenu *m, int candidate)
+{
+    DebugMenuEvent e = {DM_NONE,DM_NO_SETTING};
+    if (candidate != m->dlc_candidate) {
+        m->dlc_candidate = candidate;
+        e.action = DM_DLC_BROWSED;
+    }
+    return e;
+}
 DebugMenuEvent debug_menu_step(DebugMenu *m, uint32_t held, uint32_t elapsed_ms)
 {
     DebugMenuEvent e = {DM_NONE,DM_NO_SETTING};
@@ -150,7 +162,12 @@ DebugMenuEvent debug_menu_step(DebugMenu *m, uint32_t held, uint32_t elapsed_ms)
     if (edge & DM_TOGGLE) {
         m->open = !m->open; m->help = 0;
         m->blocked = held; m->repeat_key = m->repeat_ms = 0; m->repeating = 0;
-        if (m->open) { m->opened = m->values; m->page = DM_GRAPHICS; m->cursor = 0; }
+        if (m->open) {
+            m->opened = m->values;
+            m->dlc_candidate = m->values.dlc;
+            m->page = DM_GRAPHICS;
+            m->cursor = 0;
+        }
         e.action = m->open ? DM_OPEN : DM_CLOSE;
         return e;
     }
@@ -166,14 +183,21 @@ DebugMenuEvent debug_menu_step(DebugMenu *m, uint32_t held, uint32_t elapsed_ms)
         e.action = DM_CLOSE; return e;
     }
     if (edge & DM_SAVE) { e.action = DM_SAVE_REQUEST; return e; }
-    if (edge & DM_REVERT) { m->values = m->opened; e.action = DM_REVERTED; return e; }
+    if (edge & DM_REVERT) {
+        m->values = m->opened;
+        m->dlc_candidate = m->values.dlc;
+        e.action = DM_REVERTED;
+        return e;
+    }
     if (edge & DM_HELP) { m->help = 1; e.action = DM_HELP_CHANGED; return e; }
     /* Guard cursor/page as these fields are public for a renderer. */
     if (m->page < 0 || m->page >= DM_PAGE_COUNT) m->page = DM_GRAPHICS;
     if (m->cursor < 0 || m->cursor >= debug_menu_row_count(m->page)) m->cursor = 0;
     row = debug_menu_row_id(m->page,m->cursor);
-    if ((edge & DM_DEFAULTS) && row < DM_SETTING_COUNT)
+    if ((edge & DM_DEFAULTS) && row < DM_SETTING_COUNT) {
+        if (row == DM_DLC_CHOICE) return browse_dlc(m,m->defaults.dlc);
         return changed(m,row,debug_menu_setting_value(&m->defaults,row));
+    }
     key = repeat(m,active,elapsed_ms);
     if (key == DM_TAB_PREV || key == DM_TAB_NEXT) {
         m->page = (m->page + (key == DM_TAB_NEXT ? 1 : DM_PAGE_COUNT-1)) % DM_PAGE_COUNT;
@@ -182,6 +206,16 @@ DebugMenuEvent debug_menu_step(DebugMenu *m, uint32_t held, uint32_t elapsed_ms)
     if (key == DM_UP || key == DM_DOWN) {
         int n = debug_menu_row_count(m->page);
         m->cursor = (m->cursor + (key == DM_DOWN ? 1 : n-1)) % n; return e;
+    }
+    if (row == DM_DLC_CHOICE) {
+        if (edge & DM_ACCEPT) {
+            if (m->dlc_count) e.action = DM_DLC_ACTIVATE;
+            return e;
+        }
+        value = m->dlc_candidate;
+        if (key == DM_LEFT && value > -1) return browse_dlc(m,value - 1);
+        if (key == DM_RIGHT && value < m->dlc_count - 1) return browse_dlc(m,value + 1);
+        return e;
     }
     if (row >= DM_SETTING_COUNT) {
         if (edge & DM_ACCEPT) {

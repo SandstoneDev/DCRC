@@ -24,6 +24,30 @@ static void fresh(void) {
     startup_armed=0; mode=1; WR32(0x8c760970u,0,mode); writes=0;
 }
 static void option(const char *k,const char *v,int cli) { assert(hle_startup_setting(k,v,cli)==1); }
+static void test_missing_return(void) {
+    fresh();
+    hle_startup_prepare(0);
+    WR32(0x8c760970u,0,4);
+    WR16(0x8c7493bau,0,0);
+    WR16(0x8c7493bcu,0,0);
+    assert(!hle_startup_missing_return(1401)); /* ordinary boot */
+
+    fresh();
+    option("start_stage","speed_highway",0);
+    hle_startup_prepare(0);
+    hle_startup_frame(12);
+    assert(!hle_startup_missing_return(13)); /* action stage still running */
+    WR16(0x8c7493bau,0,0);
+    WR16(0x8c7493bcu,0,0);
+    WR32(0x8c760970u,0,5);
+    assert(!hle_startup_missing_return(912)); /* another game mode */
+    WR32(0x8c760970u,0,4);
+    WR16(0x8c7493b6u,0,4);
+    WR16(0x8c7493c4u,0,3);
+    /* Previous and return metadata cannot make the current stage supported. */
+    assert(hle_startup_missing_return(913));
+    assert(!hle_startup_missing_return(1402)); /* one recovery per boot */
+}
 int main(void) {
     uint16_t level=99,act=99,ch=99;int enabled=-1;
     fresh();option("start_stage","ec",0);option("start_act","2",0);option("start_character","tails",0);
@@ -63,5 +87,6 @@ int main(void) {
     fresh(); option("start_stage","ec",0); hle_strict=1; hle_startup_prepare(0); hle_startup_frame(12); assert(writes==0); hle_strict=0;
     fresh(); option("start_stage","ec",0); hle_startup_prepare(0); mode=4; WR32(0x8c760970u,0,mode); hle_startup_frame(12); mode=1; WR32(0x8c760970u,0,mode); hle_startup_frame(13); assert(writes==0);
     assert(hle_startup_setting("unrelated","on",0)==0);
+    test_missing_return();
     puts("startup warp tests PASS");
 }

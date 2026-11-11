@@ -4,6 +4,8 @@ This profile contains only executable hashes, function entry/end addresses and d
 
 Address metadata provenance: validated separate Dream-Recomp discovery; source revision 51a148c7bf9191fa8593e707c4996cf887076b33. Discovery software is not included or linked. All 59 original metadata hashes are recorded in profile.json; the catalog projection preserves only entry/end/origin. Independently matched to the existing verified local generation inputs.
 
+The expanded profile records five Chao modules, the alert window and thirteen upgrade scenes. The added function boundaries come from local reachability and pointer analysis of the verified US V1.005 images. The main catalog adds fourteen Chao dependencies and one upgrade dependency. The SDK fallback catalog records forty-five additional entry/end pairs in the same verified boot image, including the simple action entry. The emitter reads the user's boot and PRS bytes to generate those bodies locally.
+
 World texture policy: curated identifiers/names/dimensions for three Emerald Coast archives. 58 candidate entries; quality reductions affect every consumer of selected assets. This is not an actor-exclusivity or visual-equivalence guarantee. Original quality is available.
 
 Runtime and emitter code remains under its existing MIT notices. Compatibility names identify the user-provided game, not the converter product or an endorsement. No game or console BIOS is supplied.

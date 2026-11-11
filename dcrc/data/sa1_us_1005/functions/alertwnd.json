@@ -1,0 +1,129 @@
+{
+  "functions": [
+    {
+      "entry": "0x0c900020",
+      "end": "0x0c900096",
+      "origin": "seed"
+    },
+    {
+      "entry": "0x0c900096",
+      "end": "0x0c9000a6",
+      "origin": "seed"
+    },
+    {
+      "entry": "0x0c9000a6",
+      "end": "0x0c900122",
+      "origin": "seed"
+    },
+    {
+      "entry": "0x0c9001c0",
+      "end": "0x0c9001d0",
+      "origin": "call"
+    },
+    {
+      "entry": "0x0c900520",
+      "end": "0x0c90063e",
+      "origin": "call"
+    },
+    {
+      "entry": "0x0c90063e",
+      "end": "0x0c900732",
+      "origin": "pointer"
+    },
+    {
+      "entry": "0x0c900732",
+      "end": "0x0c90074c",
+      "origin": "pointer"
+    },
+    {
+      "entry": "0x0c90074c",
+      "end": "0x0c90092e",
+      "origin": "call"
+    },
+    {
+      "entry": "0x0c90092e",
+      "end": "0x0c900936",
+      "origin": "call"
+    },
+    {
+      "entry": "0x0c900936",
+      "end": "0x0c90094e",
+      "origin": "call"
+    },
+    {
+      "entry": "0x0c9009a0",
+      "end": "0x0c900aa6",
+      "origin": "call"
+    },
+    {
+      "entry": "0x0c900aae",
+      "end": "0x0c900ae6",
+      "origin": "call"
+    },
+    {
+      "entry": "0x0c900b80",
+      "end": "0x0c900ba6",
+      "origin": "call"
+    },
+    {
+      "entry": "0x0c900c34",
+      "end": "0x0c900d48",
+      "origin": "call"
+    },
+    {
+      "entry": "0x0c900dc0",
+      "end": "0x0c900e60",
+      "origin": "pointer"
+    },
+    {
+      "entry": "0x0c900e60",
+      "end": "0x0c900e6a",
+      "origin": "call"
+    },
+    {
+      "entry": "0x0c901006",
+      "end": "0x0c90105c",
+      "origin": "call"
+    },
+    {
+      "entry": "0x0c9012ca",
+      "end": "0x0c9012f6",
+      "origin": "call"
+    },
+    {
+      "entry": "0x0c9012f6",
+      "end": "0x0c901384",
+      "origin": "pointer"
+    },
+    {
+      "entry": "0x0c9013c0",
+      "end": "0x0c9013fc",
+      "origin": "pointer"
+    },
+    {
+      "entry": "0x0c9013fc",
+      "end": "0x0c90145e",
+      "origin": "call"
+    },
+    {
+      "entry": "0x0c90145e",
+      "end": "0x0c9014a0",
+      "origin": "call"
+    },
+    {
+      "entry": "0x0c9014a0",
+      "end": "0x0c901514",
+      "origin": "seed"
+    },
+    {
+      "entry": "0x0c9015c0",
+      "end": "0x0c9015d8",
+      "origin": "seed"
+    },
+    {
+      "entry": "0x0c9015d8",
+      "end": "0x0c90160c",
+      "origin": "seed"
+    }
+  ]
+}

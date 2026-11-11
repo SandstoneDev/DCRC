@@ -16,12 +16,13 @@ enum DebugMenuPage { DM_GRAPHICS, DM_AUDIO, DM_GAMEPLAY, DM_CHEATS, DM_DLC, DM_P
 enum DebugMenuSetting {
     DM_ASPECT, DM_FPS, DM_FRAME_SKIP, DM_MIPS, DM_SOUND, DM_VOICE,
     DM_STAGE, DM_ACT, DM_CHARACTER, DM_RINGS_LOCK, DM_LIVES_LOCK,
-    DM_DLC_CHOICE, DM_SETTING_COUNT, DM_NO_SETTING=-1
+    DM_DLC_CHOICE, DM_DITHER, DM_SETTING_COUNT, DM_NO_SETTING=-1
 };
 enum DebugMenuRow { DM_ROW_WARP=DM_SETTING_COUNT, DM_ROW_ADD_RINGS, DM_ROW_ADD_LIVES };
 enum DebugMenuAction {
     DM_NONE, DM_OPEN, DM_CLOSE, DM_CHANGED, DM_WARP, DM_ADD_RINGS,
-    DM_ADD_LIVES, DM_SAVE_REQUEST, DM_REVERTED, DM_HELP_CHANGED
+    DM_ADD_LIVES, DM_SAVE_REQUEST, DM_REVERTED, DM_HELP_CHANGED,
+    DM_DLC_BROWSED, DM_DLC_ACTIVATE
 };
 typedef struct {
     int aspect;     /* 0 = 4:3, 1 = wide */
@@ -34,13 +35,15 @@ typedef struct {
     int act;        /* human 1..8; adapter validates stage/character combination */
     int character;  /* adapter's catalog index 0..5 */
     int rings_lock, lives_lock; /* default OFF; not permission to write guest RAM */
-    int dlc;        /* -1 = off, otherwise adapter's catalog index */
+    int dlc;        /* active event: -1 = off, otherwise adapter's catalog index */
+    int dither;     /* 0 = on, 1 = opaque only, 2 = off */
 } DebugMenuValues;
 typedef struct { enum DebugMenuAction action; int changed; } DebugMenuEvent;
 typedef struct {
     int open, page, cursor, help;
     DebugMenuValues values, opened, saved, defaults;
     int stage_count, dlc_count;
+    int dlc_candidate;
     uint32_t previous, blocked, repeat_key, repeat_ms;
     int repeating;
 } DebugMenu;
@@ -58,6 +61,8 @@ void debug_menu_init(DebugMenu *, const DebugMenuValues *current,
  * cannot represent every button in a physical opening chord or its partials.
  * CLOSE keeps session values; REVERT restores the latest opening snapshot.
  * SAVE_REQUEST performs no IO and does not mark anything saved.
+ * DLC navigation changes only dlc_candidate. On DM_DLC_ACTIVATE the adapter
+ * applies that candidate and records the actual active event in values.dlc.
  */
 DebugMenuEvent debug_menu_step(DebugMenu *, uint32_t held, uint32_t elapsed_ms);
 void debug_menu_mark_saved(DebugMenu *); /* call only after successful persistence */

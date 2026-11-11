@@ -9,6 +9,11 @@
 The archive includes Python, Qt, the native PSP toolchain, FFmpeg, FFprobe
 and the ATRAC encoder. It is ready to run from the extracted folder.
 
+In the portable Windows app, **Check for updates** reads the official DCRC
+GitHub release. **Download update** verifies the ZIP and installs it in a
+new sibling folder. Open the updated converter from the same window.
+Existing conversion outputs and the previous converter folder are preserved.
+
 ## Run from source
 
 For a source checkout, open a terminal in the repository folder.

@@ -1,0 +1,3 @@
+# The compatibility manifest hashes the bytes of the JSON catalogs.
+/dcrc/data/sa1_us_1005/functions/*.json text eol=lf
+/dcrc/data/sa1_us_1005/sdk/*.json text eol=lf

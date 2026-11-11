@@ -17,6 +17,8 @@ uint32_t kamui_buffer_ptr(int list);
 void kamui_buffer_set(int list, uint32_t ptr);
 /* Appends a 32-byte block of words to a list; returns 0 when full. */
 int kamui_append(int list, const uint32_t w[8]);
+int kamui_can_append(int list, uint32_t bytes); /* complete packet span, no mutation */
+void kamui_commit_strip_head(uint32_t address); /* compile checked guest fields */
 /* The four compiled header words of the current context (0x8C890104). */
 #define KM_CTX 0x8C890104u
 #define KM_CTX_PCW (KM_CTX + 0)
@@ -90,6 +92,23 @@ int kamui_select_texture(uint32_t n);
 
 /* texture.c */
 void texture_init(void);
+/* Explicit UI service ownership, separate from the game's texture memory list.
+ * A released token stops owner use immediately; queued TA keeps its TCW alive
+ * until texture_raw_collect after list parsing/discard. Backend destruction
+ * still follows the backend's GE lifetime rule. */
+typedef struct { uint32_t token, tcw, tsp; } texture_raw_ref;
+int texture_raw_acquire(uint32_t address, uint32_t width, uint32_t height,
+                        uint32_t type, const char *label, texture_raw_ref *out);
+int texture_raw_get(uint32_t token, texture_raw_ref *out);
+void texture_raw_release(uint32_t token);
+void texture_raw_collect(void);
+void texture_raw_reset(void); /* cold game reset: caller discarded old TA */
+int texture_raw_ui_handle(uint32_t handle); /* includes retired queued-TA owners */
+void texture_raw_restore_failed(uint32_t handle); /* absent backend resource */
+int texture_raw_restore_valid(uint32_t handle,int width,int height,int fmt,
+                              uint32_t pixel_bytes,uint32_t clut_bytes);
+struct hle_state_io;
+void texture_raw_restore_finish(struct hle_state_io *io); /* successful backend load end */
 /* Resolves a TCW to a backend texture handle (0 when none). */
 uint32_t texture_from_tcw(uint32_t tcw);
 /* The alpha channel of a live texture: TEX_ALPHA_NONE (565/YUV), _OPAQUE

@@ -65,6 +65,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--bin", required=True, help="path to the descrambled 1ST_READ.BIN")
     ap.add_argument("--functions", required=True, help="Dream-Recomp *.functions.json")
+    ap.add_argument("--sdk-functions", help="optional image-hash-bound SDK function facts; generated locally")
     ap.add_argument("--seam", default=os.path.join(REPO, "recomp", "sa1_us_1005", "sdk_entry_points.tsv"))
     ap.add_argument("--wraps", default=os.path.join(REPO, "recomp", "sa1_us_1005", "hle_wraps.tsv"),
                     help="functions hle/ wraps; their bodies are emitted as fn_<addr>_orig")
@@ -91,6 +92,14 @@ def main():
         if BLOCK_A[0] <= phys(e) < BLOCK_A[1]:
             functions.append((e, int(fn["end"], 16), fn.get("origin", "")))
     seam = read_seam(args.seam)
+    code_ranges = None
+    code_hi = BLOCK_A[1]
+    if args.sdk_functions:
+        from sdk_codegen import load_sdk_functions, check_sdk_program
+        selected = load_sdk_functions(args.sdk_functions, image, seam, BLOCK_B)
+        functions.extend(selected)
+        code_ranges = [BLOCK_A] + [(e, end) for e, end, _ in selected]
+        code_hi = max(end & 0x1FFFFFFF for _, end, _ in selected)
     wraps = read_wraps(args.wraps)
     keep = []
     if args.keep and os.path.exists(args.keep):
@@ -99,9 +108,13 @@ def main():
     print("%d functions in block A, %d seam entries, %d wrapped" % (len(functions), len(seam), len(wraps)))
 
     t0 = time.time()
-    prog = Program(image, BLOCK_A[0], BLOCK_A[1], functions, seam, sdk_range=BLOCK_B, wrap=wraps, keep=keep)
+    prog = Program(image, BLOCK_A[0], code_hi, functions, seam, sdk_range=BLOCK_B,
+                   wrap=wraps, keep=keep, code_ranges=code_ranges)
     prog.build()
-    counts = prog.write_all(args.out, chunks=args.chunks)
+    if args.sdk_functions:
+        check_sdk_program(prog, selected)
+    counts = prog.write_all(args.out, chunks=args.chunks,
+                            separate_entries=[e for e, _, _ in selected] if args.sdk_functions else None)
     shutil.copy(os.path.join(HERE, "runtime", "sh4_rt.h"), args.out)
     shutil.copy(os.path.join(HERE, "runtime", "sh4_rt.c"), args.out)
     shutil.copy(os.path.join(HERE, "runtime", "sh4_trig.h"), args.out)

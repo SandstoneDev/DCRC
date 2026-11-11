@@ -13,7 +13,7 @@ as game FPS. Menu-open/close logs identify pauses for hardware measurements.
 - D-pad: choose/change; L/R: page; Cross: action; Circle: close/back.
 - Start: save with byte readback; Select: restore the opening values for this
   session; Triangle: default the focused row; Square: help.
-- Graphics: 4:3/16:9, FPS, frame skip and mip count. Mip count affects newly
+- Graphics: 4:3/16:9, FPS, frame skip, mip count and dithering. Mip count affects newly
   loaded textures. World texture resolution is selected during conversion.
 - Audio: mixer on/off and voice language. The next voice starts in that language.
 - Gameplay: stage/act/character and explicit save/restart. Ordinary resource and
@@ -23,7 +23,8 @@ as game FPS. Menu-open/close logs identify pauses for hardware measurements.
 - Cheats: refill rings/lives to99 or keep them refilled, default off. The first
   supported admission is stable Sonic/Emerald Coast act1, ordinary play substate.
   Unknown/loading/menu states decline; no unproved invulnerability/noclip writes.
-- DLC: one opaque event or off. See below; selection is not instant activation.
+- DLC: Left/Right browse, Cross activates and Start saves the active choice.
+  The candidate and the active event are displayed separately.
 
 Settings are in `data/sa1psp.ini`, including `aspect = 4:3` or `aspect = 16:9`,
 `fps_hud`, `frame_skip`, `mip_levels`, `audio`, `voice`, `start_stage`, `start_act`,
@@ -45,6 +46,12 @@ application only. Cross-application chaining retains its separate `DCRC_`
 namespace restriction. Ordinary menu-enabled PSP runs
 omit that kernel crash-screen module. Strict replays, headless/no-pad tests and
 saved-state resume disable the menu. HOME retains the ordinary cleanup/exit.
+
+A direct warp can start an action stage without a story return location.
+If the guest enters action stage 0, which has no compiled overlay in this profile,
+an INI warp clears only the
+startup stage and restarts into the normal title when the chain is available.
+An explicit command-line warp or failed restart falls back to a clean exit.
 
 ## User-supplied download events
 

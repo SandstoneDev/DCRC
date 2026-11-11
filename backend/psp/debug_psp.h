@@ -2,6 +2,8 @@
 #pragma once
 #include <stdint.h>
 void debug_psp_init(const char *base,const char *data,const volatile int *home,void (*restart)(void));
+/* Clear only the persistent direct-stage option before a normal boot. */
+int debug_psp_clear_startup_stage(void);
 void debug_psp_poll(void);
 void debug_psp_boundary(void);
 int debug_psp_capture(void);

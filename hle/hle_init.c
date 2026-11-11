@@ -4,6 +4,7 @@
  * Part of sa1-psp (MIT). */
 #include "hle.h"
 #include "ninja/ninja.h"
+#include "ninja/print.h"
 #include <stdlib.h>
 #include "state.h"
 #include "game/dlc_event.h"
@@ -58,6 +59,9 @@ static void fsca_load(void) {
 }
 
 void hle_init(void) {
+    /* Cold boot/restart has discarded the previous TA before HLE setup. */
+    ninja_print_reset();
+    texture_raw_reset();
     fsca_load();
     hle_bios_init();
     hle_shinobi_init();
@@ -86,6 +90,7 @@ void hle_state_all(hle_state_io *io) {
     hle_overlay_state(io);
     kamui_state(io);
     texture_state(io);
+    ninja_print_state(io);
     snd_host_state(io);
     snd_sd_state(io);
     snd_adxt_state(io);

@@ -29,7 +29,11 @@ def generate(data,output,source_root,jobs=1):
         (logs/(label+'.log')).write_text(result.stdout+result.stderr,encoding='utf-8')
         if result.returncode:raise ConverterError('GENERATION_FAILED',f'{label} failed with exit{result.returncode}',str(logs/(label+'.log')))
     main=output/'emitter'
-    run([sys.executable,emitter/'emit_sa1.py','--bin',data/profile['boot']['path'],'--functions',PROFILE_DIR/profile['catalogs']['main']['file'],'--out',main],'main')
+    run([sys.executable,emitter/'emit_sa1.py',
+         '--bin',data/profile['boot']['path'],
+         '--functions',PROFILE_DIR/profile['catalogs']['main']['file'],
+         '--sdk-functions',PROFILE_DIR/profile['sdk_fallback']['file'],
+         '--out',main],'main')
     def overlay(ov):
         name=ov['name'];target=output/'overlays/emitter'/name;binary=bins/(name+'.bin')
         # Input was validated above; the emitter independently enforces the

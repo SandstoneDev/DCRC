@@ -147,7 +147,6 @@ SA1_WEAK void sdk_8c63a268(sh4_ctx *c) { sa1_seam_stub(c, 0x8c63a268u, ""); c->r
 SA1_WEAK void sdk_8c610d3e(sh4_ctx *c) { sa1_seam_stub(c, 0x8c610d3eu, ""); c->r[0] = 0; }
 SA1_WEAK void sdk_8c610d30(sh4_ctx *c) { sa1_seam_stub(c, 0x8c610d30u, ""); c->r[0] = 0; }
 SA1_WEAK void sdk_8c610cf8(sh4_ctx *c) { sa1_seam_stub(c, 0x8c610cf8u, ""); c->r[0] = 0; }
-SA1_WEAK void sdk_8c60e49a(sh4_ctx *c) { sa1_seam_stub(c, 0x8c60e49au, ""); c->r[0] = 0; }
 SA1_WEAK void sdk_8c603b84(sh4_ctx *c) { sa1_seam_stub(c, 0x8c603b84u, ""); c->r[0] = 0; }
 SA1_WEAK void sdk_8c5ff2cc(sh4_ctx *c) { sa1_seam_stub(c, 0x8c5ff2ccu, ""); c->r[0] = 0; }
 SA1_WEAK void sdk_8c63a994(sh4_ctx *c) { sa1_seam_stub(c, 0x8c63a994u, ""); c->r[0] = 0; }
@@ -310,6 +309,16 @@ SA1_WEAK void sdk_8c5ff2a4(sh4_ctx *c) { sa1_seam_stub(c, 0x8c5ff2a4u, ""); c->r
 SA1_WEAK void sdk_8c60e14c(sh4_ctx *c) { sa1_seam_stub(c, 0x8c60e14cu, ""); c->r[0] = 0; }
 SA1_WEAK void sdk_8c63a9dc(sh4_ctx *c) { sa1_seam_stub(c, 0x8c63a9dcu, ""); c->r[0] = 0; }
 
+SA1_WEAK void sdk_8c602f8a(sh4_ctx *c) { sa1_seam_stub(c, 0x8c602f8au, "buGetDiskFree"); c->r[0] = (uint32_t)-1; }
+SA1_WEAK void sdk_8c603078(sh4_ctx *c) { sa1_seam_stub(c, 0x8c603078u, "buFindExecFile"); c->r[0] = (uint32_t)-1; }
+SA1_WEAK void sdk_8c603292(sh4_ctx *c) { sa1_seam_stub(c, 0x8c603292u, "buDeleteFile"); c->r[0] = (uint32_t)-1; }
+SA1_WEAK void sdk_8c6033fe(sh4_ctx *c) { sa1_seam_stub(c, 0x8c6033feu, "buGetLastError"); c->r[0] = (uint32_t)-1; }
+SA1_WEAK void sdk_8c6034a2(sh4_ctx *c) { sa1_seam_stub(c, 0x8c6034a2u, "buDefragDisk"); c->r[0] = (uint32_t)-1; }
+SA1_WEAK void sdk_8c6035be(sh4_ctx *c) { sa1_seam_stub(c, 0x8c6035beu, "buSaveExecFile"); c->r[0] = (uint32_t)-1; }
+SA1_WEAK void sdk_8c60361c(sh4_ctx *c) { sa1_seam_stub(c, 0x8c60361cu, "buLoadFileEx"); c->r[0] = (uint32_t)-1; }
+SA1_WEAK void sdk_8c603672(sh4_ctx *c) { sa1_seam_stub(c, 0x8c603672u, "buRewriteExecFile"); c->r[0] = (uint32_t)-1; }
+SA1_WEAK void sdk_8c640ce8(sh4_ctx *c) { sa1_seam_stub(c, 0x8c640ce8u, "njPrintB"); c->r[0] = (uint32_t)-1; }
+
 const sa1_fn_entry sa1_seam_table[] = {
     {0x0c5fb8a4u, sdk_8c5fb8a4},
     {0x0c5fb8a8u, sdk_8c5fb8a8},
@@ -386,13 +395,21 @@ const sa1_fn_entry sa1_seam_table[] = {
     {0x0c602de0u, sdk_8c602de0},
     {0x0c602df2u, sdk_8c602df2},
     {0x0c602f5cu, sdk_8c602f5c},
+    {0x0c602f8au, sdk_8c602f8a},
     {0x0c602fb8u, sdk_8c602fb8},
     {0x0c602fe6u, sdk_8c602fe6},
+    {0x0c603078u, sdk_8c603078},
+    {0x0c603292u, sdk_8c603292},
     {0x0c603384u, sdk_8c603384},
     {0x0c6033e4u, sdk_8c6033e4},
+    {0x0c6033feu, sdk_8c6033fe},
     {0x0c603474u, sdk_8c603474},
+    {0x0c6034a2u, sdk_8c6034a2},
     {0x0c603508u, sdk_8c603508},
     {0x0c603560u, sdk_8c603560},
+    {0x0c6035beu, sdk_8c6035be},
+    {0x0c60361cu, sdk_8c60361c},
+    {0x0c603672u, sdk_8c603672},
     {0x0c6037a0u, sdk_8c6037a0},
     {0x0c603998u, sdk_8c603998},
     {0x0c603b84u, sdk_8c603b84},
@@ -450,7 +467,6 @@ const sa1_fn_entry sa1_seam_table[] = {
     {0x0c60d1f8u, sdk_8c60d1f8},
     {0x0c60e080u, sdk_8c60e080},
     {0x0c60e14cu, sdk_8c60e14c},
-    {0x0c60e49au, sdk_8c60e49a},
     {0x0c60edb0u, sdk_8c60edb0},
     {0x0c60ede0u, sdk_8c60ede0},
     {0x0c60ede6u, sdk_8c60ede6},
@@ -553,6 +569,7 @@ const sa1_fn_entry sa1_seam_table[] = {
     {0x0c640766u, sdk_8c640766},
     {0x0c640922u, sdk_8c640922},
     {0x0c640a80u, sdk_8c640a80},
+    {0x0c640ce8u, sdk_8c640ce8},
     {0x0c640de2u, sdk_8c640de2},
     {0x0c640f38u, sdk_8c640f38},
     {0x0c641110u, sdk_8c641110},
@@ -612,4 +629,4 @@ const sa1_fn_entry sa1_seam_table[] = {
     {0x0c65c2a8u, sdk_8c65c2a8},
     {0x0c65e3c6u, sdk_8c65e3c6},
 };
-const uint32_t sa1_seam_count = 300;
+const uint32_t sa1_seam_count = sizeof sa1_seam_table / sizeof sa1_seam_table[0];

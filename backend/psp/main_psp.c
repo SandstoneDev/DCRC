@@ -89,6 +89,7 @@ int native_land_set_distance(const char *value);
 #include "../desktop/input_tape.h"
 #include "../desktop/savestate.h"
 #include "state.h"
+#include "vmu_default_path.h"
 #include "platform_psp.h"
 #include "chain_psp.h"
 #include "debug_psp.h"
@@ -321,6 +322,12 @@ static void report_and_exit(int code) {
      * final snapshot/log close. They do not extend the measurement interval. */
     draw_shutdown();
     audio_close();
+    if (audio_psp_shutdown_failed()) {
+        sa1_log("audio: worker/device retirement did not finish; retaining resources until process exit");
+        plat_log_flush();
+        sceKernelExitGame();
+        exit(1);
+    }
     kamui_report();
     draw_gu_report();
     draw_gu_display_report();
@@ -459,6 +466,21 @@ static void menu_restart(void) {
     if(home_exit_requested || prof || !no_crash_screen || sa1_chain_set_restart(base_dir)<0)return;
     exit_reason="menu_restart";report_and_exit(0);
 }
+static void exit_direct_warp(uint32_t frame) {
+    exit_reason = "startup_return_exit";
+    sa1_log("startup: frame=%u direct warp has no adventure return route", frame);
+    if (hle_startup_cli_active()) {
+        sa1_log("startup: remove startup overrides in args.txt to return to the title");
+    } else if (home_exit_requested || prof || !no_crash_screen || sa1_chain_set_restart(base_dir)<0) {
+        sa1_log("startup: title restart unavailable; closing the game");
+    } else if (debug_psp_clear_startup_stage()<0) {
+        sa1_log("startup: could not clear the configured stage; closing the game");
+    } else {
+        exit_reason = "menu_restart";
+        sa1_log("startup: cleared the configured stage; restarting to the title");
+    }
+    report_and_exit(0);
+}
 /* Own host adapter. Filenames/results below are version-profile facts, not
  * translated guest bodies. Firmware leaf has no guest RAM or entry mapping. */
 static uint32_t runtime_heartbeat(void){return debug_psp_heartbeat()+movie_psp_heartbeat();}
@@ -483,6 +505,7 @@ static void on_frame(uint32_t frame) {
     if (home_exit_requested) { exit_reason = "home"; report_and_exit(0); return; }
     if (!headless && !no_pace) pace(frame);
     milestones(frame);
+    if (hle_startup_missing_return(frame)) { exit_direct_warp(frame); return; }
     if (prof_path) prof_frame(frame);
     debug_psp_poll();
     debug_psp_cheats();
@@ -888,10 +911,20 @@ int main(int argc, char **argv) {
      * EBOOT, unless --no-vmu or a strict run (tapes keep "no VMU"). */
     if (vmu_mode > 0 || (vmu_mode == 0 && !hle_strict)) {
         char vd[300];
+        int selection=0,raw=0;
         if (vmu_dir_arg) snprintf(vd, sizeof vd, "%s", vmu_dir_arg);
-        else abs_path(vd, sizeof vd, "vmu");
-        vmu_store_psp_init(vd);
-        sa1_log("VMU A1: %s", vmu_store_psp_dir());
+        else selection=vmu_default_path(vd,sizeof vd,base_dir,&raw);
+        if(selection<0) {
+            /* Existing adapter sentinel exposes storage failure, not an empty
+             * replacement VMU. Never create/fall back after uncertain stat. */
+            vmu_store_psp_init(NULL);
+            sa1_log("VMU A1: default path unavailable selection=%d stat=%08x; no fallback",selection,(unsigned)raw);
+        } else {
+            vmu_store_psp_init(vd);
+            sa1_log("VMU A1: %s", vmu_store_psp_dir());
+            if(selection==2)sa1_log("VMU A1: initialized shared store");
+            if(selection==3)sa1_log("VMU A1: migrated legacy store; originals retained");
+        }
     }
     if (dump_trig_path) { dump_trig(dump_trig_path); plat_log_flush(); sceKernelExitGame(); return 0; }
     sa1_log("step: hle_init");

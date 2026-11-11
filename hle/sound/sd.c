@@ -46,12 +46,12 @@ static int memblk_index(uint32_t h) {
 }
 
 /* Copies n guest bytes at src into sound RAM at dst and tells the core. */
-static void to_sound_ram(uint32_t dst, uint32_t src, uint32_t n) {
+static int to_sound_ram(uint32_t dst, uint32_t src, uint32_t n) {
     snd_shared *sh = snd_host_shared();
-    if (!sh || dst >= SND_RAM_SIZE) return;
+    if (!sh || dst >= SND_RAM_SIZE) return 0;
     if (n > SND_RAM_SIZE - dst) n = SND_RAM_SIZE - dst;
     for (uint32_t i = 0; i < n; i++) sh->sound_ram[dst + i] = (uint8_t)hle_rd8(src + i);
-    snd_host_cmd(SND_CMD_BANK_CHANGED, 0, 0, 0, (int32_t)dst, (int32_t)n);
+    return snd_host_required_cmd(SND_CMD_BANK_CHANGED,0,(int32_t)dst,(int32_t)n);
 }
 
 static void note_bank(uint32_t tag, uint32_t bank, uint32_t aica, uint32_t size) {
@@ -112,6 +112,9 @@ void sdk_8c643970(sh4_ctx *c) {
     if (hle_rd32(a) != 0x544C4D53u) { sa1_log("snd: multi-unit download of 0x%08x: no S-MLT header", a); RET(-1); return; }   /* "S" "MLT" */
     uint32_t n = hle_rd32(a + 8);
     if (n > MAX_UNITS) n = MAX_UNITS;
+    /* All bank bytes and metadata form one transaction; reserve every possible
+     * BANK_CHANGED before copying, with the real-time worker excluded. */
+    if(snd_host_begin_update(n)<0){RET(-1);return;}
     nunits = n;
     uint32_t loaded = 0;
     for (uint32_t u = 0; u < n; u++) {
@@ -120,10 +123,11 @@ void sdk_8c643970(sh4_ctx *c) {
         units[u].aica = hle_rd32(e + 8); units[u].reserve = hle_rd32(e + 12);
         uint32_t off = hle_rd32(e + 16), size = hle_rd32(e + 20);
         if (off == 0xFFFFFFFFu || size == 0xFFFFFFFFu || !size) continue;
-        to_sound_ram(units[u].aica, a + off, size);
+        if(to_sound_ram(units[u].aica,a+off,size)<0){snd_host_end_update();RET(-1);return;}
         note_bank(units[u].tag, units[u].bank, units[u].aica, size);
         loaded++;
     }
+    snd_host_end_update();
     downloads++;
     if (snd_log()) sa1_log("snd: multi-unit download at 0x%08x: %u of %u units", a, loaded, n);
     RET(0);
@@ -139,8 +143,10 @@ void sdk_8c643904(sh4_ctx *c) {
         if (units[u].tag == ARG1 && units[u].bank == ARG2) {
             uint32_t size = memblk[i].size;
             if (size > units[u].reserve) size = units[u].reserve;
-            to_sound_ram(units[u].aica, memblk[i].addr, size);
+            if(snd_host_begin_update(1)<0){RET(-1);return;}
+            if(to_sound_ram(units[u].aica,memblk[i].addr,size)<0){snd_host_end_update();RET(-1);return;}
             note_bank(ARG1, ARG2, units[u].aica, size);
+            snd_host_end_update();
             RET(0);
             return;
         }
@@ -186,7 +192,7 @@ void sdk_8c643b9c(sh4_ctx *c) {
     RET(0);
 }
 
-/* SMSB sequence controls use the existing producer ring; only the existing core owner
+/* SMSB sequence controls use the existing producer ring; only the core worker
  * parses bank bytes or advances musical time. Ports2..7 remain isolated. */
 void sdk_8c643b08(sh4_ctx *c) {
     HLE_ENTER(0x8c643b08u, "sdMidiPlay");

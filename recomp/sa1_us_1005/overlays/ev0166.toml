@@ -1,0 +1,26 @@
+# Own US V1.005 event, callable entry at +0x20.
+# Header word +4 is a data pointer to the PVM descriptor list.
+[game]
+id = "sa1_ovl_ev0166"
+title = "Sonic Adventure overlay EV0166"
+region = "USA"
+
+[binary]
+path = "../../../../private/overlays/sa1_us_1005/EV0166.bin"
+load_address = 0x8CB80000
+link_address = 0x0CB80000
+entry = 0x0CB80020
+
+[functions]
+pointers = false
+sweep = false
+extra = [0x0CB80020]
+exclude = []
+
+[sa1_overlay]
+file = "SONICADV/EV0166.PRS"
+slot = 0x8cb80000
+code_lo = 0x8cb80020
+code_hi = 0x8cb80a52
+size = 49436
+sha256 = "fe15d4ff8e05b8d42913532148ae92461bf5d2dbe0642f16b26fef10beccd100"

@@ -1,0 +1,23 @@
+# Sonic Adventure USA V1.005; address/identity facts only, no game payload.
+# C113 own Python discovery from verified local disc bytes; see profile NOTICE.
+[game]
+id = "sa1_ovl_al_garden01"
+title = "Sonic Adventure overlay AL_GARDEN01"
+region = "USA"
+[binary]
+path = "../../../../private/overlays/sa1_us_1005/AL_GARDEN01.bin"
+load_address = 0x8CB80000
+link_address = 0x0CB80000
+entry = 0x8CB80000
+[functions]
+pointers = true
+sweep = true
+extra = [0x0CB80000]
+exclude = []
+[sa1_overlay]
+file = "SONICADV/AL_GARDEN01.PRS"
+slot = 0x8CB80000
+code_lo = 0x8CB80000
+code_hi = 0x8CB802A0
+size = 67740
+sha256 = "ea9b6e7e2ff38829a74bedf965a13d80428a8ae259102e21cd046442bf56a890"

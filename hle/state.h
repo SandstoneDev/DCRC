@@ -16,6 +16,10 @@ int hle_state_loading(const hle_state_io *io);
  * a load whose next chunk has another name or size nothing is copied and
  * the io carries an error (hle_state_error). */
 void hle_state_blob(hle_state_io *io, const char *name, void *p, uint32_t n);
+/* Optional extension: 1 written/read, 0 absent (no consume/copy), -1 error.
+ * The caller initializes defaults before loading an older state. A malformed
+ * present chunk fails without partially updating p. Streams must be seekable. */
+int hle_state_optional_blob(hle_state_io *io,const char *name,void *p,uint32_t n);
 /* A chunk whose size the loader does not know in advance.  Save: writes n
  * bytes from p.  Load: returns a pointer to the chunk's bytes (valid until
  * the io is freed) and its size in *n; NULL on a name mismatch. */
@@ -58,3 +62,6 @@ void texture_state(hle_state_io *io);           /* hle/ninja/texture.c */
 void snd_host_state(hle_state_io *io);          /* hle/sound/snd_host.c: core, sound RAM, stream feeders */
 void snd_sd_state(hle_state_io *io);            /* hle/sound/sd.c */
 void snd_adxt_state(hle_state_io *io);          /* hle/sound/adxt.c */
+
+/* Refuse a bounded module snapshot without touching its state. First error wins. */
+void hle_state_fail(hle_state_io *io,const char *message);

@@ -1,6 +1,8 @@
 /* snd_host.h - the main-side half of sound: owns the audio core's shared
  * block and sound RAM, feeds the ADX streams from the files, runs the core
- * once per guest frame and hands the samples to the backend (backend/audio.h)
+ * once per guest frame in deterministic mode; normal PSP playback instead
+ * lets the hardware-paced output worker own rendering. The guest clock remains
+ * 735 samples per guest frame. It hands samples to the backend (backend/audio.h)
  * and, when asked, to a WAV file.  The guest-facing entries (sd.c, adxt.c)
  * talk to the core only through here.
  *
@@ -46,6 +48,25 @@ extern int snd_guest_timing;
  * sees the players take their streams' length (snd_guest_timing). */
 extern int snd_audio_enabled;
 void snd_host_set_audio(int enabled); /* owner thread; retry an initially silent device */
-/* Host time spent in snd_core_render, microseconds, and frames rendered
- * (the CPU-cost line of the M3 report). */
+/* Host time spent in snd_core_render, microseconds, and render calls
+ * (735-sample guest calls or1024-sample hardware worker calls). */
 extern uint64_t snd_render_us, snd_render_frames;
+
+/* PSP real-time mode: installed before worker start, removed only after join.
+ * The worker alone renders; the guest thread owns files and the 735 clock.
+ * enter returns0 after bounded acquisition; a failure grants no access. */
+typedef struct snd_async_ops {
+    int (*enter)(uint32_t timeout_us);
+    void (*leave)(void);
+    void (*wake)(void);
+    void (*yield)(void);
+} snd_async_ops;
+int snd_host_async_allowed(void);
+void snd_host_async_set(const snd_async_ops *ops);
+int snd_host_async_active(void);
+int snd_host_async_render(int16_t *out, uint32_t frames);
+/* Reserve mandatory command admission BEFORE any shared mutation. No IO owner
+ * changes. On failure callers must leave all sound bytes/metadata untouched. */
+int snd_host_begin_update(uint32_t command_slots);
+void snd_host_end_update(void);
+int snd_host_required_cmd(uint8_t op,uint8_t a,int32_t x,int32_t y);

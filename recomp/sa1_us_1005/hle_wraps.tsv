@@ -47,3 +47,4 @@ address	hle	what
 8c09e880	hle/ninja/ta_stubs.c	game-side TA/store-queue writer (docs/seam.md section 5); no graphics in M1, native no-op
 8c09eb08	hle/ninja/ta_stubs.c	game-side TA/store-queue writer (docs/seam.md section 5); no graphics in M1, native no-op
 8c09ee44	hle/ninja/ta_stubs.c	game-side TA/store-queue writer (docs/seam.md section 5); no graphics in M1, native no-op
+8c60e49a	hle/ninja/model.c	Scope action material state around the locally generated SDK body

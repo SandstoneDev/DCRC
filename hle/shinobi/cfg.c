@@ -26,8 +26,8 @@ void sdk_8c604250(sh4_ctx *c) { HLE_ENTER(0x8c604250u, "syFlashServer"); RET(1);
 void sdk_8c6042e4(sh4_ctx *c) { HLE_ENTER(0x8c6042e4u, "syFlashClose"); }
 
 /* bu (VMU file system, "bu Ver 1.44").  With hle_vmu_store NULL no VMU is
- * inserted and every answer is the one this file always gave (replay tapes
- * and the oracle depend on it).  With a store (vmu_store.h), drive 0 (port A
+ * inserted; existing ordinary operations retain their legacy no-card answers.
+ * The additional operations below complete real no-card errors.  With a store (vmu_store.h), drive 0 (port A
  * slot 1) holds one standard VMU: 200 user blocks of 512 bytes whose files
  * are the store's files.  The library's two layers (wrappers at
  * 0x8C602B68.., a worker core at 0x8C647xxx over maple) are replaced at the
@@ -58,14 +58,18 @@ void sdk_8c6042e4(sh4_ctx *c) { HLE_ENTER(0x8c6042e4u, "syFlashClose"); }
  * stubs answered). */
 const vmu_store_ops *hle_vmu_store;
 static uint32_t bu_complete_cb, bu_progress_cb;
+static int32_t bu_last_error[8];
+static uint8_t bu_busy[8];
 static int bu_mount_pending, bu_find_cursor;   /* not in save states */
 
 #define BU_BLOCKS 200
 #define BU_ERR_NOROOM (-252)
 #define BU_ERR_NOFILE (-251)
 #define BU_ERR_NAME (-245)
+#define BU_ERR_BROKEN (-191)
 
 static int bu_present(uint32_t drive) { return hle_vmu_store && drive == 0; }
+static int bu_catalog(uint32_t *used, char executable[13]);
 
 /* The guest name at a (1 to 12 chars) into n; -1 if empty or too long. */
 static int bu_name(uint32_t a, char n[13]) {
@@ -75,19 +79,31 @@ static int bu_name(uint32_t a, char n[13]) {
     }
     return -1;
 }
-static uint32_t bu_blocks_of(uint32_t bytes) { return (bytes + 511) / 512; }
-static uint32_t bu_used_blocks(void) {
+static uint32_t bu_blocks_of(uint32_t bytes) { return bytes / 512 + (bytes % 512 != 0); }
+static int32_t bu_used_blocks(void) {
     char n[13]; uint32_t sz, used = 0;
-    for (int i = 0; hle_vmu_store->list(i, n, &sz) == 0; i++) used += bu_blocks_of(sz);
-    return used;
+    if (!hle_vmu_store->list) return BU_ERR_BROKEN;
+    for (int i = 0; i <= BU_BLOCKS; i++) {
+        int r=hle_vmu_store->list(i,n,&sz);
+        if(r==-1)return (int32_t)used;
+        if(r || i==BU_BLOCKS || bu_blocks_of(sz)>BU_BLOCKS-used)return BU_ERR_BROKEN;
+        used+=bu_blocks_of(sz);
+    }
+    return BU_ERR_BROKEN;
 }
 static int32_t bu_file_blocks(const char *name) {
     char n[13]; uint32_t sz;
-    for (int i = 0; hle_vmu_store->list(i, n, &sz) == 0; i++)
+    if (!hle_vmu_store->list) return -2;
+    for (int i = 0; i <= BU_BLOCKS; i++) {
+        memset(n,0,sizeof n);int r=hle_vmu_store->list(i,n,&sz);
+        if(r)return r==-1?-1:-2;
+        if(i==BU_BLOCKS || !memchr(n,0,sizeof n) || bu_blocks_of(sz)>BU_BLOCKS)return -2;
         if (!strcmp(n, name)) return (int32_t)bu_blocks_of(sz);
-    return -1;
+    }
+    return -2;
 }
 static void bu_complete(sh4_ctx *c, uint32_t drive, uint32_t op, int32_t result) {
+    if(drive<8){bu_last_error[drive]=result;bu_busy[drive]=0;}
     sa1_log("bu: drive %u op %u -> %d", (unsigned)drive, (unsigned)op, (int)result);
     if (bu_complete_cb) hle_call_guest(c, bu_complete_cb, drive, op, (uint32_t)result, 0);
 }
@@ -95,6 +111,7 @@ static void bu_complete(sh4_ctx *c, uint32_t drive, uint32_t op, int32_t result)
 void sdk_8c602b68(sh4_ctx *c) {
     HLE_ENTER(0x8c602b68u, "buInit");
     uint32_t cb = ARG3;
+    memset(bu_last_error,0,sizeof bu_last_error);memset(bu_busy,0,sizeof bu_busy);
     bu_mount_pending = bu_present(0) && (ARG1 & 1);
     RET(0);
     if (cb) {
@@ -103,20 +120,23 @@ void sdk_8c602b68(sh4_ctx *c) {
         RET(0);
     }
 }
-void sdk_8c6033e4(sh4_ctx *c) { HLE_ENTER(0x8c6033e4u, "buIsBusy"); RET(0); }
+void sdk_8c6033e4(sh4_ctx *c) { HLE_ENTER(0x8c6033e4u, "buIsBusy"); RET(ARG0<8&&bu_busy[ARG0]?-1:0); }
 void sdk_8c602df2(sh4_ctx *c) { HLE_ENTER(0x8c602df2u, "buIsMounted"); RET(bu_present(ARG0)); }
 void sdk_8c602f5c(sh4_ctx *c) {
     HLE_ENTER(0x8c602f5cu, "buGetDiskInfo");
     uint32_t drive = ARG0, info = ARG1;
     if (!bu_present(drive)) { RET(0xFF01); return; }
-    uint32_t used = bu_used_blocks(), fr = used < BU_BLOCKS ? BU_BLOCKS - used : 0;
+    uint32_t used; char executable[13];
+    int result=bu_catalog(&used,executable);
+    if(result){RET(result);return;}
+    uint32_t fr=BU_BLOCKS-used;
     for (uint32_t i = 0; i < 56; i++) hle_wr8(info + i, 0);
     hle_wr16(info + 32, 256);            /* blocks on the card */
     hle_wr16(info + 34, BU_BLOCKS);      /* user blocks */
     hle_wr16(info + 36, fr);             /* free user blocks */
     hle_wr16(info + 38, fr);
     hle_wr16(info + 40, 128);
-    hle_wr16(info + 42, fr < 128 ? fr : 128);
+    hle_wr16(info + 42, executable[0] ? 0 : fr < 128 ? fr : 128);
     hle_wr16(info + 44, 512);            /* block size */
     hle_wr16(info + 48, 1999);           /* card date 1999-01-01 (a Friday) */
     hle_wr8(info + 50, 1);
@@ -128,7 +148,8 @@ static void bu_find(sh4_ctx *c, int first) {
     uint32_t buf = ARG1;
     char n[13]; uint32_t sz;
     if (first) bu_find_cursor = 0;
-    if (hle_vmu_store->list(bu_find_cursor, n, &sz) != 0) { RET(BU_ERR_NOFILE); return; }
+    int r=hle_vmu_store->list?hle_vmu_store->list(bu_find_cursor,n,&sz):-2;
+    if(r){RET(r==-1?BU_ERR_NOFILE:BU_ERR_BROKEN);return;}
     bu_find_cursor++;
     for (int i = 0; i < 12; i++) hle_wr8(buf + i, (uint8_t)n[i]);
     hle_wr8(buf + 12, 0);
@@ -149,7 +170,8 @@ void sdk_8c603384(sh4_ctx *c) {
     char n[13];
     if (!bu_present(ARG0)) { RET(0xFF01); return; }
     if (bu_name(ARG1, n)) { RET(BU_ERR_NAME); return; }
-    RET(bu_file_blocks(n) >= 0 ? 0 : BU_ERR_NOFILE);
+    int32_t b=bu_file_blocks(n);
+    RET(b>=0?0:b==-1?BU_ERR_NOFILE:BU_ERR_BROKEN);
 }
 void sdk_8c603474(sh4_ctx *c) {
     HLE_ENTER(0x8c603474u, "buGetFileSize");
@@ -157,7 +179,7 @@ void sdk_8c603474(sh4_ctx *c) {
     if (!bu_present(ARG0)) { RET(0); return; }
     if (bu_name(ARG1, n)) { RET(BU_ERR_NAME); return; }
     int32_t b = bu_file_blocks(n);
-    RET(b >= 0 ? b : BU_ERR_NOFILE);
+    RET(b>=0?b:b==-1?BU_ERR_NOFILE:BU_ERR_BROKEN);
 }
 static uint8_t bu_buf[BU_BLOCKS * 512];
 void sdk_8c603508(sh4_ctx *c) {
@@ -169,6 +191,7 @@ void sdk_8c603508(sh4_ctx *c) {
     if (bu_name(ARG1, n)) r = BU_ERR_NAME;
     else {
         int32_t got = hle_vmu_store->read(n, bu_buf, sizeof bu_buf);
+        if(got < -1) r=BU_ERR_BROKEN;
         if (got >= 0) {
             uint32_t want = blocks ? blocks * 512 : (uint32_t)got;
             if (want > (uint32_t)got) want = (uint32_t)got;
@@ -188,8 +211,11 @@ void sdk_8c603560(sh4_ctx *c) {
     if (bu_name(ARG1, n)) r = BU_ERR_NAME;
     else {
         int32_t old = bu_file_blocks(n);
-        uint32_t used = bu_used_blocks() - (old > 0 ? (uint32_t)old : 0);
-        if (blocks == 0 || used + blocks > BU_BLOCKS) r = BU_ERR_NOROOM;
+        int32_t total=bu_used_blocks();
+        uint32_t replaced=old>0?(uint32_t)old:0;
+        uint32_t used=total>=0?(uint32_t)total:0;
+        if(old < -1 || total<0 || replaced>used)r=BU_ERR_BROKEN;
+        else if (blocks == 0 || blocks > BU_BLOCKS-(used-replaced)) r = BU_ERR_NOROOM;
         else {
             for (uint32_t i = 0; i < blocks * 512; i++) bu_buf[i] = (uint8_t)hle_rd8(buf + i);
             r = hle_vmu_store->write(n, bu_buf, blocks * 512) == 0 ? 0 : -248;   /* write error */
@@ -272,6 +298,121 @@ void sdk_8c6037a0(sh4_ctx *c) {
     RET(total / 512);
 }
 
+
+/* Own bounded file-store VMU services. API/format facts are independently
+ * checked against the supported input. No SDK/game function body copied.
+ * The folder store has a compact virtual allocation: one executable at the
+ * low end, DATA packed from the high end; no physical FAT is emulated. */
+#define BU_ERR_PARAM (-256)
+#define BU_ERR_NOCARD (-255)
+#define BU_ERR_WRITE (-192)
+static int bu_span(uint32_t a,uint32_t n){
+    uint32_t top=a>>29,p=a&0x1fffffffu;
+    if(top!=0&&top!=4&&top!=5)return 0;
+    return p>=0x0c000000u&&p-0x0c000000u<SA1_RAM_SIZE+SA1_RAM_EXTRA&&
+        n<=SA1_RAM_SIZE+SA1_RAM_EXTRA-(p-0x0c000000u);
+}
+static int bu_host_name(const char*n){
+    for(unsigned i=0;i<13;i++){
+        unsigned char z=(unsigned char)n[i];if(!z)return i>0;
+        if(!((z>='A'&&z<='Z')||(z>='a'&&z<='z')||(z>='0'&&z<='9')||z=='_'||z=='-'||z=='.'))return 0;
+    }return 0;
+}
+static int bu_safe_name(uint32_t a,char n[13]){return bu_span(a,13)&&!bu_name(a,n)&&bu_host_name(n);}
+static int bu_meta_valid(const vmu_file_info*i){
+    if(!i->size||i->size>sizeof bu_buf||i->type>VMU_STORE_EXEC||
+       (i->copy_flag!=0&&i->copy_flag!=255)||i->header_block>=bu_blocks_of(i->size))return 0;
+    return i->type!=VMU_STORE_EXEC||(i->header_block==1&&i->size>=1024&&i->size<=128u*512u&&!(i->size&511));
+}
+static int bu_stat_file(const char*n,vmu_file_info*i){
+    if(hle_vmu_store->stat){int r=hle_vmu_store->stat(n,i);return r?r:(bu_meta_valid(i)?0:-2);}
+    char found[13];uint32_t z;
+    for(int k=0;k<=BU_BLOCKS;k++){
+        int r=hle_vmu_store->list(k,found,&z);if(r)return r==-1?-1:-2;
+        if(k==BU_BLOCKS||!bu_host_name(found))return -2;
+        if(!strcmp(n,found)){*i=(vmu_file_info){z,VMU_STORE_DATA,0,0};return bu_meta_valid(i)?0:-2;}
+    }return -2;
+}
+static int bu_catalog(uint32_t*used,char executable[13]){
+    char n[13];uint32_t z;*used=0;executable[0]=0;
+    if(!hle_vmu_store->list||!hle_vmu_store->read)return BU_ERR_BROKEN;
+    for(int k=0;k<=BU_BLOCKS;k++){
+        memset(n,0,sizeof n);int r=hle_vmu_store->list(k,n,&z);if(r==-1)return 0;if(r||k==BU_BLOCKS||!bu_host_name(n))return BU_ERR_BROKEN;
+        vmu_file_info i;if(bu_stat_file(n,&i)||i.size!=z)return BU_ERR_BROKEN;
+        uint32_t blocks=bu_blocks_of(z);if(blocks>BU_BLOCKS-*used)return BU_ERR_BROKEN;*used+=blocks;
+        if(i.type==VMU_STORE_EXEC){if(executable[0])return BU_ERR_BROKEN;memcpy(executable,n,13);}
+    }return BU_ERR_BROKEN;
+}
+static int bu_begin(sh4_ctx*c,uint32_t drive){
+    if(drive>=8){RET(BU_ERR_PARAM);return 0;}
+    if(bu_busy[drive]){RET(-1);return 0;}bu_busy[drive]=1;return 1;
+}
+static void bu_finish(sh4_ctx*c,uint32_t drive,uint32_t op,int32_t result){bu_complete(c,drive,op,result);RET(0);}
+void sdk_8c602f8a(sh4_ctx*c){
+    HLE_ENTER(0x8c602f8au,"buGetDiskFree");uint32_t drive=ARG0,type=ARG1,used;char exec[13];
+    if(drive>=8||type>1){RET(BU_ERR_PARAM);return;}if(bu_busy[drive]){RET(-1);return;}
+    if(!bu_present(drive)){RET(BU_ERR_NOCARD);return;}int r=bu_catalog(&used,exec);
+    if(r){RET(r);return;}uint32_t free=BU_BLOCKS-used;
+    RET(type?(exec[0]?0:free<128?free:128):free);
+}
+void sdk_8c603078(sh4_ctx*c){
+    HLE_ENTER(0x8c603078u,"buFindExecFile");uint32_t used;char exec[13];
+    if(ARG0>=8||!bu_span(ARG1,13)){RET(BU_ERR_PARAM);return;}
+    if(bu_busy[ARG0]){RET(-1);return;}if(!bu_present(ARG0)){RET(BU_ERR_NOCARD);return;}
+    int r=bu_catalog(&used,exec);if(r||!exec[0]){RET(r?r:BU_ERR_NOFILE);return;}
+    for(unsigned i=0;i<13;i++) { hle_wr8(ARG1+i,(uint8_t)exec[i]); }
+    RET(0);
+}
+void sdk_8c6033fe(sh4_ctx*c){HLE_ENTER(0x8c6033feu,"buGetLastError");RET(ARG0>=8?BU_ERR_PARAM:bu_busy[ARG0]?-1:bu_last_error[ARG0]);}
+void sdk_8c603292(sh4_ctx*c){
+    HLE_ENTER(0x8c603292u,"buDeleteFile");uint32_t d=ARG0;char n[13];vmu_file_info i;if(!bu_begin(c,d))return;
+    int r=!bu_present(d)?BU_ERR_NOCARD:!bu_safe_name(ARG1,n)?BU_ERR_NAME:0;
+    if(!r){int q=bu_stat_file(n,&i);r=q==-1?BU_ERR_NOFILE:q?BU_ERR_BROKEN:!hle_vmu_store->remove||hle_vmu_store->remove(n)?-246:0;}
+    bu_finish(c,d,7,r);
+}
+void sdk_8c6034a2(sh4_ctx*c){
+    HLE_ENTER(0x8c6034a2u,"buDefragDisk");uint32_t d=ARG0,used;char exec[13];if(!bu_begin(c,d))return;
+    int r=!bu_present(d)?BU_ERR_NOCARD:!bu_span(ARG1,512)?BU_ERR_PARAM:bu_catalog(&used,exec);
+    /* A validated compact virtual catalog is already defragmented. */
+    bu_finish(c,d,9,r);
+}
+void sdk_8c6035be(sh4_ctx*c){
+    HLE_ENTER(0x8c6035beu,"buSaveExecFile");uint32_t d=ARG0,buf=ARG2,blocks=ARG3,used;char n[13],exec[13];if(!bu_begin(c,d))return;
+    int r=!bu_present(d)?BU_ERR_NOCARD:!bu_span(c->r[15],8)?BU_ERR_PARAM:!bu_safe_name(ARG1,n)?BU_ERR_NAME:0;
+    /* Own US AL_MAIN SaveExec sites pass VERIFY|COPYDISABLE (0x800000ff).
+     * write_typed must verify its durable commit before reporting success.
+     * The time argument is accepted; this virtual store does not model dates. */
+    uint32_t flags=r?0:STACK_ARG(1);
+    if(!r&&(blocks<2||blocks>128||!bu_span(buf,blocks*512u)||(flags&~0x800000ffu)||((flags&255)!=0&&(flags&255)!=255)))r=BU_ERR_PARAM;
+    if(!r)r=bu_catalog(&used,exec);
+    if(!r&&exec[0])r=-247;
+    if(!r){vmu_file_info old;int q=bu_stat_file(n,&old);if(q!=-1)r=q?BU_ERR_BROKEN:-250;}
+    if(!r&&blocks>BU_BLOCKS-used)r=BU_ERR_NOROOM;
+    if(!r&&!hle_vmu_store->write_typed)r=BU_ERR_WRITE;
+    if(!r){for(uint32_t k=0;k<blocks*512u;k++)bu_buf[k]=(uint8_t)hle_rd8(buf+k);
+        vmu_file_info info={blocks*512u,VMU_STORE_EXEC,1,flags&255u};
+        if(hle_vmu_store->write_typed(n,bu_buf,info.size,&info))r=BU_ERR_WRITE;
+        if(!r&&bu_progress_cb)hle_call_guest(c,bu_progress_cb,d,13,blocks,blocks);}
+    bu_finish(c,d,13,r);
+}
+static void bu_range(sh4_ctx*c,int rewrite){
+    uint32_t d=ARG0,buf=ARG2,start=ARG3,op=rewrite?20:14;char n[13];vmu_file_info info;if(!bu_begin(c,d))return;
+    int r=!bu_present(d)?BU_ERR_NOCARD:!bu_span(c->r[15],4)?BU_ERR_PARAM:!bu_safe_name(ARG1,n)?BU_ERR_NAME:0;
+    uint32_t blocks=r?0:STACK_ARG(0),off=0,bytes=0;
+    if(!r){int q=bu_stat_file(n,&info);r=q==-1?BU_ERR_NOFILE:q?BU_ERR_BROKEN:0;}
+    /* Positive ranges are supported; zero-length semantics of Ex are not
+     * assumed from ordinary buLoadFile's different whole-file convention. */
+    if(!r&&(start>BU_BLOCKS||!blocks||blocks>BU_BLOCKS))r=BU_ERR_PARAM;
+    if(!r){off=start*512u;bytes=blocks*512u;if(off>info.size||bytes>info.size-off||!bu_span(buf,bytes))r=BU_ERR_PARAM;}
+    if(!r&&rewrite&&(info.type!=VMU_STORE_EXEC||!hle_vmu_store->write_typed))r=BU_ERR_NAME;
+    if(!r){int32_t got=hle_vmu_store->read(n,bu_buf,sizeof bu_buf);if(got<0||(uint32_t)got!=info.size)r=BU_ERR_BROKEN;}
+    if(!r&&rewrite){for(uint32_t k=0;k<bytes;k++)bu_buf[off+k]=(uint8_t)hle_rd8(buf+k);if(hle_vmu_store->write_typed(n,bu_buf,info.size,&info))r=BU_ERR_WRITE;}
+    else if(!r)for(uint32_t k=0;k<bytes;k++)hle_wr8(buf+k,bu_buf[off+k]);
+    bu_finish(c,d,op,r);
+}
+void sdk_8c60361c(sh4_ctx*c){HLE_ENTER(0x8c60361cu,"buLoadFileEx");bu_range(c,0);}
+void sdk_8c603672(sh4_ctx*c){HLE_ENTER(0x8c603672u,"buRewriteExecFile");bu_range(c,1);}
+
 /* pdLcd / VMU screen: none present. */
 void sdk_8c602ab4(sh4_ctx *c) { HLE_ENTER(0x8c602ab4u, "pdLcdIsStandard"); RET(0); }
 void sdk_8c602998(sh4_ctx *c) { HLE_ENTER(0x8c602998u, "pdLcdDirection"); RET(0); }
@@ -311,4 +452,9 @@ void sdk_8c6044e0(sh4_ctx *c) {
 void shinobi_cfg_state(hle_state_io *io) {
     hle_state_blob(io, "bu.complete", &bu_complete_cb, sizeof bu_complete_cb);
     hle_state_blob(io, "bu.progress", &bu_progress_cb, sizeof bu_progress_cb);
+    if (hle_state_loading(io)) {
+        int32_t restored[8] = {0};
+        if (hle_state_optional_blob(io,"bu.last_error",restored,sizeof restored) >= 0)
+            memcpy(bu_last_error,restored,sizeof bu_last_error);
+    } else hle_state_optional_blob(io,"bu.last_error",bu_last_error,sizeof bu_last_error);
 }

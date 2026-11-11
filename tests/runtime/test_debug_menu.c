@@ -17,8 +17,8 @@ static void open_menu(DebugMenu *m) {
 static void focus(DebugMenu *m,int page,int row) { m->page=page; m->cursor=row; }
 int main(void) {
     DebugMenu m;
-    DebugMenuValues v={1,1,0,8,1,1,2,3,0,1,1,1};
-    DebugMenuValues def={0,0,1,4,1,-1,0,1,0,1,1,-1};
+    DebugMenuValues v={1,1,0,8,1,1,2,3,0,1,1,1,1};
+    DebugMenuValues def={0,0,1,4,1,-1,0,1,0,1,1,-1,0};
     debug_menu_init(&m,&v,&def,4,3);
     CHECK(!m.open); CHECK(!m.help); CHECK(!debug_menu_dirty(&m));
     CHECK(m.values.aspect==1 && m.values.mips==8 && m.values.stage==2);
@@ -41,7 +41,8 @@ int main(void) {
     debug_menu_step(&m,DM_DOWN,1); CHECK(m.cursor==2);
     debug_menu_step(&m,DM_DOWN,99); CHECK(m.cursor==2);
     debug_menu_step(&m,DM_DOWN,1); CHECK(m.cursor==3);
-    debug_menu_step(&m,DM_DOWN,UINT32_MAX); CHECK(m.cursor==0); /* bounded, no catch-up burst */
+    debug_menu_step(&m,DM_DOWN,UINT32_MAX); CHECK(m.cursor==4); /* bounded, no catch-up burst */
+    debug_menu_step(&m,DM_DOWN,100); CHECK(m.cursor==0);
     int cursor=m.cursor;
     press(&m,DM_UP|DM_DOWN); CHECK(m.cursor==cursor);
     CHECK(press(&m,DM_TAB_PREV).action==DM_NONE && m.page==DM_DLC && m.cursor==0);
@@ -58,6 +59,13 @@ int main(void) {
     CHECK(press(&m,DM_HELP).action==DM_HELP_CHANGED && m.help);
     press(&m,DM_RIGHT|DM_DOWN); CHECK(m.values.mips==4 && m.cursor==3);
     CHECK(press(&m,DM_BACK).action==DM_HELP_CHANGED && !m.help && m.open);
+    focus(&m,DM_GRAPHICS,4);
+    CHECK(press(&m,DM_RIGHT).changed==DM_DITHER && m.values.dither==2);
+    CHECK(press(&m,DM_RIGHT).action==DM_NONE && m.values.dither==2);
+    CHECK(press(&m,DM_ACCEPT).changed==DM_DITHER && m.values.dither==0);
+    CHECK(press(&m,DM_LEFT).action==DM_NONE && m.values.dither==0);
+    CHECK(press(&m,DM_RIGHT).changed==DM_DITHER && m.values.dither==1);
+    CHECK(press(&m,DM_DEFAULTS).changed==DM_DITHER && m.values.dither==0);
     focus(&m,DM_AUDIO,1);
     for(int i=0;i<4;i++) press(&m,DM_LEFT);
     CHECK(m.values.voice==-1);
@@ -84,14 +92,15 @@ int main(void) {
     focus(&m,DM_CHEATS,3); CHECK(press(&m,DM_ACCEPT).action==DM_ADD_LIVES);
     focus(&m,DM_DLC,0);
     for(int i=0;i<8;i++) press(&m,DM_RIGHT);
-    CHECK(m.values.dlc==2);
+    CHECK(m.values.dlc==1 && m.dlc_candidate==2);
     for(int i=0;i<8;i++) press(&m,DM_LEFT);
-    CHECK(m.values.dlc==-1);
+    CHECK(m.values.dlc==1 && m.dlc_candidate==-1);
     CHECK(press(&m,DM_SAVE).action==DM_SAVE_REQUEST && debug_menu_dirty(&m));
     CHECK(debug_menu_step(&m,DM_SAVE,10000).action==DM_NONE);
     debug_menu_mark_saved(&m); CHECK(!debug_menu_dirty(&m));
     CHECK(press(&m,DM_REVERT).action==DM_REVERTED);
     CHECK(m.values.aspect==v.aspect && m.values.stage==v.stage && m.values.act==v.act);
+    CHECK(m.values.dither==v.dither && m.dlc_candidate==v.dlc);
     CHECK(!m.values.rings_lock && debug_menu_dirty(&m));
     CHECK(press(&m,DM_BACK|DM_ACCEPT).action==DM_CLOSE && !m.open);
     CHECK(debug_menu_step(&m,DM_ACCEPT,1000).action==DM_NONE && !m.open);
@@ -107,18 +116,20 @@ int main(void) {
     CHECK(debug_menu_setting_value(&m.values,DM_NO_SETTING)==0);
     CHECK(debug_menu_setting_value(&m.values,DM_MIPS)==m.values.mips);
     /* Bad config must never create out-of-range state or enable cheats. */
-    v=(DebugMenuValues){-9,8,999,0,8,-9,999,0,999,1,1,999};
+    v=(DebugMenuValues){-9,8,999,0,8,-9,999,0,999,1,1,999,999};
     debug_menu_init(&m,&v,&v,0,0);
     CHECK(m.values.aspect==0 && m.values.fps==1 && m.values.frame_skip==60);
-    CHECK(m.values.mips==1 && m.values.audio==1 && m.values.voice==-1);
+    CHECK(m.values.mips==1 && m.values.audio==1 && m.values.voice==-1 && m.values.dither==2);
     CHECK(m.values.stage==0 && m.values.act==1 && m.values.character==5 && m.values.dlc==-1);
     CHECK(!m.values.rings_lock && !m.values.lives_lock);
     open_menu(&m); focus(&m,DM_GAMEPLAY,3);
     CHECK(press(&m,DM_ACCEPT).action==DM_NONE); /* empty catalog cannot request a warp */
-    focus(&m,DM_DLC,0); press(&m,DM_RIGHT); CHECK(m.values.dlc==-1);
+    focus(&m,DM_DLC,0);
+    CHECK(press(&m,DM_RIGHT).action==DM_NONE && m.dlc_candidate==-1);
+    CHECK(press(&m,DM_ACCEPT).action==DM_NONE && m.values.dlc==-1);
     debug_menu_init(&m,NULL,NULL,INT_MAX,INT_MAX);
     CHECK(m.values.aspect==1 && m.values.mips==8 && m.values.audio==1 && m.values.act==1);
-    CHECK(m.values.voice==-1 && m.values.dlc==-1 && !m.open);
+    CHECK(m.values.voice==-1 && m.values.dlc==-1 && m.values.dither==0 && !m.open);
     /* Public labels and rows cover each setting exactly once. */
     unsigned seen=0;
     for(int p=0;p<DM_PAGE_COUNT;p++) for(int r=0;r<debug_menu_row_count(p);r++) {
@@ -149,6 +160,26 @@ int main(void) {
     CHECK(press(&m,DM_TOGGLE|DM_DEFAULTS|DM_ACCEPT).action==DM_CLOSE);
     CHECK(debug_menu_step(&m,DM_DEFAULTS|DM_ACCEPT,1000).action==DM_NONE);
     CHECK(!m.open && m.values.aspect==1);
+    /* Browsing and saving do not mount an event. The adapter publishes the
+     * actual activation result, which is what save/revert and reopening see. */
+    debug_menu_init(&m,NULL,NULL,3,2);
+    open_menu(&m);
+    focus(&m,DM_DLC,0);
+    CHECK(press(&m,DM_RIGHT).action==DM_DLC_BROWSED && m.dlc_candidate==0);
+    CHECK(m.values.dlc==-1 && !debug_menu_dirty(&m));
+    CHECK(press(&m,DM_SAVE).action==DM_SAVE_REQUEST);
+    debug_menu_mark_saved(&m);
+    CHECK(m.saved.dlc==-1 && m.dlc_candidate==0);
+    CHECK(press(&m,DM_ACCEPT).action==DM_DLC_ACTIVATE);
+    CHECK(m.values.dlc==-1 && !debug_menu_dirty(&m));
+    CHECK(debug_menu_step(&m,DM_ACCEPT,5000).action==DM_NONE);
+    m.values.dlc=0; /* successful adapter result */
+    CHECK(debug_menu_dirty(&m));
+    CHECK(press(&m,DM_DEFAULTS).action==DM_DLC_BROWSED && m.dlc_candidate==-1);
+    CHECK(m.values.dlc==0);
+    CHECK(press(&m,DM_ACCEPT).action==DM_DLC_ACTIVATE); /* explicit Off */
+    CHECK(press(&m,DM_BACK).action==DM_CLOSE && m.values.dlc==0);
+    open_menu(&m); CHECK(m.dlc_candidate==0 && m.opened.dlc==0);
     printf("debug_menu: %d checks, %d failures\n",checks,failures);
     return failures?1:0;
 }

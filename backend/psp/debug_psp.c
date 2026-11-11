@@ -20,11 +20,13 @@
 #include <unistd.h>
 
 int draw_gu_set_fps_hud(const char *value);
+int draw_gu_set_dither(const char *value);
+extern int hle_config_dither;
 void draw_gu_set_max_mip(int level);
 void audio_psp_pause(int on);
 int plat_settings_release(void);
 static DebugMenu menu;
-static int enabled,running;
+static int enabled,running,restart_requested;
 static uint32_t heartbeat;
 static DebugChord chord_state;
 static uint64_t pause_total,pause_start;
@@ -61,6 +63,7 @@ static uint32_t semantic(uint32_t k){
     if(k&PSP_CTRL_TRIANGLE)b|=DM_DEFAULTS;if(k&PSP_CTRL_SQUARE)b|=DM_HELP;
     return b;
 }
+static const char *const dither_values[]={"on","opaque","off"};
 static void apply(int setting){
     DebugMenuValues *v=&menu.values;
     if(setting<0 || setting==DM_ASPECT){
@@ -72,8 +75,15 @@ static void apply(int setting){
     if(setting<0 || setting==DM_MIPS)draw_gu_set_max_mip(v->mips-1);
     if(setting<0 || setting==DM_SOUND)snd_host_set_audio(v->audio);
     if(setting<0 || setting==DM_VOICE)snd_voice_lang=v->voice;
+    if(setting<0 || setting==DM_DITHER){
+        draw_gu_set_dither(dither_values[v->dither]);
+        hle_config_dither=v->dither;
+    }
     if(setting<0 || setting==DM_DLC_CHOICE){
-        if(hle_content_select(v->dlc)<0)v->dlc=hle_content_selected();
+        if(hle_content_select(v->dlc)<0){
+            v->dlc=hle_content_selected();
+            menu.dlc_candidate=v->dlc;
+        }
         note(hle_content_status());
     }
     if(v->stage<0 || v->stage>=STAGE_COUNT)v->stage=0;
@@ -88,24 +98,13 @@ static int same_file(const char *path,const char *data,size_t n){
 }
 /* Temporary and backup names are new and owned by this transaction. No
  * inplace fallback: failure retains/restores the prior config and evidence. */
-static int save_config(int force_launch){
+static int write_config_pairs(const DebugIniPair *pairs,size_t pair_count){
+    if(!config_path[0])return -1;
     if(plat_settings_release()<0){note("Save declined: cached settings handle could not close");return -1;}
     char *old=malloc(16385),*out=malloc(16385);if(!old||!out){free(old);free(out);note("Save declined: not enough temporary memory");return -1;}
     size_t old_n=0;int existed=0;FILE *f=fopen(config_path,"rb");
     if(f){existed=1;old_n=fread(old,1,16385,f);int bad=ferror(f)||old_n>16384;if(fclose(f))bad=1;if(bad){free(old);free(out);note("Save declined: unreadable/oversized INI");return -1;}}
     old[old_n]=0;
-    char skip[12],mips[12],act[12],dlc[12];DebugMenuValues *v=&menu.values;
-    if(v->frame_skip<2)snprintf(skip,sizeof skip,"%s",v->frame_skip?"off":"auto");else snprintf(skip,sizeof skip,"%d",v->frame_skip);
-    snprintf(mips,sizeof mips,"%d",v->mips);snprintf(act,sizeof act,"%d",v->act);
-    if(v->dlc<0)strcpy(dlc,"off");else snprintf(dlc,sizeof dlc,"%d",v->dlc);
-    DebugIniPair pairs[]={
-        {"aspect",v->aspect?"16:9":"4:3"},{"fps_hud",v->fps?"on":"off"},
-        {"frame_skip",skip},{"mip_levels",mips},{"audio",v->audio?"on":"off"},
-        {"voice",v->voice<0?"game":v->voice?"en":"ja"},{"dlc_event",dlc},
-        {"start_stage",stages[v->stage].key},{"start_act",act},{"start_character",characters[v->character]}
-    };
-    int launch_changed=force_launch || v->stage!=startup_snapshot.stage || v->act!=startup_snapshot.act || v->character!=startup_snapshot.character;
-    size_t pair_count=sizeof pairs/sizeof *pairs-(launch_changed?0:3);
     int n=debug_ini_update(old,old_n,pairs,pair_count,out,16385);
     if(n<0){free(old);free(out);note("Save declined: INI too large or malformed");return -1;}
     char tmp[560],bak[560];unsigned tag=(unsigned)sa1_plat_time_us();
@@ -122,9 +121,35 @@ static int save_config(int force_launch){
     if(ok){ok=rename(tmp,config_path)==0;installed=ok;}
     if(ok)ok=same_file(config_path,out,(size_t)n);
     if(!ok&&backed){if(installed)rename(config_path,tmp);if(access(config_path,F_OK)!=0)rename(bak,config_path);}
-    if(ok){startup_snapshot=menu.values;debug_menu_mark_saved(&menu);note("Saved + full readback; previous INI kept as .bak");sa1_log("debug-menu: configuration saved/readback; previous backup retained");}
-    else note("Save failed; previous config retained/restored; temp kept");
+    if(!ok)note("Save failed; previous config retained/restored; temp kept");
     free(old);free(out);return ok?0:-1;
+}
+
+int debug_psp_clear_startup_stage(void){
+    const DebugIniPair pair={"start_stage","off"};
+    return write_config_pairs(&pair,1);
+}
+
+static int save_config(int force_launch){
+    char skip[12],mips[12],act[12],dlc[12];DebugMenuValues *v=&menu.values;
+    if(v->frame_skip<2)snprintf(skip,sizeof skip,"%s",v->frame_skip?"off":"auto");else snprintf(skip,sizeof skip,"%d",v->frame_skip);
+    snprintf(mips,sizeof mips,"%d",v->mips);snprintf(act,sizeof act,"%d",v->act);
+    if(v->dlc<0)strcpy(dlc,"off");else snprintf(dlc,sizeof dlc,"%d",v->dlc);
+    DebugIniPair pairs[]={
+        {"aspect",v->aspect?"16:9":"4:3"},{"fps_hud",v->fps?"on":"off"},
+        {"frame_skip",skip},{"mip_levels",mips},{"audio",v->audio?"on":"off"},
+        {"voice",v->voice<0?"game":v->voice?"en":"ja"},{"dlc_event",dlc},
+        {"dither",dither_values[v->dither]},
+        {"start_stage",stages[v->stage].key},{"start_act",act},{"start_character",characters[v->character]}
+    };
+    int launch_changed=force_launch || v->stage!=startup_snapshot.stage || v->act!=startup_snapshot.act || v->character!=startup_snapshot.character;
+    size_t pair_count=sizeof pairs/sizeof *pairs-(launch_changed?0:3);
+    if(write_config_pairs(pairs,pair_count)<0)return -1;
+    startup_snapshot=menu.values;
+    debug_menu_mark_saved(&menu);
+    note("Settings saved");
+    sa1_log("debug-menu: configuration saved/readback; previous backup retained");
+    return 0;
 }
 static void value_text(int row,char *out,size_t cap){
     DebugMenuValues *v=&menu.values;
@@ -136,43 +161,64 @@ static void value_text(int row,char *out,size_t cap){
     case DM_STAGE:snprintf(out,cap,"%s",stages[v->stage].label);break;
     case DM_ACT:snprintf(out,cap,"%d",v->act);break;
     case DM_CHARACTER:snprintf(out,cap,"%s",characters[v->character]);break;
-    case DM_DLC_CHOICE:snprintf(out,cap,"%s",v->dlc<0?"Off (next normal load)":hle_content_label(v->dlc));break;
+    case DM_DLC_CHOICE:snprintf(out,cap,"%s",menu.dlc_candidate<0?"Off":hle_content_label(menu.dlc_candidate));break;
+    case DM_DITHER:snprintf(out,cap,"%s",v->dither==0?"On":v->dither==1?"Opaque only":"Off");break;
     case DM_ROW_WARP:snprintf(out,cap,"Cross: save + restart");break;
     case DM_ROW_ADD_RINGS:case DM_ROW_ADD_LIVES:snprintf(out,cap,"Cross: refill to 99");break;
     default:snprintf(out,cap,"%s",debug_menu_setting_value(v,row)?"On":"Off");break;
     }
 }
+/* Own compact GE menu. Rendering is independent of the controller and
+ * keeps the active tab, focus and candidate values visible at 480x272. */
 static void render(void){
-    char text[20][80];DebugDrawLine lines[20];unsigned n=0;
-#define LINE(X,Y,C,T) do{snprintf(text[n],sizeof text[n],"%s",T);lines[n]=(DebugDrawLine){X,Y,C,text[n]};n++;}while(0)
-    LINE(16,12,0xffa5f2ffu,"DCRC DEBUG MENU - game paused");
-    char title[70];snprintf(title,sizeof title,"L/R: %s   %s",debug_menu_page_label(menu.page),debug_menu_dirty(&menu)?"[unsaved]":"[saved]");
-    LINE(16,28,0xffffffffu,title);
+    static const uint32_t paper=0xff24201cu,tab=0xff39312au,focus=0xff684c26u;
+    static const uint32_t white=0xfff5f0eau,muted=0xffb6aaa0u,accent=0xff69c9ffu;
+    DebugDrawLine lines[32];
+    DebugDrawRect rects[24];
+    char text[32][80];
+    unsigned n=0, nb=0;
+#define LINE(X,Y,C,T) do { snprintf(text[n],sizeof text[n],"%s",T); \
+    lines[n]=(DebugDrawLine){X,Y,C,text[n]};n++; } while(0)
+#define BOX(X,Y,W,H,C) do { rects[nb++]=(DebugDrawRect){X,Y,W,H,C}; } while(0)
+    BOX(8,8,464,256,paper);
+    BOX(8,8,464,2,accent);
+    LINE(18,19,white,"DCRC settings");
+    LINE(346,19,debug_menu_dirty(&menu)?accent:muted,
+         debug_menu_dirty(&menu)?"Unsaved":"Saved");
+    for(int i=0;i<DM_PAGE_COUNT;i++){
+        int x=16+i*90;
+        BOX(x,38,86,20,i==menu.page?focus:tab);
+        LINE(x+5,44,i==menu.page?accent:muted,debug_menu_page_label(i));
+    }
     if(menu.help){
-        LINE(16,54,0xffffffffu,"Open: L + R + Cross + Down");
-        LINE(16,70,0xffffffffu,"Release the chord before Start / Select.");
-        LINE(16,86,0xffffffffu,"D-pad: select/change. L/R: switch page.");
-        LINE(16,102,0xffffffffu,"Cross: action. Circle: close / back.");
-        LINE(16,118,0xffffffffu,"Start: save. Select: revert opening values.");
-        LINE(16,134,0xffffffffu,"Triangle: default row. Square: help.");
-        LINE(16,150,0xffffffffu,"Stage/character change restarts the game.");
-        LINE(16,166,0xffffffffu,"Mip count affects newly loaded textures.");
-        LINE(16,182,0xffffffffu,"DLC: next ordinary load after VMU selection.");
+        LINE(22,75,accent,"Controls");
+        LINE(22,95,white,"D-pad: select / edit   L / R: change tab");
+        LINE(22,115,white,"Cross: action          Circle: close");
+        LINE(22,135,white,"Triangle: default      Square: help");
+        LINE(22,155,white,"Start: save            Select: undo");
+        LINE(22,175,muted,"Warp starts a new game session.");
     }else{
         for(int i=0;i<debug_menu_row_count(menu.page);i++){
-            int row=debug_menu_row_id(menu.page,i);char val[48];value_text(row,val,sizeof val);
-            snprintf(text[n],sizeof text[n],"%-22.22s %s",debug_menu_row_label(row),val);
-            lines[n]=(DebugDrawLine){20,56+i*20,0xffffffffu,text[n]};n++;
+            int row=debug_menu_row_id(menu.page,i),y=66+i*24;
+            int selected=i==menu.cursor;
+            char value[80];value_text(row,value,sizeof value);
+            BOX(16,y,448,21,selected?focus:tab);
+            LINE(22,y+7,selected?accent:white,debug_menu_row_label(row));
+            LINE(230,y+7,white,value);
         }
-        if(menu.page==DM_CHEATS)LINE(16,158,0xffa5f2ffu,"Cheats: Sonic / Emerald Coast act 1 only.");
-        if(menu.page==DM_GAMEPLAY)LINE(16,158,0xffa5f2ffu,"Other character/stage routes may be unsupported.");
-        if(menu.page==DM_DLC){LINE(16,150,0xffa5f2ffu,hle_content_status());LINE(16,168,0xffa5f2ffu,"Off unmounts; spawned objects leave on unload.");}
+        if(menu.page==DM_DLC){
+            char active[80];
+            snprintf(active,sizeof active,"Active: %s",menu.values.dlc<0?"Off":hle_content_label(menu.values.dlc));
+            LINE(22,104,white,active);
+            LINE(22,122,muted,"Left / Right: browse. Cross: activate.");
+        }
     }
-    LINE(16,208,0xffa5f2ffu,chord_state.blocked?"Release ALL buttons before using the menu.":status);
-    LINE(16,238,0xffccccccu,"D-pad: edit  L/R: tabs  X: action  O: close");
-    LINE(16,254,0xffccccccu,"Start: save  Select: revert  Square: help");
+    LINE(18,208,accent,chord_state.blocked?"Release all buttons.":status);
+    LINE(18,232,muted,"L/R tabs   X apply   O close   Start save");
+    LINE(18,247,muted,"Select undo   Triangle default   Square help");
 #undef LINE
-    draw_debug_screen(lines,n,menu.help?-1:53+menu.cursor*20);
+#undef BOX
+    draw_debug_screen(lines,n,rects,nb);
 }
 static void grant(int rings,int lives){
     DebugCheatContext now=read_cheat(0);
@@ -185,6 +231,11 @@ static void event(DebugMenuEvent e){
     switch(e.action){
     case DM_CHANGED:apply(e.changed);if(e.changed==DM_MIPS)note("Mip count applies to newly loaded textures");break;
     case DM_REVERTED:apply(-1);note("Opening values restored for this session");break;
+    case DM_DLC_ACTIVATE:
+        hle_content_select(menu.dlc_candidate);
+        menu.values.dlc=hle_content_selected();
+        note(hle_content_status());
+        break;
     case DM_SAVE_REQUEST:save_config(0);break;
     case DM_ADD_RINGS:grant(1,0);break;
     case DM_ADD_LIVES:grant(0,1);break;
@@ -193,18 +244,22 @@ static void event(DebugMenuEvent e){
         if(hle_startup_cli_active()){note("Warp declined: remove startup overrides from args.txt");break;}
         if(hle_content_selected()>=0 && menu.values.stage){note("DLC requires normal boot / VMU selection first");break;}
         if(menu.values.act>stages[menu.values.stage].acts){note("Act outside this menu preset's supported range");break;}
-        if(save_config(1)==0 && restart_game){menu.open=0;restart_game();}break;
+        if(save_config(1)==0){
+            restart_requested=1;
+            menu.open=0;
+        }
+        break;
     default:break;
     }
 }
 void debug_psp_init(const char *base,const char *data,const volatile int *home,void (*restart)(void)){
-    home_exit=home;restart_game=restart;
+    home_exit=home;restart_game=restart;restart_requested=0;
     char self[256];int self_n=snprintf(self,sizeof self,"%s/EBOOT.PBP",base?base:"");
     if(self_n<0||self_n>=(int)sizeof self||!sa1_application_path_valid(self))restart_game=NULL;
     enabled=hle_config_debug_menu && !hle_strict;
     int n=snprintf(config_path,sizeof config_path,"%s/sa1psp.ini",data?data:"data");if(n<0||n>=(int)sizeof config_path)enabled=0;
     int skip=hle_frame_skip_cli!=-2?hle_frame_skip_cli:hle_frame_skip;
-    DebugMenuValues v={hle_aspect_wide,draw_gu_fps_enabled(),skip<0?0:skip==0?1:skip,draw_gu_mip_limit(),snd_audio_enabled,snd_voice_lang,0,1,0,0,0,hle_content_selected()};
+    DebugMenuValues v={hle_aspect_wide,draw_gu_fps_enabled(),skip<0?0:skip==0?1:skip,draw_gu_mip_limit(),snd_audio_enabled,snd_voice_lang,0,1,0,0,0,hle_content_selected(),hle_config_dither};
     uint16_t level=0,act=0,character=0;int startup_enabled=0;
     if(!hle_startup_get(&level,&act,&character,&startup_enabled)){
         static const int levels[]={0,1,2,3,4,5,6,7,8,9,10,15,17,18,20,22,26,29,32,33,36,37};
@@ -212,7 +267,7 @@ void debug_psp_init(const char *base,const char *data,const volatile int *home,v
         if(startup_enabled)for(int i=1;i<STAGE_COUNT;i++)if(levels[i]==level){v.stage=i;break;}
         v.act=(int)act+1;for(int i=0;i<6;i++)if(chars[i]==character){v.character=i;break;}
     }
-    DebugMenuValues defaults={1,1,0,8,1,1,0,1,0,0,0,-1};
+    DebugMenuValues defaults={1,1,0,8,1,1,0,1,0,0,0,-1,0};
     debug_menu_init(&menu,&v,&defaults,STAGE_COUNT,hle_content_count());
     startup_snapshot=menu.values;
     note("L+R+Cross+Down: open. Release chord fully.");
@@ -242,6 +297,10 @@ void debug_psp_boundary(void){
     audio_psp_pause(0);pause_total+=sa1_plat_time_us()-pause_start;running=0;
     draw_debug_reset_meter();
     sa1_log("debug-menu: closed guest=%u paused_us=%llu",hle_frame_count(),(unsigned long long)pause_total);
+    if(restart_requested){
+        restart_requested=0;
+        if(restart_game && !(home_exit&&*home_exit))restart_game();
+    }
 }
 static DebugCheatContext read_cheat(int advance){
     uint32_t task=hle_rd32(0x8c78c648u),work=hle_rd32(0x8c78c608u);

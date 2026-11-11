@@ -306,7 +306,12 @@ static ra_slot *ra_get(const char *path) {
         base = e->off; size = e->size;
         full_path(full, sizeof full, "SONICADV.PAK");
     } else full_path(full, sizeof full, path);
-    if (!ra[victim] && !(ra[victim] = memalign(64, sizeof *ra[victim]))) return NULL;
+    if (!ra[victim]) {
+        ra[victim] = memalign(64, sizeof *ra[victim]);
+        if (!ra[victim]) return NULL;
+        memset(ra[victim], 0, sizeof *ra[victim]);
+        ra[victim]->fd = -1;
+    }
     ra_slot *s = ra[victim];
     if (s->path[0]) ra_close(s);
     SceUID fd = sceIoOpen(full, PSP_O_RDONLY, 0);

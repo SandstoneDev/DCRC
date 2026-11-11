@@ -18,6 +18,12 @@ strip-writer files. They are not distributed. Their eleven Block-A wrap entries
 are removed; address-only facts remain, allowing the own emitter to generate
 the originals on the user's computer. Generic TA/banked/2D wrappers remain.
 
+The expanded profile describes additional verified overlay and SDK function
+bounds, including Chao, upgrade scenes and the original Ninja action evaluator.
+The emitter reads the player's boot file and PRS overlays to produce those
+function bodies. The action wrapper controls only the host renderer's material
+scope. The screen-print adapter reads the default atlas from guest RAM.
+
 The resulting reviewed profile uses the TA parser. Native static-distance
 reduction is not supported, so the UI/CLI retain full100% distance rather than
 advertising an inactive control. World texture caps still transform selected
@@ -51,6 +57,10 @@ replaced with an attributed BSD-3-Clause adaptation of
 own deterministic noise and rounded nominal intervals. This changes the LFO
 reference: phase, frequency, noise and audio parity have not been established
 on hardware. It is not described as a lossless sound fix.
+
+The PSP output worker and host mixer use the device's PCM rate independently
+of the guest frame cadence. The worker, transaction locks and shutdown
+ownership logic are generic host code. The attributed LFO header is unchanged.
 
 ## Generic converter and platform additions
 

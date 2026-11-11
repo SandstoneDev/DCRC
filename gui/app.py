@@ -16,8 +16,10 @@ from .art_preview import Preview, file_image
 from PySide6 import QtCore, QtGui, QtWidgets as W
 from .controller import Task, DEFAULTS, settings_values, load_settings, save_settings
 from .session_log import start_app_log
+from dcrc import __version__
 from dcrc.models import STAGES, CHARACTERS
 from dcrc.capabilities import PROFILE_CAPABILITIES
+from dcrc.updater import check_for_update, install_update, portable_root
 
 
 class Window(W.QMainWindow):
@@ -29,6 +31,9 @@ class Window(W.QMainWindow):
         self.setMinimumSize(860, 560)
         self.job = None
         self.job_dialog = None
+        self.update_root = portable_root()
+        self.available_update = None
+        self.updated_install = None
         self.pending_picker = None
         self.pending_audio = False
         self.pending_border = False
@@ -65,10 +70,14 @@ class Window(W.QMainWindow):
         layout.setContentsMargins(10, 6, 10, 8)
         layout.setSpacing(6)
         header = W.QHBoxLayout()
-        heading = W.QLabel('DCRC Converter')
+        heading = W.QLabel(f'DCRC Converter {__version__}')
         heading.setStyleSheet('font-size:21px;font-weight:600')
         header.addWidget(heading)
         header.addStretch()
+        self.update_button = W.QPushButton('Check for updates')
+        self.update_button.setVisible(self.update_root is not None)
+        self.update_button.clicked.connect(self.update_converter)
+        header.addWidget(self.update_button)
         self.language_box = W.QComboBox()
         for label, value in [('System language','system'),('English','en'),('Русский','ru')]:
             self.language_box.addItem(label,value)
@@ -140,7 +149,7 @@ class Window(W.QMainWindow):
                 widget.setFocusPolicy(QtCore.Qt.StrongFocus)
                 widget.installEventFilter(self)
             if isinstance(widget, (W.QLabel, W.QPushButton, W.QCheckBox)) and widget.text():
-                if widget not in (self.version, self.stage, self.log_path):
+                if widget not in (self.version, self.stage, self.log_path, self.update_button):
                     self._translations.append((widget.setText, widget.text()))
             elif isinstance(widget, W.QComboBox) and widget not in (self.language_box,self.theme_box):
                 for index in range(widget.count()):
@@ -167,6 +176,7 @@ class Window(W.QMainWindow):
         translations = catalog(self.language_choice)
         for setter, text in self._translations:
             setter(translations.get(text,text))
+        self.update_button.setText(self.tr(self.update_button_label()))
         self.controls_editor.retranslate(self.tr)
         for widget,text in self._dynamic_labels.items():
             if widget.text() in (text,previous.get(text,text)):
@@ -729,11 +739,47 @@ class Window(W.QMainWindow):
         for button in self.step_buttons: button.setEnabled(True)
         for button in (self.start,self.identify_button,self.verify_button,self.configure_button,
                        self.media_button,self.catalog_button,self.download_button,
-                       self.language_box,self.theme_box):
+                       self.language_box,self.theme_box,self.update_button):
             button.setEnabled(not busy)
         self.cancel.setEnabled(busy)
         self.cancel.setVisible(not busy or self.job!='Download DLC')
         self._step_state()
+
+    def update_button_label(self):
+        if self.updated_install is not None:
+            return 'Open updated converter'
+        if self.available_update is not None:
+            return 'Download update'
+        return 'Check for updates'
+
+    def update_converter(self):
+        if self.task.pending or self.update_root is None:
+            return
+        if self.updated_install is not None:
+            launcher = self.updated_install/'DCRC Converter.exe'
+            self.persist(self.values())
+            started, _ = QtCore.QProcess.startDetached(str(launcher), [], str(self.updated_install))
+            if started:
+                self.close()
+            else:
+                self.show_error('Could not open the updated converter.')
+            return
+        if self.available_update is None:
+            def check(event, cancel):
+                return check_for_update(__version__, self.update_root, cancelled=cancel.is_set)
+            self.begin('Check for updates', check)
+            return
+
+        update = self.available_update
+        stage = self.tr('Download update')
+
+        def download(event, cancel):
+            def progress(received, total):
+                event({'type': 'progress', 'stage': stage,
+                       'progress': received / total})
+            return install_update(update, self.update_root, progress=progress, cancelled=cancel.is_set)
+
+        self.begin('Download update', download)
 
     def identify(self):
         if self.task.pending:return
@@ -888,6 +934,13 @@ class Window(W.QMainWindow):
                         self._apply_catalog()
                     elif self.job == 'Download DLC':
                         self.controls['dlc_dir'].setText(result['source_dir'])
+                    elif self.job == 'Check for updates':
+                        self.available_update = result
+                        self.update_button.setText(self.tr(self.update_button_label()))
+                    elif self.job == 'Download update':
+                        self.updated_install = result
+                        self.available_update = None
+                        self.update_button.setText(self.tr(self.update_button_label()))
                     elif self.job=='Prepare border':
                         self.controls['border_image'].setText(str(result))
                         self.controls['border_mode'].setCurrentIndex(self.controls['border_mode'].findData('custom'))
@@ -914,7 +967,10 @@ class Window(W.QMainWindow):
                     if self.job=='Check version':self.version.setText(self.stage.text())
                     self.convert_after_check=None;self.start_after_check=False
                     self.pending_picker=None;self.pending_audio=False
-                self.inline_status.setText(self.stage.text())
+                if kind == 'finished' and self.job in ('Check for updates', 'Download update'):
+                    self.inline_status.setText(self.result_summary(event.get('result')))
+                else:
+                    self.inline_status.setText(self.stage.text())
                 self.inline_bar.hide()
                 if self.job_dialog and self.job=='Download DLC':
                     self.job_dialog.finish(self.result_summary(event.get('result')) if kind=='finished' else self.stage.text(),kind=='finished')
@@ -954,6 +1010,12 @@ class Window(W.QMainWindow):
 
     def result_summary(self,result):
         if self.job=='Check version':return self.identity_summary(result)
+        if self.job=='Check for updates':
+            if result is None:
+                return self.tr('No newer converter is available.')
+            return self.tr('Converter {version} is available. Click Download update.').format(version=result.version)
+        if self.job=='Download update':
+            return self.tr('Update installed in a separate folder. Click Open updated converter.')
         if self.job=='DLC catalog':
             entries=result.get('entries',[])
             return self.tr('Available to download: {available} of {count} events. Select events, then download.').format(available=sum(bool(e.get('supported')) for e in entries),count=len(entries))

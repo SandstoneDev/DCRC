@@ -1,0 +1,231 @@
+{
+  "schema": 1,
+  "image_sha256": "45bc5d3c25dcfe2cc2c5701311d46783f33e4daa44a951cd9896724d66f0367a",
+  "functions": [
+    {
+      "entry": "0x8c5fdbec",
+      "end": "0x8c5fdcc4",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c5fde20",
+      "end": "0x8c5fe0d2",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c609cb0",
+      "end": "0x8c609d68",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c609d68",
+      "end": "0x8c609e3a",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c609e3a",
+      "end": "0x8c60a002",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60a002",
+      "end": "0x8c60a1f6",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60a1f6",
+      "end": "0x8c60a22c",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60a250",
+      "end": "0x8c60a2a0",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60a2a0",
+      "end": "0x8c60a334",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60a334",
+      "end": "0x8c60a3f8",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60a3f8",
+      "end": "0x8c60a4f6",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60a4f6",
+      "end": "0x8c60a61a",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60a61a",
+      "end": "0x8c60a70a",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60b3e2",
+      "end": "0x8c60b428",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60b428",
+      "end": "0x8c60b462",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60b462",
+      "end": "0x8c60b4a8",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60b4a8",
+      "end": "0x8c60b4e0",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60b518",
+      "end": "0x8c60b596",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60b596",
+      "end": "0x8c60b614",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60b614",
+      "end": "0x8c60b692",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60b692",
+      "end": "0x8c60b710",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60b81c",
+      "end": "0x8c60ba3c",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60beb0",
+      "end": "0x8c60bf5e",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60bf5e",
+      "end": "0x8c60c026",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60c026",
+      "end": "0x8c60c174",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60c19c",
+      "end": "0x8c60c322",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60c322",
+      "end": "0x8c60c3b8",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60c3b8",
+      "end": "0x8c60c44e",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60c488",
+      "end": "0x8c60c526",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60c526",
+      "end": "0x8c60c5c4",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60cfc4",
+      "end": "0x8c60cfe2",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60cfe2",
+      "end": "0x8c60cffc",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60cffc",
+      "end": "0x8c60d016",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60d016",
+      "end": "0x8c60d034",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60d034",
+      "end": "0x8c60d054",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60d054",
+      "end": "0x8c60d094",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60d094",
+      "end": "0x8c60d0d4",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60d0d4",
+      "end": "0x8c60d114",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60d140",
+      "end": "0x8c60d180",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60e31c",
+      "end": "0x8c60e3d2",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60e49a",
+      "end": "0x8c60e5e4",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c60e5e4",
+      "end": "0x8c60e6da",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c64f244",
+      "end": "0x8c64f2d8",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c64f2dc",
+      "end": "0x8c64f318",
+      "origin": "sdk-fallback"
+    },
+    {
+      "entry": "0x8c64f31c",
+      "end": "0x8c64f330",
+      "origin": "sdk-fallback"
+    }
+  ]
+}

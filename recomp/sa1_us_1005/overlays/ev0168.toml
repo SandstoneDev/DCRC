@@ -1,0 +1,25 @@
+# Own US1.005 upgrade event. Header+0 is callable, header+4 is PVM descriptor data.
+[game]
+id = "sa1_ovl_ev0168"
+title = "Sonic Adventure overlay EV0168"
+region = "USA"
+
+[binary]
+path = "../../../../private/overlays/sa1_us_1005/EV0168.bin"
+load_address = 0x8cb80000
+link_address = 0x0cb80000
+entry = 0x0cb80020
+
+[functions]
+pointers = false
+sweep = false
+extra = [0x0cb80020]
+exclude = []
+
+[sa1_overlay]
+file = "SONICADV/EV0168.PRS"
+slot = 0x8cb80000
+code_lo = 0x8cb80020
+code_hi = 0x8cb80872
+size = 40724
+sha256 = "6cd01e8531df14434694c5c7d7021461587730c28b0a028d257326608f3e7ddd"

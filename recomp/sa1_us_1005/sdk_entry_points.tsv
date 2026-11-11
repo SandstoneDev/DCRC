@@ -141,7 +141,6 @@ address	sites	callers	is_entry	name	confidence	evidence
 8C610D3E	3	3	1	-	-	-
 8C610D30	3	3	1	-	-	-
 8C610CF8	3	3	1	-	-	-
-8C60E49A	3	3	1	-	-	-
 8C603B84	3	3	1	-	-	-
 8C5FF2CC	3	3	1	-	-	-
 8C63A994	3	2	1	-	-	-
@@ -303,3 +302,12 @@ address	sites	callers	is_entry	name	confidence	evidence
 8C5FF2A4	0	0	1	-	-	called only from STG04.PRS (code overlay), not from block A
 8C60E14C	0	0	1	-	-	called only from ADV0130.PRS (code overlay), not from block A
 8C63A9DC	0	0	1	-	-	called only from STG03.PRS (code overlay), not from block A
+8C602F8A	0	0	1	buGetDiskFree	high	AL_MAIN US1.005 wrapper ABI and operation/range semantics verified; C115 own HLE
+8C603078	0	0	1	buFindExecFile	high	AL_MAIN US1.005 wrapper ABI and operation/range semantics verified; C115 own HLE
+8C603292	0	0	1	buDeleteFile	high	AL_MAIN US1.005 wrapper ABI and operation/range semantics verified; C115 own HLE
+8C6033FE	0	0	1	buGetLastError	high	AL_MAIN US1.005 wrapper ABI and operation/range semantics verified; C115 own HLE
+8C6034A2	0	0	1	buDefragDisk	high	AL_MAIN US1.005 wrapper ABI and operation/range semantics verified; C115 own HLE
+8C6035BE	0	0	1	buSaveExecFile	high	AL_MAIN US1.005 wrapper ABI and operation/range semantics verified; C115 own HLE
+8C60361C	0	0	1	buLoadFileEx	high	AL_MAIN US1.005 wrapper ABI and operation/range semantics verified; C115 own HLE
+8C603672	0	0	1	buRewriteExecFile	high	AL_MAIN US1.005 wrapper ABI and operation/range semantics verified; C115 own HLE
+8C640CE8	0	0	1	njPrintB	high	US1.005 PrintB binary glyph and TA packet contract; C115 own HLE; called from AL_MAIN

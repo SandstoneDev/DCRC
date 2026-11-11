@@ -19,7 +19,7 @@ static char manifest[20000];
 static uint8_t avmi[108],bvmi[108],avms[1024],bvms[1536];
 static int fail_read,base_writes,base_removes;
 static uint32_t a_size_override,vmi_size_override;
-static int stress,stress_count=200,stress_changed,base_lists,fail_write,fail_remove;
+static int stress,stress_count=200,stress_changed,base_lists,fail_write,fail_remove,fail_list;
 static const char *names[]={"A_SAVE","SONICADV_505","SONICADV_599","SONICADV_ALF","Z_SAVE"};
 static int32_t base_read(const char *n,void *b,uint32_t cap) {
  for(unsigned i=0;i<5;i++) if(!strcmp(n,names[i])) { if(cap) ((uint8_t*)b)[0]=(uint8_t)(40+i);return cap?1:0; }
@@ -27,8 +27,10 @@ static int32_t base_read(const char *n,void *b,uint32_t cap) {
 }
 static int base_write(const char *n,const void *b,uint32_t z) { (void)n;(void)b;(void)z;base_writes++;if(stress)stress_changed=1;return fail_write?-1:0; }
 static int base_remove(const char *n) { (void)n;base_removes++;if(stress)stress_count--;return fail_remove?-1:0; }
-static int base_list(int i,char n[13],uint32_t *z) { if(stress){base_lists++;if(i<0||i>=stress_count)return -1;snprintf(n,13,"A%03u_SAVE",(unsigned)i%1000u);*z=stress_changed?1024:512;return 0;}if(i<0||i>=5)return -1;strcpy(n,names[i]);*z=512;return 0; }
-static const vmu_store_ops ops={base_read,base_write,base_remove,base_list};
+static int base_list(int i,char n[13],uint32_t *z) { if(fail_list)return -2;if(stress){base_lists++;if(i<0||i>=stress_count)return -1;snprintf(n,13,"A%03u_SAVE",(unsigned)i%1000u);*z=stress_changed?1024:512;return 0;}if(i<0||i>=5)return -1;strcpy(n,names[i]);*z=512;return 0; }
+static const vmu_store_ops ops={
+    .read=base_read,.write=base_write,.remove=base_remove,.list=base_list
+};
 static const void *file(const char *p,uint32_t *z) {
  if(!strcmp(p,"dlc/events.txt")){*z=(uint32_t)strlen(manifest);return manifest;}
  if(!strcmp(p,"dlc/a.vmi")){*z=sizeof avmi;return avmi;}
@@ -129,6 +131,18 @@ int main(void){
  CK(hle_vmu_store->list(198,n,&z)==0&&!strcmp(n,"SONICADV_505"));CK(hle_vmu_store->list(199,n,&z)<0);
  stress_count=201;CK(hle_vmu_store->list(0,n,&z)<0); /* Foreign contract violation declines, stays bounded. */
  stress_count=200;CK(hle_vmu_store->list(0,n,&z)==0);
+ vmu_file_info info;
+ CK(hle_vmu_store->stat("SONICADV_505",&info)==0&&info.size==sizeof avms&&info.type==VMU_STORE_DATA);
+ CK(hle_vmu_store->stat("SONICADV_599",&info)==-1);
+ CK(hle_vmu_store->stat("A000_SAVE",&info)==0&&info.size==1024&&info.type==VMU_STORE_DATA);
+ int writes=base_writes;
+ CK(hle_vmu_store->write_typed("SONICADV_505",got,1024,&info)<0&&base_writes==writes);
+ CK(hle_vmu_store->write_typed("A000_SAVE",got,1024,&info)==0&&base_writes==writes+1);
+ info.type=VMU_STORE_EXEC;info.header_block=1;
+ CK(hle_vmu_store->write_typed("A000_SAVE",got,1024,&info)<0&&base_writes==writes+1);
+ fail_list=1;
+ CK(hle_vmu_store->list(0,n,&z)==-2&&hle_vmu_store->stat("A000_SAVE",&info)==-2);
+ fail_list=0;
  CK(hle_content_select(-1)==0&&hle_vmu_store==&ops);
  printf("PASS %u opaque-content checks; no payload decoder/game bytes\n",checks);
  return 0;

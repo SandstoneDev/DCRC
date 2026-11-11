@@ -7,6 +7,8 @@ int hle_startup_setting(const char *key, const char *value, int cli);
 void hle_startup_prepare(int resuming);
 /* Once at the established fresh-boot frame12/mode1 boundary. */
 void hle_startup_frame(uint32_t frame);
+/* Consume the empty return route left by a fresh direct action-stage warp. */
+int hle_startup_missing_return(uint32_t frame);
 /* Validated effective launch request, not the live player state. */
 int hle_startup_get(uint16_t *level,uint16_t *act,uint16_t *character,int *enabled);
 int hle_startup_cli_active(void);

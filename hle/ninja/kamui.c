@@ -176,9 +176,19 @@ static void sh_set(uint32_t off, uint32_t flag, uint32_t v) {
     sh_commit();
 }
 
+void kamui_commit_strip_head(uint32_t address) {
+    uint32_t previous=sh_addr;sh_addr=address;sh_commit();sh_addr=previous;
+}
+
 /* ---- buffers --------------------------------------------------------------- */
 uint32_t kamui_buffer_ptr(int list) { return hle_rd32(desc_addr + 8u * (uint32_t)list); }
 void kamui_buffer_set(int list, uint32_t ptr) { hle_wr32(desc_addr + 8u * (uint32_t)list, ptr); }
+
+int kamui_can_append(int list,uint32_t bytes) {
+    if(list<0 || list>2 || !bufs[list].base)return 0;
+    uint32_t base=bufs[list].base&0x1fffffffu,p=kamui_buffer_ptr(list)&0x1fffffffu;
+    return p>=base && p-base<=bufs[list].size && bytes<=bufs[list].size-(p-base);
+}
 
 int kamui_append(int list, const uint32_t w[8]) {
     uint32_t p = kamui_buffer_ptr(list) & 0x1FFFFFFFu;
@@ -233,6 +243,7 @@ static void buffers_reset(void) {
     for (int i = 0; i < 3; i++) if (bufs[i].base) kamui_buffer_set(i, bufs[i].base);
     /* the game-visible copies too, so a stale pointer is never reused */
     hle_wr32(KM_CTX_PTR_OP, bufs[0].base); hle_wr32(KM_CTX_PTR_TR, bufs[1].base); hle_wr32(KM_CTX_PTR_PT, bufs[2].base);
+    if (!frame_rendered) texture_raw_collect();
 }
 
 static void buffers_alloc(void) {

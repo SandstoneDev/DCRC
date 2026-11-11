@@ -196,5 +196,12 @@
   "FMV playback unavailable in this public runtime": "Видео FMV недоступно в этом публичном runtime",
   "Unavailable in public TA runtime": "Недоступно в публичном TA runtime",
   "Fixed by public runtime": "Задано публичным runtime",
-  "Custom 4:3 borders require a runtime feature not included in this public profile.": "Свои рамки 4:3 требуют функции runtime, отсутствующей в публичном профиле."
+  "Custom 4:3 borders require a runtime feature not included in this public profile.": "Свои рамки 4:3 требуют функции runtime, отсутствующей в публичном профиле.",
+  "Check for updates": "Проверить обновления",
+  "Download update": "Скачать обновление",
+  "Open updated converter": "Запустить обновлённый конвертер",
+  "Could not open the updated converter.": "Не удалось запустить обновлённый конвертер.",
+  "No newer converter is available.": "Доступных обновлений нет.",
+  "Converter {version} is available. Click Download update.": "Доступен конвертер {version}. Нажмите «Скачать обновление».",
+  "Update installed in a separate folder. Click Open updated converter.": "Обновление установлено в отдельную папку. Нажмите «Запустить обновлённый конвертер»."
 }

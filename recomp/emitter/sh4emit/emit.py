@@ -30,7 +30,7 @@ STORE_OPS = {
 
 class Program:
     def __init__(self, image, code_lo, code_hi, functions, seam, sdk_range=None,
-                 name_prefix="fn_", log=print, extern=None, wrap=None, keep=None):
+                 name_prefix="fn_", log=print, extern=None, wrap=None, keep=None, code_ranges=None):
         """functions: list of (entry, end, origin).  seam: {addr: (name, sites)}.
         extern: {addr: C name} of functions emitted in another unit (an
         overlay's calls into the main image); called directly, full sync.
@@ -50,6 +50,7 @@ class Program:
         # trace_call_targets.txt: jsr/jmp targets), which are real call targets whatever the
         # discovery origin says.
         self.keep = {phys(a) for a in (keep or ())}
+        self.code_ranges = code_ranges
         self.log = log
         self.summaries = Summaries()
         self.cfgs = {}
@@ -102,7 +103,7 @@ class Program:
         origin = {e: o for e, _, o in self.functions_in}
 
         # pass 1: everything is an entry; collect call targets and patched words
-        env = Env(self.image, self.code_lo, self.code_hi, entries_all)
+        env = Env(self.image, self.code_lo, self.code_hi, entries_all, code_ranges=self.code_ranges)
         called = set()
         cfgs = {}
         for e in entries_all:
@@ -126,7 +127,7 @@ class Program:
         local_only = {e for e in branch_entries if e not in self.keep and e not in referenced}
         entries = [e for e in entries_all if e not in local_only]
         self.stats["entries_merged"] = len(local_only)
-        env = Env(self.image, self.code_lo, self.code_hi, entries, patched)
+        env = Env(self.image, self.code_lo, self.code_hi, entries, patched, code_ranges=self.code_ranges)
         self.env = env
         work = list(entries)
         seen = set()
@@ -231,10 +232,13 @@ class Program:
         fe = FunctionEmitter(self, cfg, fa)
         return fe.emit()
 
-    def write_all(self, out_dir, chunks=32, include_dir=None, unit="game", overlay=None):
+    def write_all(self, out_dir, chunks=32, include_dir=None, unit="game", overlay=None,
+                  separate_entries=None):
         """overlay: None for the main image, else {"name", "table", "record",
         "code_lo", "code_hi"}: the table and the sa1_overlay record get those
-        symbol names, and no seam files are written."""
+        symbol names, and no seam files are written. Optional separate_entries
+        retain ordinary chunk placement and append those bodies in at most two
+        additional chunks; analysis, headers and lookup tables stay combined."""
         os.makedirs(out_dir, exist_ok=True)
         t0 = time.time()
         counts = {"instructions": 0, "blocks": 0, "calls_direct": 0, "calls_seam": 0,
@@ -252,18 +256,26 @@ class Program:
             total_bytes += len(text)
             for k, v in c.items():
                 counts[k] = counts.get(k, 0) + v
-        # chunk by size
-        per = max(1, total_bytes // chunks + 1)
+        # Chunk the ordinary bodies independently of opt-in SDK additions.
+        partitions = [(bodies, chunks)]
+        if separate_entries is not None:
+            separate = {phys(e) for e in separate_entries}
+            if not separate <= set(self.order):
+                raise ValueError("separate code entries were not emitted")
+            partitions = [([(e, text) for e, text in bodies if e not in separate], chunks),
+                          ([(e, text) for e, text in bodies if e in separate], 2)]
         files = []
-        cur, cur_size, idx = [], 0, 0
-        for e, text in bodies:
-            cur.append(text)
-            cur_size += len(text)
-            if cur_size >= per:
+        for part, n in partitions:
+            per = max(1, sum(len(text) for _, text in part) // n + 1)
+            cur, cur_size = [], 0
+            for e, text in part:
+                cur.append(text)
+                cur_size += len(text)
+                if cur_size >= per:
+                    files.append(cur)
+                    cur, cur_size = [], 0
+            if cur:
                 files.append(cur)
-                cur, cur_size = [], 0
-        if cur:
-            files.append(cur)
         inc = '#include "sh4_rt.h"\n#include "%s.h"\n#include "seam.h"\n' % unit
         if overlay and self.extern:
             inc += '#include "game.h"\n'

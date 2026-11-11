@@ -117,6 +117,7 @@ const draw_stats *draw_get_stats(void) { return &stats; }
 typedef struct {
     uint32_t gl; int w, h; uint32_t bytes; int fmt, clut_fmt; uint32_t pix_n, clut_n; void *pix, *clut;
     int pblk[4];                  /* SA1_TEX_BUDGET: texpool block + 1 of the texture [0] and its PSP mirror variants [1..3]; -1 = mirror failed */
+    uint8_t ui_protected;
     int pw, ph, pbits, plevels, dropped;   /* its size on the PSP; top levels the pool dropped */
     uint32_t mfail[4];            /* mirror_epoch + 1 when the variant found no room (draw_gu.c) */
 } tex_slot;
@@ -143,7 +144,7 @@ static void pool_evict(int owner) {
 }
 static uint32_t pool_drop_top(int owner) {
     tex_slot *t = &texs[owner & 0xFFFF];
-    if (t->plevels < 2) return 0;
+    if (t->plevels < 2 || t->ui_protected) return 0;
     t->pw >>= 1; t->ph >>= 1; t->plevels--; t->dropped++;
     return texpool_psp_bytes(t->pw, t->ph, t->pbits, t->plevels, NULL);
 }
@@ -315,6 +316,12 @@ uint32_t draw_texture_create(int width, int height, int fmt, const void *pixels,
     return texture_create_at(0, width, height, fmt, pixels, clut_fmt, clut);
 }
 
+int draw_texture_protect_ui(uint32_t handle) {
+    if (!handle || handle >= TEX_MAX || !texs[handle].w) return -1;
+    texs[handle].ui_protected = 1;
+    return 0;
+}
+
 void draw_texture_destroy(uint32_t handle) {
     if (handle == 0 || handle >= TEX_MAX || texs[handle].w == 0) return;
 #ifndef SA1_NO_SDL
@@ -331,25 +338,52 @@ void draw_texture_destroy(uint32_t handle) {
  * copy; a load drops the current textures and re-creates the saved ones
  * under their handles, which guest RAM refers to. */
 #include "state.h"
+/* Raw owners were restored before backend pixels. A failed rebuild must
+ * revoke that numeric handle before an ordinary texture can reuse its slot. */
+extern int texture_raw_restore_valid(uint32_t,int,int,int,uint32_t,uint32_t);
+extern void texture_raw_restore_finish(hle_state_io *);
+static int texture_restore_raw_error(hle_state_io *io,uint32_t handle) {
+    extern int texture_raw_ui_handle(uint32_t);
+    extern void texture_raw_restore_failed(uint32_t);
+    if (!texture_raw_ui_handle(handle)) return 0;
+    texture_raw_restore_failed(handle);
+    hle_state_fail(io,"cannot restore raw UI texture");
+    texture_raw_restore_finish(io);
+    return 1;
+}
 typedef struct tex_rec { uint32_t handle, pix_n, clut_n; int32_t w, h, fmt, clut_fmt; } tex_rec;
 void draw_gl_texture_state(hle_state_io *io) {
     uint32_t count = 0;
     if (!hle_state_loading(io)) for (int i = 1; i < TEX_MAX; i++) count += texs[i].w != 0;
     hle_state_blob(io, "textures", &count, sizeof count);
     if (hle_state_loading(io)) {
-        if (hle_state_error(io)) return;
+        if (hle_state_error(io)) { texture_raw_restore_finish(io);return; }
         for (int i = 1; i < TEX_MAX; i++) if (texs[i].w) draw_texture_destroy((uint32_t)i);
         for (uint32_t k = 0; k < count; k++) {
-            tex_rec r;
+            tex_rec r={0};
             hle_state_blob(io, "tex", &r, sizeof r);
             uint32_t pn = 0, cn = 0;
             const void *pix = hle_state_var(io, "tex.pix", NULL, &pn);
             const void *clut = hle_state_var(io, "tex.clut", NULL, &cn);
-            if (hle_state_error(io)) return;
-            if (pn != r.pix_n || cn != r.clut_n || !pix) { sa1_log("draw: texture %u in the state has %u/%u bytes, expected %u/%u", r.handle, pn, cn, r.pix_n, r.clut_n); continue; }
-            if (texture_create_at((int)r.handle, r.w, r.h, r.fmt, pix, r.clut_fmt, cn ? clut : NULL) != r.handle)
+            if (hle_state_error(io)) { texture_restore_raw_error(io,r.handle);texture_raw_restore_finish(io);return; }
+            extern int texture_raw_ui_handle(uint32_t);
+            int raw_owned=texture_raw_ui_handle(r.handle);
+            if (raw_owned && (!pix || r.handle>=TEX_MAX || r.pix_n!=pn || r.clut_n!=cn ||
+                !texture_raw_restore_valid(r.handle,r.w,r.h,r.fmt,pn,cn))) {
+                texture_restore_raw_error(io,r.handle);return;
+            }
+            if (pn != r.pix_n || cn != r.clut_n || !pix) { sa1_log("draw: texture %u in the state has %u/%u bytes, expected %u/%u", r.handle, pn, cn, r.pix_n, r.clut_n); if(texture_restore_raw_error(io,r.handle))return;continue; }
+            if (texture_create_at((int)r.handle, r.w, r.h, r.fmt, pix, r.clut_fmt, cn ? clut : NULL) != r.handle) {
                 sa1_log("draw: cannot re-create texture %u (%dx%d fmt %d)", r.handle, r.w, r.h, r.fmt);
+                if(texture_restore_raw_error(io,r.handle))return;
+            } else {
+                extern int texture_raw_ui_handle(uint32_t);
+                if (raw_owned && (!texs[r.handle].pix || draw_texture_protect_ui(r.handle)<0)) {
+                    texture_restore_raw_error(io,r.handle);return;
+                }
+            }
         }
+        texture_raw_restore_finish(io);
         return;
     }
     for (int i = 1; i < TEX_MAX; i++) {

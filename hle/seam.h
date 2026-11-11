@@ -145,7 +145,6 @@ void sdk_8c63a268(sh4_ctx *c);  /* -                                            
 void sdk_8c610d3e(sh4_ctx *c);  /* -                                            3 sites */
 void sdk_8c610d30(sh4_ctx *c);  /* -                                            3 sites */
 void sdk_8c610cf8(sh4_ctx *c);  /* -                                            3 sites */
-void sdk_8c60e49a(sh4_ctx *c);  /* -                                            3 sites */
 void sdk_8c603b84(sh4_ctx *c);  /* -                                            3 sites */
 void sdk_8c5ff2cc(sh4_ctx *c);  /* -                                            3 sites */
 void sdk_8c63a994(sh4_ctx *c);  /* -                                            3 sites */
@@ -307,3 +306,13 @@ void sdk_8c5ff24c(sh4_ctx *c);  /* -                                            
 void sdk_8c5ff2a4(sh4_ctx *c);  /* -                                            0 sites */
 void sdk_8c60e14c(sh4_ctx *c);  /* -                                            0 sites */
 void sdk_8c63a9dc(sh4_ctx *c);  /* -                                            0 sites */
+
+void sdk_8c602f8a(sh4_ctx *c);  /* buGetDiskFree */
+void sdk_8c603078(sh4_ctx *c);  /* buFindExecFile */
+void sdk_8c603292(sh4_ctx *c);  /* buDeleteFile */
+void sdk_8c6033fe(sh4_ctx *c);  /* buGetLastError */
+void sdk_8c6034a2(sh4_ctx *c);  /* buDefragDisk */
+void sdk_8c6035be(sh4_ctx *c);  /* buSaveExecFile */
+void sdk_8c60361c(sh4_ctx *c);  /* buLoadFileEx */
+void sdk_8c603672(sh4_ctx *c);  /* buRewriteExecFile */
+void sdk_8c640ce8(sh4_ctx *c);  /* njPrintB */
