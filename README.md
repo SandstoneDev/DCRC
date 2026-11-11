@@ -17,7 +17,7 @@ its custom-licensed implementation is not copied here.
 
 ## Quick start on Windows
 
-1. [Download the Windows x64 ZIP](https://github.com/SandstoneDev/DCRC/releases/download/v0.1.0/DCRC-Converter-Windows-x64-v0.1.0.zip) from the [latest release](https://github.com/SandstoneDev/DCRC/releases/latest).
+1. [Download the Windows x64 ZIP](https://github.com/SandstoneDev/DCRC/releases/download/v0.1.1/DCRC-Converter-Windows-x64-v0.1.1.zip) from the [latest release](https://github.com/SandstoneDev/DCRC/releases/latest).
 2. Extract the entire archive into a writable folder and run **DCRC Converter.exe**.
 3. Select your own **Sonic Adventure Dreamcast USA V1.005** GDI and keep its track files alongside it.
 4. Choose an output folder, then click **Convert** on the last tab.
@@ -29,7 +29,7 @@ from the extracted folder.
 
 ## Status
 
-**DCRC 0.1.0** supports **Sonic Adventure, Dreamcast USA V1.005**. Other games and disc revisions require their own porting
+**DCRC 0.1.1** supports **Sonic Adventure, Dreamcast USA V1.005**. Other games and disc revisions require their own porting
 work. The converter builds the PSP game locally from your own disc.
 
 The reviewed source profile deliberately uses locally translated original

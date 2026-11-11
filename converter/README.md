@@ -2,7 +2,7 @@
 
 ## Start the portable converter
 
-1. [Download the Windows x64 ZIP](https://github.com/SandstoneDev/DCRC/releases/download/v0.1.0/DCRC-Converter-Windows-x64-v0.1.0.zip).
+1. [Download the Windows x64 ZIP](https://github.com/SandstoneDev/DCRC/releases/download/v0.1.1/DCRC-Converter-Windows-x64-v0.1.1.zip).
 2. Extract the entire archive into a writable folder.
 3. Open **DCRC Converter.exe**.
 
@@ -36,7 +36,10 @@ or the advanced settings. CLI-only source use needs `requirements.txt`.
    final Convert task. Errors/cancellation never silently omit selected events.
 2. **Output:** choose the exact new PSP game folder. Existing foreign folders and
    unknown player files are preserved. Work/SDK resolution is automatic in a
-   complete portable layout; advanced fields permit explicit overrides.
+   complete portable layout; advanced fields permit explicit overrides. On
+   Windows, a deeply nested output uses a work folder under local app data to
+   keep compiler paths short. If a deep folder causes a missing source error,
+   choose a short **Work folder** under **Advanced build options**.
 3. **Appearance:** edit the local title, browse images from the supplied game or
    local files, audition music and choose its start/1–10 second clip. A custom
    side image is an optional local 4:3 setting. When converting into an existing

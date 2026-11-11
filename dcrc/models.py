@@ -5,7 +5,7 @@ import os
 import math
 import re
 from .errors import ConverterError
-from .storage import plain_path
+from .storage import plain_path, windows_native_path_too_long
 from .capabilities import PROFILE_CAPABILITIES
 
 STAGES=('normal','emerald_coast','station_square','windy_valley','twinkle_park',
@@ -13,6 +13,18 @@ STAGES=('normal','emerald_coast','station_square','windy_valley','twinkle_park',
  'final_egg','chaos0','chaos4','chaos6','egg_hornet','egg_viper','mystic_ruins',
  'egg_carrier_outside','egg_carrier_inside','sky_chase1','sky_chase2')
 CHARACTERS=('sonic','tails','knuckles','amy','gamma','big')
+
+# Reserve the suffix of a longest generated C path in the US V1.005 profile.
+_GENERATED_INPUT = (Path('stages/generate') / ('0' * 64) / ('run_' + '0' * 32) /
+                    'generated/overlays/emitter/al_garden00/ovl_al_garden00_table.c')
+
+
+def default_work_folder(output):
+    adjacent = output.parent / '.dcrc-work'
+    if windows_native_path_too_long(adjacent / _GENERATED_INPUT):
+        local = Path(os.environ.get('LOCALAPPDATA') or Path.home() / 'AppData' / 'Local')
+        return plain_path(local / 'DCRC' / 'work')
+    return adjacent
 
 @dataclass
 class ConversionOptions:
@@ -59,7 +71,7 @@ class ConversionOptions:
         self.control_map=validate_control_map(self.control_map)
         self.source=plain_path(self.source)
         self.output=plain_path(self.output)
-        self.work=plain_path(self.work) if self.work else self.output.parent/'.dcrc-work'
+        self.work=plain_path(self.work) if self.work else default_work_folder(self.output)
         self.toolchain=Path(self.toolchain).expanduser().resolve() if self.toolchain else None
         self.dlc_dir=plain_path(self.dlc_dir) if self.dlc_dir else None
         self.border_image=plain_path(self.border_image) if self.border_image and self.border_mode not in ('default','orbit') else None

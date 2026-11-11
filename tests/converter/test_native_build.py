@@ -146,6 +146,15 @@ class NativeBuildTest(unittest.TestCase):
             self.assertIn((src/'recomp/emitter/runtime/sh4_rt.h').as_posix(),units['game_009.c']['flags'])
             self.assertTrue(all('hello' not in str(u['source']) for u in result['units']))
             self.assertFalse((base/'build').exists())
+            if os.name == 'nt':
+                deep = gen / 'overlays' / 'emitter' / ('long_' * 38) / 'ovl_long.c'
+                deep.parent.mkdir()
+                deep.write_text('/* own fixture */')
+                self.assertGreaterEqual(len(str(deep)), 260)
+                with self.assertRaisesRegex(api.ConverterError, 'Choose a short work folder') as failure:
+                    api.plan(src,gen,base/'build',sdk)
+                self.assertEqual(failure.exception.code,'native-work-path')
+                self.assertFalse((base/'build').exists())
 
     @unittest.skipUnless(os.name == 'nt','MinGW response files use the Windows ANSI codepage')
     def test_response_file_uses_native_codepage_instead_of_utf8_mojibake(self):

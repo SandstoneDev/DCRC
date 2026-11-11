@@ -34,6 +34,27 @@ def test_normal_boot_and_psp_quality_default(tmp_path):
     assert (o.world_textures,o.land_distance,o.startup_stage)==(64,100,'normal')
 
 
+@pytest.mark.skipif(sys.platform != 'win32', reason='Windows PSP compiler path limit')
+def test_deep_output_uses_short_local_work_folder(tmp_path, monkeypatch):
+    o = options(tmp_path)
+    o.output = tmp_path / ('long-download-folder-' * 5) / 'game'
+    local = Path(tmp_path.anchor) / 'dcrc-test-local'
+    monkeypatch.setenv('LOCALAPPDATA', str(local))
+
+    assert o.validate().work == local / 'DCRC' / 'work'
+    assert not o.output.exists()
+
+
+@pytest.mark.skipif(sys.platform != 'win32', reason='Windows PSP compiler path limit')
+def test_short_and_explicit_work_paths_are_kept(tmp_path):
+    root = Path(tmp_path.anchor) / 'dcrc-test-short'
+    o = options(tmp_path)
+    o.output = root / 'game'
+    assert o.validate().work == root / '.dcrc-work'
+    o.work = root / 'chosen'
+    assert o.validate().work == root / 'chosen'
+
+
 def test_source_output_overlap_rejected(tmp_path):
     source=tmp_path/'input';source.mkdir()
     with pytest.raises(ConverterError): ConversionOptions(source,source/'result').validate()

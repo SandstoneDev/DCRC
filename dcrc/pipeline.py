@@ -128,6 +128,7 @@ def convert(options,event=None,cancel_event=None,*,log_path=None):
     records=source_files(source);runtime_fp=fingerprint(records)
     profile_fp=fingerprint(tree_files(PROFILE_DIR));toolchain_fp=tc.fingerprint();check()
     emit({'type': 'log', 'message': f'DCRC {__version__} runtime {runtime_fp}, profile {profile_fp}'})
+    emit({'type': 'log', 'message': f'Work folder: {o.work}'})
     cache=StageCache(o.work,emit)
     log=Path(log_path) if log_path else o.work/'logs'/('conversion_'+time.strftime('%Y%m%d_%H%M%S')+'_'+uuid.uuid4().hex[:8]+'.log')
     runner=CommandRunner(log,event=emit,cancel_event=stop)

@@ -15,6 +15,11 @@ def reject_links(path):
     if p.is_symlink() or getattr(p,'is_junction',lambda:False)():
         raise ConverterError('unsafe_path',f'Linked paths are not accepted: {p}')
 
+def windows_native_path_too_long(path):
+    # The bundled Windows PSP compiler fails to open source paths at MAX_PATH.
+    return os.name == 'nt' and len(str(path).encode('utf-16-le', 'surrogatepass')) >= 260 * 2
+
+
 def plain_path(path):
     p=Path(path).expanduser().absolute()
     for part in (*reversed(p.parents),p):reject_links(part)

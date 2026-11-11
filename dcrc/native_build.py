@@ -14,6 +14,7 @@ import re
 import struct
 
 from .errors import ConverterError
+from .storage import windows_native_path_too_long
 from .toolchain import resolve
 
 BACKEND = ('platform_psp.c', 'coro_psp.c', 'draw_gu.c', 'crash_psp.c', 'main_psp.c',
@@ -198,6 +199,10 @@ def plan(source_root, generated, build_dir, toolchain):
         for path in sources:
             if not path.is_file():
                 raise ConverterError('runtime', 'Required runtime source is missing: ' + str(path))
+            if windows_native_path_too_long(path):
+                raise ConverterError('native-work-path',
+                    'The PSP compiler source path is too long. Choose a short work folder near the drive root.',
+                    'Use Output > Advanced build options > Work folder, or set --work in the CLI.')
             rel = path.relative_to(gen if group == 'game' else src)
             obj = dest/'obj'/('sa1_' + group + '_psp.dir')/('generated' if group == 'game' else 'source')/rel.parent/(rel.name+'.o')
             flags = common + includes + sdk_inc
