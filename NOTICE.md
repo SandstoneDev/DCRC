@@ -29,6 +29,8 @@ optional external-DLC decoder. Their input-side functions are emitted locally
 from the user's supported disc where applicable. Generated game code/assets,
 compiled game programs, states and captured fixtures are never public inputs.
 
-Neither this notice nor a component's source licence grants rights to a
-commercial game, its assets or generated translations. No upstream claim of
-ownership/accuracy overrides a file-level provenance review.
+The root MIT licence covers the applicable source code and documentation in
+this repository. Sonic Adventure, its executable, its assets, the Sega Katana
+SDK and code generated from them remain the property of their respective
+owners. No upstream claim of ownership or accuracy overrides a file-level
+provenance review.

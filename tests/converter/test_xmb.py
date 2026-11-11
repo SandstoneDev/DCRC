@@ -1,5 +1,5 @@
 """Owned synthetic XMB inputs; no game/media fixtures."""
-import io, json, struct, tempfile, threading, unittest
+import io, json, os, struct, tempfile, threading, unittest
 from pathlib import Path
 from unittest.mock import patch
 from PIL import Image,ImageOps
@@ -162,7 +162,7 @@ class XmbTest(unittest.TestCase):
             c=xmb.inspect_source_media(src);self.assertEqual(c['images'][0]['id'],'title');self.assertEqual(len(c['tracks']),0)
     def test_encoder_package_resolution_and_explicit_override(self):
         bundle=self.root/'bundle';(bundle/'python').mkdir(parents=True);tools=bundle/'tools'/'atracdenc';tools.mkdir(parents=True)
-        p=tools/'atracdenc.exe';p.write_bytes(b'owned fake encoder');other=self.root/'encoder';other.write_bytes(b'fake')
+        p=tools/('atracdenc.exe' if os.name=='nt' else 'atracdenc');p.write_bytes(b'owned fake encoder');other=self.root/'encoder';other.write_bytes(b'fake')
         with patch.object(xmb.sys,'executable',str(bundle/'python'/'python.exe')),patch('dcrc.media_tools.__file__',str(bundle/'app/dcrc/media_tools.py')),patch.object(xmb.shutil,'which',side_effect=AssertionError('must use packaged tool')):
             self.assertEqual(xmb.resolve_encoder(),p.resolve());self.assertEqual(xmb.resolve_encoder(other),other.resolve())
     def test_mock_external_audio_commands_frames_and_failure(self):

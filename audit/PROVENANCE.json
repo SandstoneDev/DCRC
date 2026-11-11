@@ -310,8 +310,8 @@
       }
     },
     "LICENSE": {
-      "sha256": "559a34be5e92dc0ed58e1845d1e00be3faa6203f97dcd366f62f26c7bc160878",
-      "bytes": 1407,
+      "sha256": "a2cc77ff1084a0ebc0458acce4614e7e7446b3a1110d9a5d98ed20b350214dd0",
+      "bytes": 1102,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -319,7 +319,17 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "LICENSE"
       },
-      "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
+      "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "v0.1.0-preview.2-source-review",
+          "path": "LICENSE"
+        },
+        "review": "Host-neutral synthetic encoder fixture or canonical MIT text with scope retained in NOTICE."
+      }
     },
     "LICENSES/MAME-BSD-3-Clause.txt": {
       "sha256": "af31046c3c7ac1ccfe0e3be847c1fcc61e909f412518de2d2c1b785a9dbbb03f",
@@ -358,8 +368,8 @@
       "review": "Complete upstream MIT copyright, permission and disclaimer."
     },
     "NOTICE.md": {
-      "sha256": "b854475c64b3618754bbd399a90948bd4806b1873fce30ff70d2d52f0bef1841",
-      "bytes": 2022,
+      "sha256": "41ba78bc6b16e096e295a4af11e8f5827960cbbf8e7a58b170e1b1c95a9ef0f8",
+      "bytes": 2133,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -367,7 +377,17 @@
         "revision": "uncommitted-source-preparation",
         "path": "NOTICE.md"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "v0.1.0-preview.2-source-review",
+          "path": "NOTICE.md"
+        },
+        "review": "Host-neutral synthetic encoder fixture or canonical MIT text with scope retained in NOTICE."
+      }
     },
     "README.md": {
       "sha256": "b35c7931dba6fb4c61def4c25d6b0927c71411a1930d798f803f672eec5f079b",
@@ -5750,8 +5770,18 @@
         "path": "tests/converter/test_xmb.py"
       },
       "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
-      "sha256": "1b59a3fb3712f80e33186a2d3cbbc339ae46b5798bb71b9432e9c13235d866dc",
-      "bytes": 18270
+      "sha256": "71160a1815adb54feb06723d07dbc2ac2f3d1ac03d429fe2c598c478dcef1e55",
+      "bytes": 18310,
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "v0.1.0-preview.2-source-review",
+          "path": "tests/converter/test_xmb.py"
+        },
+        "review": "Host-neutral synthetic encoder fixture or canonical MIT text with scope retained in NOTICE."
+      }
     },
     "tests/emitter/run_tests.py": {
       "sha256": "6ceb70aff394f699f8ec64b9c02a1d89064f3137b6e1e66f769c9eedf0038658",
