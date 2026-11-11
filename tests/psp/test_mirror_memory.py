@@ -92,6 +92,30 @@ if 'static uint8_t *mirror_heap_alloc(' in s:
  setup();texs[1].hidden=1;texs[1].mem=chunk_mem;texs[1].total=TEXPOOL_CHUNK-16;unsigned ac=align_calls;CHECK(mirror_heap_alloc(32)==NULL&&align_calls==(int)ac);texs[1].mem=NULL;uint8_t*ok=mirror_heap_alloc(32);CHECK(ok!=NULL);free(ok);
  printf("mirror_memory:''')
 names+=['tex_mem_alloc','tex_mem_free','texture_build','free_slot','texture_release','draw_texture_destroy','mirror_variant']
+# Extract the real frame-start retry block; only the external room result is
+# stubbed, so the policy under test cannot drift into a duplicate model.
+block_start=s.index('    if (mirror_need &&',s.index('void draw_begin_frame('))
+block_end=s.index('{',block_start)+1;depth=1
+while depth:
+ depth+=(s[block_end]=='{')-(s[block_end]=='}');block_end+=1
+room_block=s[block_start:block_end]
+prefix+='\nstatic uint32_t mirror_room_frame;static int mirror_room_ok,room_result,room_calls;static uint32_t room_bytes;\nstatic int retry_room(uint32_t n){room_calls++;room_bytes=n;return room_result;}\nstatic void retry_frame(void){tex_frame++;\n#define texpool_make_room retry_room\n'+room_block+'\n#undef texpool_make_room\n}\n'
+suffix=suffix.replace(' uint32_t hash=2166136261u;',r'''
+ /* The pool can remain full while an independent heap block becomes free.
+  * Recheck the failed mirror on the existing 60-frame retry boundary. */
+ setup();base();used=texpool_get_stats()->used;CHECK(texpool_alloc(TEXPOOL_CHUNK-used-16,15,0,0,&dummy)>=0);
+ deny_align=1;h=mirror_variant(1,1,0);CHECK(h==1&&mirror_need>0);deny_align=0;
+ mirror_room_frame=0;mirror_room_ok=room_result=room_calls=0;tex_frame=59;retry_frame();
+ CHECK(room_calls==1&&room_bytes>0&&!mirror_room_ok&&mirror_need==0&&mirror_epoch==1);
+ h=mirror_variant(1,1,0);verify(h);CHECK(texs[h].pblk==0);cleanup();
+ /* Persistent denial stays bounded: no allocation storm or stale queued
+  * byte accumulation between scheduled attempts. */
+ setup();base();used=texpool_get_stats()->used;CHECK(texpool_alloc(TEXPOOL_CHUNK-used-16,15,0,0,&dummy)>=0);
+ deny_align=1;CHECK(mirror_variant(1,1,0)==1);mirror_room_frame=0;mirror_room_ok=room_result=room_calls=0;
+ tex_frame=59;retry_frame();CHECK(mirror_epoch==1&&mirror_need==0);CHECK(mirror_variant(1,1,0)==1);uint32_t queued=mirror_need;unsigned retry_allocs=align_calls;
+ for(unsigned f=61;f<120;f++){retry_frame();CHECK(mirror_variant(1,1,0)==1);CHECK(align_calls==(int)retry_allocs&&mirror_need==queued&&room_calls==1);}
+ retry_frame();CHECK(room_calls==2&&mirror_epoch==2&&mirror_need==0);CHECK(mirror_variant(1,1,0)==1);CHECK(align_calls==(int)retry_allocs+1);cleanup();
+ uint32_t hash=2166136261u;''')
 code=prefix+'\n'+'\n'.join(fn(n)for n in names)+'\n'+suffix
 (a.out/'mirror_memory.c').write_text(code)
 b=subprocess.run(['cc','-std=c11','-O1','-Wall','-Wextra','-Werror','-Wno-unused-function','-Wno-deprecated-declarations','-fno-strict-aliasing','-fsanitize=address,undefined','-I'+str(R),str(a.out/'mirror_memory.c'),'-o',str(a.out/'mirror_memory')],capture_output=True,text=True);out=b.stdout+b.stderr;rc=b.returncode

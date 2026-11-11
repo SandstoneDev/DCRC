@@ -10,7 +10,7 @@ MANIFEST='dcrc_manifest.json'
 OWNER='.dcrc_owner.json'
 MUTABLE={'args.txt','data/sa1psp.ini','dcrc_settings.json'}
 RUNTIME_KEYS={'land_distance','aspect','frame_skip','mip_levels','show_fps','audio','voice',
-              'startup_stage','startup_character','startup_act'}
+              'startup_stage','startup_character','startup_act','control_map','movies','dither'}
 
 def claim_output(folder,profile):
     folder=Path(folder);reject_links(folder)
@@ -69,11 +69,15 @@ def runtime_text(options):
     args=[f'--land-distance {options.land_distance}','--stats 120']
     ini='# DCRC player settings. Quality/runtime options may be edited locally.\n'
     ini+=f'voice = {options.voice}\naudio = '+('on' if options.audio else 'off')+'\n'
+    from .capabilities import PROFILE_CAPABILITIES
+    if PROFILE_CAPABILITIES['movie_playback']:ini+='movies = '+('on' if options.movies else 'off')+'\n'
+    if PROFILE_CAPABILITIES['configurable_dither']:ini+=f'dither = {options.dither}\n'
     ini+='renderer = ta\nland_cull = on\nevent_skip = on\nmath = native\n'
     ini+=f'aspect = {options.aspect}\nframe_skip = {options.frame_skip}\nmip_levels = {options.mip_levels}\n'
     ini+='fps_hud = '+('on' if options.show_fps else 'off')+'\ndebug_menu = on\n'
     ini+=f'start_stage = {"off" if options.startup_stage=="normal" else options.startup_stage}\n'
     ini+=f'start_character = {options.startup_character}\nstart_act = {options.startup_act}\n'
+    for physical,action in options.control_map.items():ini+=f'control_{physical} = {action}\n'
     return '\n'.join(args)+'\n',ini
 
 def configure_folder(folder,**runtime_options):
@@ -82,14 +86,22 @@ def configure_folder(folder,**runtime_options):
     old=m.get('options',{});values={f.name:old[f.name] for f in fields(ConversionOptions) if f.name in old}
     values.update(runtime_options);values.update(source=Path('.'),output=Path('.'),work=None,toolchain=None)
     opts=ConversionOptions(**values).validate(check_paths=False)
+    if opts.movies:
+        from .movies import NAMES
+        for name in NAMES:
+            for extension in ('pmf','wav'):
+                rel=f'data/MOVIE/{name}.{extension}';owned=m['files'].get(rel)
+                p=checked_path(folder,rel)
+                if not owned or owned.get('mutable') or not p.is_file() or file_digest(p)!={k:owned[k] for k in ('bytes','sha256')}:
+                    raise ConverterError('movies_assets','Reconvert from your own disc with movies enabled before turning FMV on. Movie assets are missing, unowned or modified.')
     args,ini=runtime_text(opts)
     # Known runtime settings change; retain unrelated hand-written INI keys.
     old_ini=checked_path(folder,'data/sa1psp.ini')
     if old_ini.exists():
         known={'voice','audio','renderer','land_cull','event_skip','math','aspect','frame_skip',
-               'gu_max_mip','mip_levels','fps_hud','debug_menu','start_stage','start_character','start_act'}
+               'gu_max_mip','mip_levels','fps_hud','debug_menu','start_stage','start_character','start_act','movies','dither'}
         extra=[line for line in old_ini.read_text(encoding='utf-8-sig').splitlines()
-               if '=' in line and line.split('=',1)[0].strip() not in known]
+               if '=' in line and line.split('=',1)[0].strip() not in known and not line.split('=',1)[0].strip().startswith('control_')]
         if extra:ini+='\n# Additional player settings\n'+'\n'.join(extra)+'\n'
     for rel,text in [('args.txt',args),('data/sa1psp.ini',ini)]:
         p=checked_path(folder,rel);p.parent.mkdir(parents=True,exist_ok=True);p.write_text(text,encoding='utf-8',newline='\n')

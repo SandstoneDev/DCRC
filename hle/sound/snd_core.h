@@ -30,7 +30,7 @@
 #define SND_FRAME_SAMPLES 735           /* 44100 / 60: one guest frame */
 #define SND_RAM_SIZE (2u << 20)         /* the AICA's 2 MB */
 #define SND_VOICES 64                   /* tone channels, as on the AICA */
-#define SND_PORTS 2                     /* MIDI direct ports (16 channels each) */
+#define SND_PORTS 8                     /* two direct + six sequence ports,16 channels each */
 #define SND_STREAMS 2                   /* ADX players: 0 BGM (stereo), 1 voice (mono) */
 #define SND_STREAM_RING (64u * 1024u)   /* compressed bytes per stream, a power of two */
 #define SND_CMD_RING 1024               /* commands, a power of two */
@@ -59,6 +59,9 @@ enum {
     SND_CMD_STREAM_STOP,                /* a = stream */
     SND_CMD_STREAM_VOL,                 /* a = stream, x = level in 0.1 dB (0 = unity, -960 = off) */
     SND_CMD_BANK_CHANGED,               /* sound RAM rewritten: stop the voices reading x..x+y */
+    SND_CMD_SEQ_START,                  /* a=sequence port2..7,b=bank,x=song */
+    SND_CMD_SEQ_STOP,
+    SND_CMD_SEQ_VOLUME,                 /* x=signed port level offset,y=fade */
 };
 
 typedef struct snd_cmd_ring {
@@ -91,6 +94,8 @@ typedef struct snd_shared {
     /* main -> core: where each program bank (SMPB, by MIDI bank number)
      * sits in sound RAM, from the multi-unit table; size 0 = not loaded. */
     volatile uint32_t bank_addr[16], bank_size[16];
+    /* SMSB mapping; published by the synchronous bank-copy/core owner. */
+    volatile uint32_t seq_bank_addr[16], seq_bank_size[16];
     /* main -> core, debug: SND_MUTE_* bits of what not to mix (stems) */
     volatile uint32_t mute;
     /* debug: when nonzero, only effect voices of program (solo & 0xFF) in

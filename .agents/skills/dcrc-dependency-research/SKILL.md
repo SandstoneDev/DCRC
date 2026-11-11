@@ -9,6 +9,11 @@ Establish the required capability from current callers and the failing action:
 host OS/architecture, target ABI, required tools/headers/libs, version constraints
 and whether it is runtime, build-only, test-only or historical research. A similar
 project name is not evidence of equivalence.
+For the normal source converter, distinguish Python plus Pillow/pyelftools,
+optional PySide6 GUI packages, and the separate native PSP homebrew toolchain.
+Read the checkout's requirements files and [dependency guide](../../../docs/DEPENDENCIES.md)
+before choosing versions. FFmpeg/ffprobe and an ATRAC encoder belong only to
+media paths that need them; they are not replacements for PSPSDK.
 
 Check repository manifests and available tools read-only. If a private skill is
 missing, recover its required public capability from project APIs and official

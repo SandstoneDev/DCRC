@@ -17,6 +17,11 @@ Record these fields; use unknown where a fact has not been established:
 
 A calculated hash proves content identity, not publisher authenticity. Do not
 invent upstream checksums or treat an unsigned mirror as an official release.
+For a patched encoder or compiler, preserve both upstream and patched source
+identities and the patch/build recipe. A version string or copied licence file
+alone cannot bind an executable to its claimed source. Verify host DLL/runtime
+requirements as well as the PSP target; a successful `--help` is only a loader
+smoke check, not a successful compile, media encode or game conversion.
 
 When a link fails, record checked date, response/error and where the replacement
 was discovered. Recheck the maintainer's root site and repository before broad

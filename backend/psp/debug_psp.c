@@ -189,7 +189,7 @@ static void event(DebugMenuEvent e){
     case DM_ADD_RINGS:grant(1,0);break;
     case DM_ADD_LIVES:grant(0,1);break;
     case DM_WARP:
-        if(!restart_game){note("Restart unavailable: use a DCRC_ folder, no profiler");break;}
+        if(!restart_game){note("Restart unavailable for this installation path");break;}
         if(hle_startup_cli_active()){note("Warp declined: remove startup overrides from args.txt");break;}
         if(hle_content_selected()>=0 && menu.values.stage){note("DLC requires normal boot / VMU selection first");break;}
         if(menu.values.act>stages[menu.values.stage].acts){note("Act outside this menu preset's supported range");break;}
@@ -200,7 +200,7 @@ static void event(DebugMenuEvent e){
 void debug_psp_init(const char *base,const char *data,const volatile int *home,void (*restart)(void)){
     home_exit=home;restart_game=restart;
     char self[256];int self_n=snprintf(self,sizeof self,"%s/EBOOT.PBP",base?base:"");
-    if(self_n<0||self_n>=(int)sizeof self||!sa1_chain_path_valid(self))restart_game=NULL;
+    if(self_n<0||self_n>=(int)sizeof self||!sa1_application_path_valid(self))restart_game=NULL;
     enabled=hle_config_debug_menu && !hle_strict;
     int n=snprintf(config_path,sizeof config_path,"%s/sa1psp.ini",data?data:"data");if(n<0||n>=(int)sizeof config_path)enabled=0;
     int skip=hle_frame_skip_cli!=-2?hle_frame_skip_cli:hle_frame_skip;

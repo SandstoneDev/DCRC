@@ -3,8 +3,10 @@
  * Part of sa1-psp (MIT). */
 #pragma once
 
-static inline int sa1_chain_path_valid(const char *s) {
-    static const char prefix[]="ms0:/PSP/GAME/DCRC_";
+/* A player-named install is eligible only for an explicit same-app restart.
+ * Cross-app diagnostic chains retain their separate DCRC namespace below. */
+static inline int sa1_application_path_valid(const char *s) {
+    static const char prefix[]="ms0:/PSP/GAME/";
     static const char suffix[]="/EBOOT.PBP";
     const unsigned pre=sizeof prefix-1, tail=sizeof suffix-1;
     if (!s) return 0;
@@ -20,10 +22,16 @@ static inline int sa1_chain_path_valid(const char *s) {
     }
     return 1;
 }
+static inline int sa1_chain_path_valid(const char *s) {
+    static const char prefix[]="ms0:/PSP/GAME/DCRC_";
+    if (!sa1_application_path_valid(s)) return 0;
+    for (unsigned i=0;i<sizeof prefix-1;i++) if (s[i]!=prefix[i]) return 0;
+    return s[sizeof prefix-1]!='/';
+}
 /* Memory Stick FAT names are case-insensitive. Never chain to our own
  * image through a differently cased spelling. Both strings stay bounded. */
-static inline int sa1_chain_path_same(const char *a,const char *b) {
-    if (!sa1_chain_path_valid(a) || !sa1_chain_path_valid(b)) return 0;
+static inline int sa1_application_path_same(const char *a,const char *b) {
+    if (!sa1_application_path_valid(a) || !sa1_application_path_valid(b)) return 0;
     for (unsigned i=0;;i++) {
         unsigned char x=(unsigned char)a[i], y=(unsigned char)b[i];
         if (x>='A' && x<='Z') x=(unsigned char)(x+'a'-'A');
@@ -31,4 +39,7 @@ static inline int sa1_chain_path_same(const char *a,const char *b) {
         if (x!=y) return 0;
         if (!x) return 1;
     }
+}
+static inline int sa1_chain_path_same(const char *a,const char *b) {
+    return sa1_chain_path_valid(a) && sa1_chain_path_valid(b) && sa1_application_path_same(a,b);
 }

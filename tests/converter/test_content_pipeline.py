@@ -49,6 +49,7 @@ def pipeline_fixture(tmp_path,monkeypatch):
         def __init__(self,root,event=None):
             self.cache=RealStageCache(Path(root)/'content-fixture',event)
         def run(self,name,key,action):
+            if name=='xmb':return self.cache.run(name,key,action)
             if name!='content':return results[name]
             if state['before_content']:
                 hook=state['before_content'];state['before_content']=None;hook()
@@ -137,3 +138,34 @@ def test_reimport_updates_active_owned_files_instead_of_retaining_them(pipeline_
     changed=bytearray(image.read_bytes());changed[-1]=37;image.write_bytes(changed)
     pipeline.convert(options)
     assert (options.output/'data/dlc/events/event00.vms').read_bytes()==changed
+
+
+def test_custom_xmb_repack_preserves_exact_generated_body(pipeline_fixture,tmp_path):
+    from dataclasses import replace
+    from PIL import Image
+    pipeline,options,_=pipeline_fixture
+    picture=tmp_path/'own-picture.png';Image.new('RGB',(64,64),'blue').save(picture)
+    options=replace(options,xmb_icon_mode='file',xmb_icon_file=picture,
+                    xmb_background_mode='file',xmb_background_file=picture)
+    result=pipeline.convert(options)
+    pbp=(result.folder/'EBOOT.PBP').read_bytes();offsets=struct.unpack_from('<8I',pbp,8)
+    assert pbp[offsets[6]:offsets[7]]==b'own synthetic payload'
+    assert pbp[offsets[1]:offsets[2]].startswith(b'\x89PNG')
+    assert pbp[offsets[4]:offsets[5]].startswith(b'\x89PNG')
+    assert 'renderer = ta' in (result.folder/'data/sa1psp.ini').read_text()
+    import json
+    manifest=json.loads((result.folder/'dcrc_manifest.json').read_text(encoding='utf8'))
+    assert manifest['content'] is None
+    again=pipeline.convert(options)
+    assert (again.folder/'EBOOT.PBP').read_bytes()==pbp
+
+
+def test_opaque_import_manifest_does_not_claim_gameplay(pipeline_fixture,tmp_path):
+    import json
+    pipeline,options,_=pipeline_fixture
+    pair(tmp_path/'content');options.dlc_dir=tmp_path/'content'
+    result=pipeline.convert(options)
+    content=json.loads((result.folder/'dcrc_manifest.json').read_text(encoding='utf8'))['content']
+    assert content['count']==1 and content['input_fingerprint']
+    assert content['opaque_only'] and not content['guest_decoder_included']
+    assert not content['gameplay_verified']

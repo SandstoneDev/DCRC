@@ -2,14 +2,15 @@
 
 ## Project foundation
 
-DCRC builds on **CountAllegrex's [sa1-psp](https://github.com/countallegrex/sa1-psp)**:
-its SH-4 emitter/runtime, HLE and PSP/desktop backends provide the project's
-foundation. Preserve the upstream MIT licence and the notice
+**CountAllegrex created [sa1-psp](https://github.com/countallegrex/sa1-psp)**.
+Its SH-4 emitter/runtime, HLE and PSP/desktop backends provide the foundation
+for DCRC. Preserve the upstream MIT licence and the notice
 `Copyright (c) 2026 CountAllegrex` in substantial copies. The repository LICENSE
 does not grant rights to any commercial game, its assets or proprietary SDKs.
 
 The converter, GUI, native Windows build adapter, portability integration,
-publication audit and portable agent kit are by **SandstoneDev**.
+publication audit and portable agent kit are by **SandstoneDev**, who maintains
+DCRC and continues to develop its converter, runtime and porting tools.
 
 The reviewed `sound_lfo.h` adapts MAME AICA amplitude-wave generation under
 BSD-3-Clause: **ElSemi, Deunan Knute and R. Belmont**, with thanks to
@@ -19,8 +20,10 @@ The full notice remains in the header. The new LFO reference is not asserted to
 match console sound phase/noise. See docs/PROVENANCE.md.
 
 DCRC's converter, frontend and integration work retain their applicable project
-notices. PS2RC inspired the converter workflow; its custom-licensed implementation
-and unrelated dependency list are not copied into this project.
+notices. PS2RC inspired the converter workflow. The selected generic movie/WAV
+player and PMF format tools have an owner-authored PS2RC/SDXR/DCRC origin chain
+and an explicit SandstoneDev MIT notice in each transferred file. This limited
+grant does not relicense other PS2RC code, dependencies or game material.
 
 Historical compatibility discovery used
 [Dream-Recomp](https://github.com/phobos665/dream-recomp), separately, at

@@ -52,6 +52,31 @@ own deterministic noise and rounded nominal intervals. This changes the LFO
 reference: phase, frequency, noise and audio parity have not been established
 on hardware. It is not described as a lossless sound fix.
 
+## Generic converter and platform additions
+
+The updated frontend, bounded local media readers, automatic session logs and
+owned worker orchestration are own code; pictures/audio and converted outputs
+come only from the user's inputs. Digital remapping targets guest controls and
+does not replace physical HOME or the platform menu chord.
+
+The generic movie/WAV player and PSP display/audio ownership adapters are own
+code using public PSPSDK APIs. Game-version filename/entry/result facts are
+separate from the firmware-player implementation. Custom DBR1 side images and
+dither policy contain no image pixels, private native mesh implementation or
+proprietary SDK declarations. Exact reviewed files and modifications are in the
+provenance register; other private modules are not transitively admitted.
+
+The bounded sequence parser consumes the user's bank format and synthetic
+fixtures; no captured bank, waveform or translated sound-driver body is supplied.
+The public MAME-derived LFO header and its BSD notice remain a separate unchanged
+component. Known texture-role rules use live metadata/name/size/format facts,
+not embedded pictures or a universal lossless-quality claim.
+
+A source audit and an actual local conversion are distinct from binary
+redistribution review. FFmpeg/ATRAC/SDK source pointers do not certify every
+possible selected compiler, codec or runtime DLL. Keep that complete component
+review separate; source exports include no dependency executables.
+
 ## Boundaries
 
 External GPL discovery/emulator/toolchain programs keep their licences and run

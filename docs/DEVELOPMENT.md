@@ -15,7 +15,9 @@ directories; never replace them with captured game/BIOS data. Real conversion
 tests use the developer's supported image and an external/ignored work folder.
 
 The converter runs: identify/full hashes → extract → main+58overlay emission →
-PSP compilation/link/helper/PBP → assets → settings/package → readback.
+optional local media → PSP compilation/link/helper/PBP → assets/XMB →
+settings/package → readback. Network DLC acquisition is an explicit GUI/CLI
+action; conversion itself consumes the resulting local input.
 `dcrc.worker` is the owned long-stage subprocess entry. Both workers and emitters
 need explicit `-B` because an embedded Python `._pth` may ignore environment-only
 bytecode controls. Receipt keys bind input, code, profile and toolchain contents.
@@ -27,6 +29,11 @@ texture diagnostics, input tapes, state/trace comparison, PSP profiling/addr2lin
 host synthetic checks and optional PSPLink diagnostics. Commands take local
 inputs; read each tool's `--help` or header before use. Device-specific tools
 must receive an explicit device/path and are never part of automatic conversion.
+A matching community decomp can help identify contracts, but its source/licence,
+version and completeness need independent checks. Decompiled game/SDK bodies do
+not become public HLE merely by renaming them. Chao code/service coverage remains
+unsupported; see COMPATIBILITY.md.
+
 Legacy optimization experiments and private captured data are not a development
 dependency. Do not reconstruct missing data from a published receipt or invent
 old performance results.

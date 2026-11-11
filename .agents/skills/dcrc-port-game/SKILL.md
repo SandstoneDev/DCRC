@@ -7,6 +7,9 @@ description: Develop DCRC's supported Dreamcast-to-PSP conversion pipeline or in
 
 Read repository AGENTS.md and locate the requested layer before editing. Use
 the existing converter API instead of creating a second GUI-only pipeline.
+Inspect the checkout's [capability table](../../../dcrc/capabilities.py) and
+profile facts before planning a feature: a CLI flag, successful conversion or
+compiled helper does not establish an accepted runtime path.
 
 For PSP menu/aspect/startup and opaque DLC mounting, read docs/IN_GAME_MENU.md.
 Keep explicit CLI precedence and ordinary VMU activation requirements; do not
@@ -22,6 +25,9 @@ facts only; it cannot smuggle instructions or game data as JSON, arrays or patch
 Do not replace an unimplemented guest function with silent success to obtain a
 boot claim. Implement from a reviewed behaviour contract or keep a genuine
 user-side generated fallback, then test the observable path.
+An unavailable fallback remains an explicit compatibility gap. Cover required
+overlay callbacks and services such as save access and animated model drawing;
+loading their textures alone does not make those routes supported.
 
 For a change, establish the relevant failure/behaviour, make the narrow change,
 and run checks that distinguish the intended result from stale-cache success.

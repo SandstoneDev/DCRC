@@ -18,6 +18,29 @@ SDK installation, proprietary runtime or game material is vendored here.
   `psp-prxgen.exe`, `psp-strip.exe`, PSPSDK headers/libraries and target libc.
   Select it with `--toolchain`, or DCRC_TOOLCHAIN. It is an external installation.
 
+## Optional local media tools
+
+Use [FFmpeg/ffprobe](https://ffmpeg.org/download.html) for source-audio preview,
+movie conversion and music decoding. Inspect the selected build's codecs,
+filters, host requirements and [licence configuration](https://ffmpeg.org/legal.html);
+its top-level name does not establish the licence of every binary/library. A
+failed page request is not proof the project is unavailable. Pin a permitted
+source/build and verify its required operations locally.
+
+XMB music encoding uses a compatible external
+[atracdenc](https://github.com/dcherednik/atracdenc) implementation. Upstream uses
+LGPL-2.1 and has separately licensed dependencies. DCRC's tested local adapter
+accepts RIFF PCM16 input; do not assume every upstream binary has that interface.
+For a modified encoder, retain upstream and complete modified source identities,
+patch/build recipe and notices. Supplying an existing compatible AT3 file needs
+no encoder. No encoder executable or private build path is included here.
+
+Source use accepts explicit tool paths. A local portable package can provide
+its own `tools/ffmpeg` and `tools/atracdenc` directories, with manifests and all
+required notices/source records. The builder validates exact selected file
+identities and interfaces; a successful build is not redistribution clearance.
+The source-only inventory does not certify a complete portable binary package.
+
 ## PSP toolchain sources
 
 The authoritative homebrew project is [PSPDEV](https://pspdev.github.io/):

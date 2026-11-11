@@ -53,9 +53,10 @@ static int (*entry)(SceSize,void *);
 static char events[128],logs[1024];
 static const char *from="ms0:/PSP/GAME/DCRC_CURRENT/EBOOT.PBP";
 static const char *next="ms0:/PSP/GAME/DCRC_NEXT/EBOOT.PBP";
+static const char *expected_log="ms0:/PSP/GAME/DCRC_CURRENT/chain.log";
 #define CHECK(x) do { checks++; if(!(x)){errors++;printf("FAIL line %d: %s\n",__LINE__,#x);} } while(0)
 static void event(char c){size_t n=strlen(events);CHECK(n+1<sizeof events);events[n]=c;events[n+1]=0;}
-int sceIoOpen(const char *p,int f,int m){CHECK(!strcmp(p,"ms0:/PSP/GAME/DCRC_CURRENT/chain.log"));CHECK(f==(PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND));CHECK(m==0666);opens++;return open_rc;}
+int sceIoOpen(const char *p,int f,int m){CHECK(!strcmp(p,expected_log));CHECK(f==(PSP_O_WRONLY|PSP_O_CREAT|PSP_O_APPEND));CHECK(m==0666);opens++;return open_rc;}
 int sceIoWrite(int fd,const void *p,unsigned n){CHECK(fd==3);CHECK(strlen(logs)+n<sizeof logs);strncat(logs,p,n);writes++;return (int)n;}
 int sceIoClose(int fd){CHECK(fd==3);closes++;return 0;}
 int sceKernelCreateThread(const char *name,int (*fn)(SceSize,void *),int priority,int stack,unsigned attr,void *opt){CHECK(!strcmp(name,"sa1_chain"));CHECK(priority==0x10&&stack==0x2000&&attr==0&&opt==NULL);creates++;entry=fn;return create_rc;}
@@ -93,6 +94,15 @@ int main(void){
   CHECK(opens==2&&writes==2&&closes==2);CHECK(strstr(logs,"stage=kernel_loadexec")!=NULL);CHECK(strstr(logs,"stage=kernel_return_exit")!=NULL);
  }
  reset();open_rc=-1;CHECK(module_start(sizeof args,&args)==0);CHECK(entry(0,NULL)==0);CHECK(exits==1&&thread_exits==1&&opens==2&&writes==0&&closes==0);
+ from="ms0:/PSP/GAME/sonictest/EBOOT.PBP";next=from;
+ expected_log="ms0:/PSP/GAME/sonictest/chain.log";
+ reset();args.magic=SA1_RESTART_MAGIC;
+ CHECK(module_start(sizeof args,&args)==0);CHECK(creates==1&&starts==1&&entry!=NULL);
+ memset(&args,0,sizeof args);CHECK(entry!=NULL&&entry(0,NULL)==0);
+ CHECK(execs==1&&exits==1&&thread_exits==1&&opens==2&&writes==2&&closes==2);
+ reset();args.magic=SA1_RESTART_MAGIC;
+ strcpy(args.next,"ms0:/PSP/GAME/another_game/EBOOT.PBP");rejected();
+ reset();rejected(); /* ordinary cross-app magic never permits this path */
  CHECK(module_stop(0,NULL)==0);
  printf("chain kernel actual body: %d checks, %d errors (MIPS stub check mocked)\n",checks,errors);return errors?1:0;
 }
@@ -105,7 +115,9 @@ ordered = ['prof_stop();', 'plat_watchdog_stop()', 'draw_shutdown();',
            'audio_close();', 'sa1_chain_prepare(', 'reports_complete=1',
            'plat_log_close();', 'plat_files_close_all();', 'sa1_chain_launch(',
            'sceKernelExitGame();\n    exit(code);']
-positions = [body.index(text) for text in ordered]
+# Earlier failure branches close their own diagnostics before returning. The
+# final occurrences belong to the ordinary fallthrough handoff path.
+positions = [body.rindex(text) for text in ordered]
 assert positions == sorted(positions), 'owner cleanup/report/chain ordering changed'
 assert re.search(r'no_crash_screen\s*&&\s*prof\s*==\s*NULL', body)
 with tempfile.TemporaryDirectory() as directory:

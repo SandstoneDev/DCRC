@@ -56,6 +56,7 @@ static void to_sound_ram(uint32_t dst, uint32_t src, uint32_t n) {
 
 static void note_bank(uint32_t tag, uint32_t bank, uint32_t aica, uint32_t size) {
     snd_shared *sh = snd_host_shared();
+    if (tag == 0x42534D53u && bank < 16 && sh) { sh->seq_bank_addr[bank] = aica; sh->seq_bank_size[bank] = size; }
     if (tag == 0x42504D53u && bank < 16 && sh) { sh->bank_addr[bank] = aica; sh->bank_size[bank] = size; }  /* "SMPB" */
 }
 
@@ -185,19 +186,25 @@ void sdk_8c643b9c(sh4_ctx *c) {
     RET(0);
 }
 
-/* Sequence ports (the game's channels 32-37).  The route plays no sequence
- * (two start calls with all-zero arguments at the Chaos 0 result and the
- * Emerald Coast goal), so these are logged and accepted. */
+/* SMSB sequence controls use the existing producer ring; only the existing core owner
+ * parses bank bytes or advances musical time. Ports2..7 remain isolated. */
 void sdk_8c643b08(sh4_ctx *c) {
     HLE_ENTER(0x8c643b08u, "sdMidiPlay");
-    if (snd_log()) sa1_log("snd seq play port %d %08x %08x %08x", port_index(ARG0), ARG1, ARG2, ARG3);
+    int p=port_index(ARG0);
+    if(p<2||p>=SND_PORTS||ARG1>=16){RET(-1);return;}
+    snd_host_cmd(SND_CMD_SEQ_START,(uint8_t)p,(uint8_t)ARG1,0,(int32_t)ARG2,(int32_t)ARG3);
     RET(0);
 }
-void sdk_8c643e08(sh4_ctx *c) { HLE_ENTER(0x8c643e08u, "sdMidiStop"); RET(0); }
-/* 0x8C643D88: sdMidiSetVol(port, level, fade) is driver command 5: the port's
- * level offset fades to level.  The game calls it only for the sequence
- * ports, so the MIDI ports keep offset 0 (snd_core's level law). */
-void sdk_8c643d88(sh4_ctx *c) { HLE_ENTER(0x8c643d88u, "sdMidiSetVol"); RET(0); }
+void sdk_8c643e08(sh4_ctx *c) {
+    HLE_ENTER(0x8c643e08u,"sdMidiStop");int p=port_index(ARG0);
+    if(p>=2&&p<SND_PORTS)snd_host_cmd(SND_CMD_SEQ_STOP,(uint8_t)p,0,0,0,0);
+    RET(0);
+}
+void sdk_8c643d88(sh4_ctx *c) {
+    HLE_ENTER(0x8c643d88u,"sdMidiSetVol");int p=port_index(ARG0);
+    if(p>=2&&p<SND_PORTS)snd_host_cmd(SND_CMD_SEQ_VOLUME,(uint8_t)p,0,0,(int32_t)ARG1,(int32_t)ARG2);
+    RET(0);
+}
 
 /* 0x8C643754: sdSysSetVolume(out, pan, level) is driver command 0x83 (MASARU.DRV
  * 0x5b88): it sets EFSDL/EFPAN of the AICA DSP output mixer slot `out`

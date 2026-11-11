@@ -2,9 +2,10 @@
  * as the SH-4 gives them, for the recompiled code (FSCA, sh4_rt.h) and the
  * Ninja HLE's angle math (njSin/njCos are fsca on the console).
  *
- * The values are the console's own table (the oracle's fsca for every angle,
- * dumped by tools/flycast/fsca_dump.py into the user's data folder as
- * fsca_sh4.bin and loaded at boot with sh4_trig_init); the platform's
+ * An optional external fsca_sh4.bin table can be loaded at boot with
+ * sh4_trig_init. Neither the table nor a dumper is distributed here;
+ * this source profile uses the libm fallback when no table is supplied. The
+ * platform's
  * sinf/cosf differ from it at about 70 % of the angles, and differ between
  * the desktop's libm and newlib (PSP) as well.  The table is exactly
  * cos(a) = sin(a + 0x4000) and sin(a + 0x8000) = -sin(a) (bit for bit), so

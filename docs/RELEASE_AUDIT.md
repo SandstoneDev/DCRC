@@ -19,6 +19,11 @@ them when extracting. The exporter requires an exact provenance/source-view
 match, writes only a new external archive, excludes Git internals and ignored
 files, and reads back every entry. It does not publish the archive.
 
+Do not replace the allowlist export with an archive of the whole checkout.
+Ignored bytecode and test caches can retain host paths and diagnostics even
+when the tracked tree is clean. Keep those local files outside the export;
+their presence does not authorize deleting private development evidence.
+
 The gate checks provenance coverage/content hashes, host paths, credentials,
 unreviewed files, unsafe links, generated/binary material and known excluded
 sources. Staged mode reads actual index blobs, so cleaning only the working
@@ -33,6 +38,14 @@ or add a blanket path exclusion. Keep real user images, generated C, executable
 ports, saves, captures, logs, credentials and private dependency installations
 outside the public tree and index. `.gitignore` never clears an already tracked
 secret. Stop publication and preserve evidence if an unresolved item remains.
+
+Check enabled options against `dcrc/capabilities.py`, their actual linked runtime
+paths and functional evidence. Preserve the [compatibility limits](COMPATIBILITY.md),
+including unsupported Chao routes and unverified optional-event gameplay. A
+successful source scan must not be described as full-game or physical PSP
+acceptance. Keep the inherited component origins and licences in the
+[provenance register](../audit/PROVENANCE.json) when adding own integration;
+modified upstream files do not become wholly new own code.
 
 The self-register is scanned as content but cannot contain its own recursive
 SHA. Synthetic source tests may contain recognizer strings and constructed

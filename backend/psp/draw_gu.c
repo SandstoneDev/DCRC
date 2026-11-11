@@ -1,3 +1,7 @@
+#include "../control_map.h"
+#include "../border_image.h"
+#include "../movie_layout.h"
+#include "movie_display.h"
 /* draw_gu.c - backend/draw.h on the PSP's GE through sceGu.
  *
  * The same contract as backend/desktop/draw_gl.c, which was written to be
@@ -326,9 +330,85 @@ typedef struct {
     uint32_t total;               /* bytes of mem */
     uint32_t parent;              /* a mirror variant: the slot it mirrors, at mirror[pk] */
     int pk;
+    uint8_t ui_protected,top_drops; /* generic live detail-role metadata */
     uint32_t mfail;               /* mirror_epoch + 1 when a variant last found no room */
 } gtex;
 static gtex texs[TEX_MAX];
+typedef struct {uint32_t promoted,cold_lost,drop_refused;} detail_stats;
+static detail_stats ui_stats,sky_stats;
+static void texture_detail_protect(uint32_t h, int sky) {
+    unsigned role = sky ? 2u : 1u;
+    detail_stats *st = sky ? &sky_stats : &ui_stats;
+    if (!h || h >= TEX_MAX || !texs[h].mem || texs[h].dying) return;
+    if (texs[h].hidden) {
+        uint32_t p = texs[h].parent;
+        int k = texs[h].pk;
+        if (!p || p >= TEX_MAX || k < 1 || k > 3 || !texs[p].mem || texs[p].dying || texs[p].hidden || texs[p].mirror[k] != h) return;
+        h = p;
+    }
+    for (int k = 0; k < 4; k++) {
+        uint32_t m = k ? texs[h].mirror[k] : h;
+        if (!m || m >= TEX_MAX || !texs[m].mem || texs[m].dying) continue;
+        if (k && (m == h || !texs[m].hidden || texs[m].parent != h || texs[m].pk != k)) continue;
+        gtex *t = &texs[m];
+        if (t->ui_protected & role) continue;
+        t->ui_protected |= role; st->promoted++;
+        if (t->top_drops) {
+            st->cold_lost++;
+            if (st->cold_lost <= 8)
+                sa1_log("texture-%s: first-use already lost base handle=%u drops=%u current=%dx%d loaded=%dx%d; no restoration",
+                        sky ? "sky" : "ui", m, t->top_drops, t->w, t->h, t->w << t->top_drops, t->h << t->top_drops);
+        }
+    }
+}
+static void texture_ui_protect(uint32_t h) { texture_detail_protect(h, 0); }
+static int texture_hud_detail(uint32_t h) {
+    if (!h || h >= TEX_MAX) return 0;
+    const gtex *t = &texs[h];
+    if (!t->mem || t->hidden || t->dying || t->top_drops > 3 || t->w < 8 || t->h < 8 || t->w > 256 || t->h > 64) return 0;
+    int w = t->w << t->top_drops, height = t->h << t->top_drops;
+    extern const char *texture_name(uint32_t);
+    const char *name = texture_name(h);
+    if (!name) return 0;
+    /* The pause bank is resident before its first pause draw. Its labels and
+     * panel are rectangular; first-use 2D protection cannot restore lost base. */
+    if (t->fmt == DRAW_FMT_4444) {
+        if (w == 256 && height == 64 && !strcmp(name, "npa_pause")) return 1;
+        if (w == 128 && height == 32)
+            return !strcmp(name, "npa_restart") || !strcmp(name, "npa_saikai") || !strcmp(name, "npa_stop") ||
+                   !strcmp(name, "nbutton_kage") || !strcmp(name, "nbutton_waku");
+    }
+    if (t->fmt == DRAW_FMT_5650 && w == 128 && height == 32 && !strcmp(name, "nbutton_ita")) return 1;
+    if (w != height || w > 64) return 0;
+    if (t->fmt == DRAW_FMT_4444) {
+        if (w == 64) return !strcmp(name, "hyoji_head");
+        if (w == 16)
+            return !strcmp(name, "snum_co") || (strlen(name) == 6 && !memcmp(name, "snum_", 5) && name[5] >= '0' && name[5] <= '9');
+        if (w == 32)
+            return !strcmp(name, "colon") || (strlen(name) == 6 && !memcmp(name, "digit", 5) && name[5] >= '0' && name[5] <= '9');
+    }
+    if (t->fmt != DRAW_FMT_5650 || w != 32) return 0;
+    return !strcmp(name, "hyoji_zanki_s") || !strcmp(name, "hyoji_zanki_t") || !strcmp(name, "hyoji_zanki_k") ||
+           !strcmp(name, "hyoji_zanki_a") || !strcmp(name, "hyoji_zanki_e") || !strcmp(name, "hyoji_zankib");
+}
+static int texture_sky_detail(uint32_t h) {
+    if (!h || h >= TEX_MAX) return 0;
+    const gtex *t = &texs[h];
+    if (!t->mem || t->hidden || t->dying || t->top_drops > 6 || t->w < 1 || t->h < 1 || t->w > 512 || t->h > 512) return 0;
+    int w = t->w << t->top_drops, height = t->h << t->top_drops;
+    if (w != height) return 0;
+    if (!((t->fmt == DRAW_FMT_5650 && (w == 256 || w == 128)) || (t->fmt == DRAW_FMT_4444 && w == 16))) return 0;
+    extern const char *texture_name(uint32_t);
+    const char *name = texture_name(h);
+    if (!name) return 0;
+    if (t->fmt == DRAW_FMT_5650 && w == 256)
+        return !strcmp(name, "sonic_sky1") || !strcmp(name, "ecsc_s_bkca") ||
+               !strcmp(name, "obj_sssky_d") || !strcmp(name, "obj_sssky_e") || !strcmp(name, "obj_sssky_n");
+    if (t->fmt == DRAW_FMT_5650 && w == 128)
+        return !strcmp(name, "ecsc_s_bkcb") || !strcmp(name, "ecsc_s_bkcc") || !strcmp(name, "obj_ssskybb_n");
+    return t->fmt == DRAW_FMT_4444 && w == 16 && !strcmp(name, "ecsc_s_bkcd");
+}
+
 /* bind_block's key (--replay-v2 16): the whole description of what the
  * slot's prebuilt bind block binds.  A slot freed and taken by the next
  * texture often gets the same memory back (first fit) with the same level
@@ -548,11 +628,14 @@ static void pool_evict(int owner) {
 static uint32_t pool_drop_top(int owner) {
     gtex *t = &texs[owner];
     if (t->levels < 2 || t->dying) return 0;
+    if(!(t->ui_protected&1u)&&texture_hud_detail((uint32_t)owner))texture_ui_protect((uint32_t)owner);
+    if(!(t->ui_protected&2u)&&texture_sky_detail((uint32_t)owner))texture_detail_protect((uint32_t)owner,1);
+    if(t->ui_protected){if(t->ui_protected&1u)ui_stats.drop_refused++;if(t->ui_protected&2u)sky_stats.drop_refused++;return 0;}
     ge_wait();
     uint32_t o1 = t->off[1];
     memmove(t->mem, t->mem + o1, t->total - o1);
     for (int l = 0; l + 1 < t->levels; l++) { t->off[l] = t->off[l + 1] - o1; t->tbw[l] = t->tbw[l + 1]; }
-    t->levels--; t->w >>= 1; t->h >>= 1;
+    t->levels--; t->w >>= 1; t->h >>= 1; t->top_drops++;
     t->total -= o1; t->bytes -= o1; stats.texture_bytes -= o1;
     sceKernelDcacheWritebackRange(t->mem, t->total);
     /* A model's prebuilt list binds the old level addresses and sizes: the
@@ -999,6 +1082,40 @@ void draw_gu_set_list_cache(int on) { list_cache = on; }
 static int list_cached;                       /* the open per-frame list is cached */
 static uintptr_t list_wb;                     /* the list below it is in RAM */
 static uintptr_t list_pend;                   /* a sceGuGetMemory block filled after its stall moved (0: none) */
+
+/* Own generic output policy. No private game/native renderer dependency. */
+static int movie_display_active;
+static int dither_requested,dither_active,dither_restore_pending;
+int draw_gu_set_dither(const char *value){
+ if(!value)return 0;
+ if(!strcmp(value,"on"))dither_requested=0;
+ else if(!strcmp(value,"opaque"))dither_requested=1;
+ else if(!strcmp(value,"off"))dither_requested=2;
+ else return 0;
+ return 1;
+}
+int draw_gu_dither_mode(void){return dither_requested;}
+static void dither_latch(void) {
+    if (dither_active!=dither_requested) {
+        dither_active=dither_requested;dither_restore_pending=1;
+    }
+}
+static void dither_restore_baseline(void) {
+    if (dither_active==2) sceGuDisable(GU_DITHER);
+    else sceGuEnable(GU_DITHER); /* opaque clear / before the next state bind */
+}
+static void dither_clear_policy(void) {
+    /* On/default emits no new command. Returning from a diagnostic mode does. */
+    if (dither_active || dither_restore_pending) dither_restore_baseline();
+    dither_restore_pending=0;
+}
+static char border_path[256];static uint8_t *border_pixels;static int border_attempted;
+static void border_load(void);static void border_draw(void);
+void draw_gu_border_path(const char *path) {
+    if (border_pixels) return;
+    if (!path || strlen(path) >= sizeof border_path) { border_path[0]=0; return; }
+    strcpy(border_path,path); border_attempted=0;
+}
 static inline int in_list_mem(uintptr_t a) { return a >= (uintptr_t)list_mem && a <= (uintptr_t)list_mem + LIST_BYTES; }
 int __real_sceGeListUpdateStallAddr(int qid, void *stall);
 int __wrap_sceGeListUpdateStallAddr(int qid, void *stall) {
@@ -1065,7 +1182,7 @@ int draw_init(int scale, int want_headless) {
     sa1_log("draw: --gu-debug %d, depth split z %.1f (0: one pass)", gu_debug, depth_split);
     static const ScePspIMatrix4 dither = { {-4, 0, -3, 1}, {2, -2, 3, -1}, {-3, 1, -4, 0}, {3, -1, 2, -2} };
     sceGuSetDither(&dither);
-    sceGuEnable(GU_DITHER);
+    dither_active=dither_requested;dither_restore_baseline();
     ScePspFMatrix4 ident;
     memset(&ident, 0, sizeof ident);
     ident.x.x = ident.y.y = ident.z.z = ident.w.w = 1.0f;
@@ -1087,9 +1204,11 @@ int draw_init(int scale, int want_headless) {
 }
 
 void draw_shutdown(void) {
+    if(movie_display_active)return; /* uncertain GE owner retains resources */
     if (headless) return;
     ge_wait();
-    sceGuSync(0, 0);                    /* let the GE finish the last list */
+    if(sceGuSync(0,0)<0)return; /* retain DMA inputs on uncertain drain */
+    free(border_pixels);border_pixels=NULL;
     display_observe();                /* no extra wait for pending NEXTFRAME */
     sceGuDisplay(GU_FALSE);
     sceGuTerm();
@@ -1111,6 +1230,8 @@ static void fps_overlay(void);
 
 void draw_begin_frame(uint32_t clear_argb) {
     ge_wait();                        /* the last frame's list, vertices and textures are free again */
+    dither_latch();
+    if(!aspect_wide&&!headless&&!list_open)border_load();
     stats.draw_calls = stats.triangles = stats.strips = stats.state_changes = 0;
     cur_valid = 0; cur_proj = -1; bound_tex = 0;
     texpool_set_frame(++tex_frame);
@@ -1118,7 +1239,8 @@ void draw_begin_frame(uint32_t clear_argb) {
     if (mirror_need && tex_frame - mirror_room_frame >= (mirror_room_ok ? 1u : 60u)) {
         mirror_room_frame = tex_frame;
         mirror_room_ok = texpool_make_room(mirror_need < TEXPOOL_CHUNK ? mirror_need : TEXPOOL_CHUNK);
-        if (mirror_room_ok) { mirror_epoch++; mirror_need = 0; }
+        /* Retry visible heap demand even when the pool could not make room. */
+        mirror_epoch++;mirror_need=0;
     }
     rec_reset();
     if (headless) return;
@@ -1135,6 +1257,7 @@ void draw_begin_frame(uint32_t clear_argb) {
 static inline void sh_zoff(int o);
 static inline void sh_zmask(int m);
 static void frame_clear(void) {
+    dither_clear_policy();
     if (swap_pending && sceDisplayGetVcount() == swap_vcount) {
         uint64_t t = sa1_plat_time_us();
         sceDisplayWaitVblankStart();
@@ -1148,7 +1271,8 @@ static void frame_clear(void) {
         sceGuScissor(0, 0, SCR_W, SCR_H);
         sceGuClearColor(0xFF000000u); sceGuClearDepth(0);
         sceGuClear(GU_COLOR_BUFFER_BIT | GU_DEPTH_BUFFER_BIT);
-        sceGuScissor(SCR_W / 8, 0, SCR_W * 7 / 8, SCR_H);
+        border_draw();
+        sceGuScissor(SCR_W / 8, 0, SCR_W * 3 / 4, SCR_H);
         sceGuClearColor(abgr(frame_clear_argb) | 0xFF000000u);
         sceGuClear(GU_COLOR_BUFFER_BIT);
     } else {
@@ -1411,6 +1535,9 @@ static void model_report(void);
 static void mesh_far_report(void);
 /* Frame-time and renderer counters since the last call (main_psp.c --stats). */
 void draw_gu_report(void) {
+    sa1_log("texture-ui: protected=%u cold_lost=%u refused_top_drops=%u",ui_stats.promoted,ui_stats.cold_lost,ui_stats.drop_refused);
+    sa1_log("texture-sky: promoted=%u cold_lost=%u refused_top_drops=%u",sky_stats.promoted,sky_stats.cold_lost,sky_stats.drop_refused);
+
     model_report();
     mesh_far_report();
     if (gs.mesh_ge || gs.mesh_cpu) sa1_log("draw: meshes accepted for the GE %u, left to the TA path %u (other %u, near plane %u, guard band %u, depth split %u)",
@@ -1455,7 +1582,7 @@ void draw_gu_report(void) {
  * needs, whatever state it is called in) and keeps the shadow it ends with
  * (sh_end): after its CALL, those states are known again.  Anything else
  * that sets one of these states must go through sh_*. */
-enum { SH_BLEND, SH_BLENDF, SH_ZFUNC, SH_ZMASK, SH_ATEST, SH_TEX, SH_CULL, SH_FRONT, SH_FOG, SH_SHADE, SH_ZOFF,
+enum { SH_BLEND, SH_BLENDF, SH_ZFUNC, SH_ZMASK, SH_ATEST, SH_TEX, SH_CULL, SH_FRONT, SH_FOG, SH_DITHER, SH_SHADE, SH_ZOFF,
        SH_WRAP, SH_FILTER, SH_TFUNC, SH_N };
 typedef struct { int v[SH_N]; uint32_t bfix[2]; } ge_shadow;
 static ge_shadow sh;
@@ -1470,8 +1597,13 @@ void draw_gu_set_ge_shadow(int on) { sh_off = !on; }
  * a bind was ~20 of them, 680 binds a frame in Emerald Coast. */
 void draw_gu_set_replay_v2(int bits) { replay_v2 = bits; }
 static inline int sh_set(int k, int v) { if (sh.v[k] == v && !sh_off) return 0; sh.v[k] = v; return 1; }
-static const int sh_cap[SH_N] = { [SH_BLEND] = GU_BLEND, [SH_ATEST] = GU_ALPHA_TEST, [SH_TEX] = GU_TEXTURE_2D, [SH_CULL] = GU_CULL_FACE, [SH_FOG] = GU_FOG };
+static const int sh_cap[SH_N] = { [SH_BLEND] = GU_BLEND, [SH_ATEST] = GU_ALPHA_TEST, [SH_TEX] = GU_TEXTURE_2D, [SH_CULL] = GU_CULL_FACE, [SH_FOG] = GU_FOG, [SH_DITHER] = GU_DITHER };
 static inline void sh_enable(int k, int on) { if (sh_set(k, on)) { if (on) sceGuEnable(sh_cap[k]); else sceGuDisable(sh_cap[k]); } }
+/* Generic blend-only classification: no game model or texture guesses. */
+static void sh_dither_draw(int opaque){
+ if(!dither_active){sh.v[SH_DITHER]=1;return;}
+ sh_enable(SH_DITHER,dither_active==1&&opaque);
+}
 static inline void sh_blendfunc(int sf, int df, unsigned sfix, unsigned dfix) {
     if (sh_set(SH_BLENDF, sf | df << 4) | (sh.bfix[0] != sfix) | (sh.bfix[1] != dfix)) {
         sh.bfix[0] = sfix; sh.bfix[1] = dfix;
@@ -1489,6 +1621,7 @@ static void sh_merge(const ge_shadow *e) {
 }
 /* The offset colour's pass: additive, untextured, at equal depth. */
 static void sh_offset_pass(void) {
+    sh_dither_draw(0);
     sh_enable(SH_TEX, 0);
     sh_enable(SH_BLEND, 1); sh_blendfunc(GU_FIX, GU_FIX, 0xFFFFFFu, 0xFFFFFFu);
     sh_zfunc(GU_GEQUAL); sh_zmask(GU_TRUE);
@@ -1500,6 +1633,7 @@ static void sh_offset_pass(void) {
  * untracked depth-test and aspect-scissor invariants across this pass. */
 static void fps_overlay(void) {
     if (!fps_hud_on || headless || !list_open) return;
+    if(dither_active)dither_restore_baseline();
     display_observe();
     unsigned intr=sceKernelCpuSuspendIntr();
     display_counter c=display_counts;
@@ -1532,7 +1666,7 @@ static void fps_overlay(void) {
     sceGuScissor(0,0,SCR_W,SCR_H);
     sceGuDrawArray(GU_SPRITES,GU_COLOR_8888|GU_VERTEX_16BIT|GU_TRANSFORM_2D,(int)(2*n),NULL,v);
     sceGuEnable(GU_DEPTH_TEST);
-    if (!aspect_wide) sceGuScissor(SCR_W/8,0,SCR_W*7/8,SCR_H);
+    if (!aspect_wide) sceGuScissor(SCR_W/8,0,SCR_W*3/4,SCR_H);
     sh_reset(&sh);
     fps_hud_draws++;
 }
@@ -1608,14 +1742,24 @@ static uint32_t *bind_block(uint32_t h, const gtex *t) {
 static int ge_exp(int x) { x &= 0x3FF; return x ? 31 - __builtin_clz((unsigned)x) : -1; }
 static void bind_texture(const draw_state *s) {
     uint32_t h = s->texture;
+    if(s->layer==DRAW_LAYER_2D)texture_ui_protect(h);
+    int sky=texture_sky_detail(h);
     int fu = s->flip_u && !s->clamp_u, fv = s->flip_v && !s->clamp_v;
     if (fu || fv) h = mirror_variant(h, fu, fv);
+    if(s->layer==DRAW_LAYER_2D&&h!=s->texture)texture_ui_protect(h);
+    if(sky&&h!=s->texture){unsigned k=(unsigned)fu|(unsigned)fv<<1;
+        if(!h||h>=TEX_MAX||!texs[h].mem||texs[h].dying||!texs[h].hidden||texs[h].parent!=s->texture||
+           texs[h].pk!=(int)k||texs[s->texture].mirror[k]!=h)sky=0;}
+    if(sky)texture_detail_protect(s->texture,1);
     float su = (fu && h != s->texture) ? 0.5f : 1.0f, sv = (fv && h != s->texture) ? 0.5f : 1.0f;
-    if (h != bound_tex) {
-        gtex *t = &texs[h];
+    gtex *t=&texs[h];
+    int levels=s->layer==DRAW_LAYER_2D||sky?1:t->levels;
+    int filter_key=(s->filter==DRAW_FILTER_POINT)|(levels<<1);
+    int levels_changed=sh_off||sh.v[SH_FILTER]<0||(sh.v[SH_FILTER]>>1)!=levels;
+    if(h!=bound_tex||levels_changed){
         if (t->pblk) texpool_touch(t->pblk - 1);
         if (tex_flush_pending) { sceGuTexFlush(); tex_flush_pending = 0; }
-        uint32_t *blk = (replay_v2 & 16) && !in_model_build ? bind_block(h, t) : NULL;
+        uint32_t *blk = (replay_v2 & 16) && !in_model_build && levels==t->levels ? bind_block(h, t) : NULL;
         if (blk) {
             unsigned int *c = gu_list->current;
             const uint32_t a = (uint32_t)(uintptr_t)blk;
@@ -1628,11 +1772,11 @@ static void bind_texture(const draw_state *s) {
                 sceGuClutMode(fmt_psm(t->clut_fmt), 0, 0xFF, 0);
                 sceGuClutLoad(t->fmt == DRAW_FMT_T4 ? 1 : 16, t->clut);
             }
-            sceGuTexMode(fmt_psm(t->fmt), t->levels - 1, 0, (gu_debug & 4) ? 0 : 1);
+            sceGuTexMode(fmt_psm(t->fmt), levels - 1, 0, (gu_debug & 4) ? 0 : 1);
             rc.binds++;
             if (replay_v2 & 8) {        /* sceGuTexImage's words, one flush after the last level instead of one per level */
                 unsigned int *c = gu_list->current;
-                for (int l = 0; l < t->levels; l++, c += 3) {
+                for (int l = 0; l < levels; l++, c += 3) {
                     const uint32_t tbp = (uint32_t)(uintptr_t)(t->mem + t->off[l]);
                     c[0] = ((160u + (uint32_t)l) << 24) | (tbp & 0xFFFFFFu);
                     c[1] = ((168u + (uint32_t)l) << 24) | ((((tbp >> 8) & 0xF0000u) | (uint32_t)t->tbw[l]) & 0xFFFFFFu);
@@ -1641,7 +1785,7 @@ static void bind_texture(const draw_state *s) {
                 c[0] = 0xCB000000u;     /* TEXFLUSH */
                 gu_list->current = c + 1;
             } else
-                for (int l = 0; l < t->levels; l++) sceGuTexImage(l, t->w >> l, t->h >> l, t->tbw[l], t->mem + t->off[l]);
+                for (int l = 0; l < levels; l++) sceGuTexImage(l, t->w >> l, t->h >> l, t->tbw[l], t->mem + t->off[l]);
         }
         bound_tex = h;
     }
@@ -1658,7 +1802,7 @@ static void bind_texture(const draw_state *s) {
         if (sega_tile_sampler_clamp(s,0,1,h,texs[h].w,texs[h].h,texs[h].fmt,texture_name(h))) wu = wv = GU_CLAMP;
     }
     if (sh_set(SH_WRAP, wu | wv << 8)) sceGuTexWrap(wu, wv);
-    if (sh_set(SH_FILTER, s->filter == DRAW_FILTER_POINT)) {
+    if (sh_set(SH_FILTER, filter_key)) {
         if (s->filter == DRAW_FILTER_POINT) sceGuTexFilter(GU_NEAREST_MIPMAP_NEAREST, GU_NEAREST);
         else sceGuTexFilter(GU_LINEAR_MIPMAP_LINEAR, GU_LINEAR);
     }
@@ -1677,6 +1821,7 @@ static void bind_texture(const draw_state *s) {
 /* Blend, depth compare and write, alpha test and the texture enable: what
  * the offset-colour pass changes and puts back. */
 static void apply_blend_depth(const draw_state *s) {
+    sh_dither_draw(s->blend_src==DRAW_BLEND_ONE&&s->blend_dst==DRAW_BLEND_ZERO);
     if (s->blend_src == DRAW_BLEND_ONE && s->blend_dst == DRAW_BLEND_ZERO) sh_enable(SH_BLEND, 0);
     else {
         int sf, df; unsigned sfix, dfix;
@@ -1856,7 +2001,7 @@ static void select_proj(const draw_vertex *v, int n) {
 static void set_proj(int pass, int p) {
     sceGuSetMatrix(GU_PROJECTION, &proj[pass][p]);
     if (aspect_wide) {
-        if (p == PROJ_2D) sceGuScissor(SCR_W / 8, 0, SCR_W * 7 / 8, SCR_H);
+        if (p == PROJ_2D) sceGuScissor(SCR_W / 8, 0, SCR_W * 3 / 4, SCR_H);
         else sceGuScissor(0, 0, SCR_W, SCR_H);
     }
 }
@@ -1920,7 +2065,7 @@ static void replay(void) {
             sh_zmask(GU_FALSE);
             sceGuClearDepth(depth_floor ? depth_floor + 2u : 0u);
             sceGuClear(GU_DEPTH_BUFFER_BIT);
-            if (!aspect_wide) sceGuScissor(SCR_W / 8, 0, SCR_W * 7 / 8, SCR_H);
+            if (!aspect_wide) sceGuScissor(SCR_W / 8, 0, SCR_W * 3 / 4, SCR_H);
         }
         int st = -1, pj = -1, mt = -1, restore = 0;
         for (int i = 0; i < nitems[pass]; i++) {
@@ -2584,21 +2729,12 @@ int draw_poll_input(struct hle_pad *p, int *quit) {
     *quit = 0;
     SceCtrlData pad;
     if (sceCtrlPeekBufferPositive(&pad, 1) <= 0) return -1;
-    uint32_t b = 0, k = pad.Buttons;
-    if (k & PSP_CTRL_CROSS) b |= 4;
-    if (k & PSP_CTRL_CIRCLE) b |= 2;
-    if (k & PSP_CTRL_SQUARE) b |= 0x400;
-    if (k & PSP_CTRL_TRIANGLE) b |= 0x200;
-    if (k & PSP_CTRL_START) b |= 8;
-    if (k & PSP_CTRL_UP) b |= 0x10;
-    if (k & PSP_CTRL_DOWN) b |= 0x20;
-    if (k & PSP_CTRL_LEFT) b |= 0x40;
-    if (k & PSP_CTRL_RIGHT) b |= 0x80;
-    p->buttons = b;
+    unsigned char lt,rt;
+    p->buttons=control_map_apply(hle_control_map,pad.Buttons,&lt,&rt);
     p->x = (int8_t)nub(pad.Lx);
     p->y = (int8_t)nub(pad.Ly);
-    p->ltrig = (k & PSP_CTRL_LTRIGGER) ? 255 : 0;
-    p->rtrig = (k & PSP_CTRL_RTRIGGER) ? 255 : 0;
+    p->ltrig = lt;
+    p->rtrig = rt;
     return 0;
 }
 
@@ -3179,7 +3315,7 @@ static void model_build_list(gmodel *g) {
         return;
     }
     if (used > gms.list_max) gms.list_max = used;
-    g->list_epoch = tex_epoch; g->list_ok = 1;
+    g->list_epoch = tex_epoch; g->list_ok = dither_active+1;
     gms.lists++;
 }
 
@@ -3187,7 +3323,7 @@ static void model_call(uint32_t h) {
     gmodel *g = &gmodels[h];
     if (!g->sets) return;
     if (tex_flush_pending) { sceGuTexFlush(); tex_flush_pending = 0; }
-    if (g->list_ok >= 0 && (!g->list_ok || g->list_epoch != tex_epoch)) model_build_list(g);
+    if (g->list_ok >= 0 && (g->list_ok != dither_active+1 || g->list_epoch != tex_epoch)) model_build_list(g);
     if (g->list_ok <= 0) return;
     unsigned int *c = gu_list->current;
     uint32_t a = (uint32_t)(uintptr_t)g->list;
@@ -3237,6 +3373,7 @@ void draw_debug_screen(const DebugDrawLine *lines,unsigned count,int highlight_y
     unsigned intr=sceKernelCpuSuspendIntr();dc_untracked_reuse(&display_counts);sceKernelCpuResumeIntr(intr);
     swap_pending=0;
     list_start();
+    dither_latch();dither_clear_policy();
     sceGuScissor(0,0,SCR_W,SCR_H);
     sceGuDisable(GU_DEPTH_TEST);sceGuDisable(GU_FOG);sceGuDisable(GU_CULL_FACE);
     sceGuDisable(GU_ALPHA_TEST);sceGuDisable(GU_TEXTURE_2D);sceGuDepthMask(GU_TRUE);
@@ -3272,4 +3409,117 @@ void draw_debug_screen(const DebugDrawLine *lines,unsigned count,int highlight_y
     sceDisplayWaitVblankStart();sceGuSwapBuffers();draw_fb^=FB_BYTES;
     swap_pending=1;swap_vcount=sceDisplayGetVcount();
     draw_debug_reset_meter();
+}
+
+static void border_load(void) {
+    if (border_attempted || border_pixels || !border_path[0]) return;
+    border_attempted=1;
+    FILE *f=fopen(border_path,"rb"); uint8_t header[16]; uint8_t *p=NULL;
+    int ok=f && fread(header,1,sizeof header,f)==sizeof header && border_image_header_valid(header,sizeof header);
+    if (ok) {
+        p=memalign(64,BORDER_IMAGE_BYTES);
+#if UINTPTR_MAX <= UINT32_MAX
+        if (p && !border_image_memory_fits((uintptr_t)p,BORDER_IMAGE_BYTES)) { free(p);p=NULL; }
+#endif
+        ok=p && fread(p,1,BORDER_IMAGE_BYTES,f)==BORDER_IMAGE_BYTES && fgetc(f)==EOF && !ferror(f);
+    }
+    if (f && fclose(f)) ok=0;
+    if (!ok) { free(p);sa1_log("border: unavailable or invalid optional DBR1; black fields retained");return; }
+    sceKernelDcacheWritebackRange(p,BORDER_IMAGE_BYTES); border_pixels=p;
+    sa1_log("border: loaded optional 128x512 RGB565 image (%u bytes)",BORDER_IMAGE_BYTES);
+}
+
+static void border_draw(void) {
+    if (!border_image_visible(aspect_wide,headless,border_pixels!=NULL)) return;
+    unsigned used=(unsigned)sceGuCheckList();
+    if (used>LIST_BYTES || sizeof(border_image_vertex)*4u+512u>LIST_BYTES-used) return;
+    border_image_vertex *v=sceGuGetMemory(4*sizeof *v); if (!v) return;
+    border_image_vertices(v);
+    sceGuScissor(0,0,SCR_W,SCR_H);
+    sceGuDisable(GU_DEPTH_TEST);sceGuDepthMask(GU_TRUE);
+    sceGuDisable(GU_DITHER); /* Already encoded RGB565: do not quantize it again. */
+    sceGuDisable(GU_BLEND);sceGuDisable(GU_ALPHA_TEST);sceGuDisable(GU_CULL_FACE);sceGuDisable(GU_FOG);
+    sceGuEnable(GU_TEXTURE_2D);sceGuShadeModel(GU_FLAT);
+    sceGuTexMode(GU_PSM_5650,0,0,0);sceGuTexImage(0,128,512,128,border_pixels);
+    sceGuTexScale(1.0f,1.0f);sceGuTexOffset(0,0);
+    sceGuTexLevelMode(GU_TEXTURE_CONST,0);sceGuTexFilter(GU_NEAREST,GU_NEAREST);
+    sceGuTexWrap(GU_CLAMP,GU_CLAMP);sceGuTexFunc(GU_TFX_REPLACE,GU_TCC_RGB);sceGuTexFlush();
+    sceGuDrawArray(GU_SPRITES,GU_TEXTURE_16BIT|GU_COLOR_8888|GU_VERTEX_16BIT|GU_TRANSFORM_2D,4,NULL,v);
+    dither_restore_baseline(); /* restore the selected clear/bind baseline. */
+    sceGuEnable(GU_DEPTH_TEST);sceGuDepthMask(GU_FALSE);
+    sceGuTexLevelMode((gu_debug&1)?GU_TEXTURE_CONST:GU_TEXTURE_AUTO,(gu_debug&1)?0.0f:lod_bias);
+    sceGuScissor(SCR_W/8,0,SCR_W*3/4,SCR_H);
+    sh_reset(&sh);bound_tex=0;tex_su=tex_sv=-1.0f;tex_flush_pending=1;
+}
+
+int draw_movie_begin(void) {
+    if(headless||movie_display_active)return -1;
+    if(list_open)draw_end_frame();
+    ge_wait();if(sceGuSync(0,0)<0)return -1;
+    movie_display_active=1;draw_debug_reset_meter();return 0;
+}
+
+int draw_movie_present(const uint16_t *picture,unsigned stride) {
+    if(!movie_display_active||!picture||stride!=BUF_W)return -1;
+#if UINTPTR_MAX<=UINT32_MAX
+    uintptr_t address=(uintptr_t)picture;
+    if(address<0x08800000u||address>0x0c000000u-BUF_W*SCR_H*2u)return -1;
+#endif
+    ge_wait();if(sceGuSync(0,0)<0)return -1;
+    if(swap_pending&&sceDisplayGetVcount()==swap_vcount)sceDisplayWaitVblankStart();
+    display_observe();
+    unsigned intr=sceKernelCpuSuspendIntr();
+    dc_untracked_reuse(&display_counts);sceKernelCpuResumeIntr(intr);
+    swap_pending=0;
+    list_start();
+    dither_clear_policy();
+    sceGuScissor(0,0,SCR_W,SCR_H);sceGuDepthMask(GU_FALSE);
+    sceGuClearColor(0xff000000u);sceGuClearDepth(0);
+    sceGuClear(GU_COLOR_BUFFER_BIT|GU_DEPTH_BUFFER_BIT);
+    border_draw(); /* only the optional side fields when current aspect is4:3 */
+    sceGuScissor(0,0,SCR_W,SCR_H);
+    sceGuDisable(GU_DEPTH_TEST);sceGuDepthMask(GU_TRUE);
+    sceGuDisable(GU_BLEND);sceGuDisable(GU_ALPHA_TEST);
+    sceGuDisable(GU_CULL_FACE);sceGuDisable(GU_FOG);sceGuDisable(GU_DITHER);
+    sceGuEnable(GU_TEXTURE_2D);sceGuShadeModel(GU_FLAT);
+    sceGuTexMode(GU_PSM_5650,0,0,0);
+    sceGuTexScale(1,1);sceGuTexOffset(0,0);sceGuTexLevelMode(GU_TEXTURE_CONST,0);
+    sceGuTexFilter(aspect_wide?GU_LINEAR:GU_NEAREST,aspect_wide?GU_LINEAR:GU_NEAREST);
+    sceGuTexWrap(GU_CLAMP,GU_CLAMP);sceGuTexFunc(GU_TFX_REPLACE,GU_TCC_RGB);
+    int ok=1;
+    for(unsigned band=0;band<2;band++){
+        unsigned used=(unsigned)sceGuCheckList();
+        if(used>LIST_BYTES||MOVIE_SLICES*2u*sizeof(movie_sprite)+512u>LIST_BYTES-used){ok=0;break;}
+        movie_sprite *v=sceGuGetMemory(MOVIE_SLICES*2u*sizeof *v);
+        if(!v){ok=0;break;}
+        movie_band_vertices(v,aspect_wide,band);
+        sceGuTexImage(0,BUF_W,movie_band_height(band),BUF_W,
+                      (const uint8_t*)picture+movie_band_offset(band));
+        sceGuTexFlush();
+        sceGuDrawArray(GU_SPRITES,GU_TEXTURE_32BITF|GU_VERTEX_32BITF|GU_TRANSFORM_2D,
+                       MOVIE_SLICES*2u,NULL,v);
+    }
+    dither_restore_baseline();sceGuEnable(GU_DEPTH_TEST);sceGuDepthMask(GU_FALSE);
+    sceGuFinish();sceKernelDcacheWritebackAll();
+    int sync=sceGuSync(0,0);list_cached=0;
+    if(!ok||sync<0)return -1;
+    sceDisplayWaitVblankStart();sceGuSwapBuffers();draw_fb^=FB_BYTES;
+    swap_pending=1;swap_vcount=sceDisplayGetVcount();
+    return 0;
+}
+
+int draw_movie_end(void) {
+    if(!movie_display_active)return 0;
+    ge_wait();if(sceGuSync(0,0)<0)return -1;
+    list_start();
+    sceGuEnable(GU_DEPTH_TEST);sceGuDepthMask(GU_FALSE);
+    dither_restore_baseline();sceGuEnable(GU_SCISSOR_TEST);
+    sceGuTexLevelMode((gu_debug&1)?GU_TEXTURE_CONST:GU_TEXTURE_AUTO,(gu_debug&1)?0.0f:lod_bias);
+    sceGuTexScale(1,1);sceGuTexOffset(0,0);
+    sceGuScissor(aspect_wide?0:SCR_W/8,0,aspect_wide?SCR_W:SCR_W*3/4,SCR_H);
+    sceGuFinish();sceKernelDcacheWritebackAll();
+    int sync=sceGuSync(0,0);list_cached=0;
+    if(sync<0)return -1;
+    movie_display_active=0;tex_flush_pending=1;draw_debug_reset_meter();
+    return 0;
 }

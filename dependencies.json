@@ -199,6 +199,22 @@
       "status": "FETCHED",
       "bytes": 1687,
       "sha256": "65e9ed46a59976eda8f5bd1ea79a680dea38dd299c760bc9a8d87a764ef5029b"
+    },
+    {
+      "id": "ffmpeg_optional_media",
+      "licence_summary": "Configuration-dependent LGPL/GPL and separately licensed components; verify the exact selected build",
+      "source": "https://ffmpeg.org/download.html",
+      "licence_url": "https://ffmpeg.org/legal.html",
+      "status": "REFERENCE_ONLY",
+      "scope": "No binary or universal checksum supplied; exact build/source/licences are a separate inventory"
+    },
+    {
+      "id": "atracdenc_optional_xmb",
+      "licence_summary": "LGPL-2.1 with separate dependency notices; patched source/build provenance required",
+      "source": "https://github.com/dcherednik/atracdenc",
+      "licence_url": "https://github.com/dcherednik/atracdenc/blob/master/LICENSE",
+      "status": "REFERENCE_ONLY",
+      "scope": "Requires compatible PCM input interface; upstream version alone does not certify a local binary"
     }
   ]
 }

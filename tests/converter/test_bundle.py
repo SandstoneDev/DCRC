@@ -1,4 +1,5 @@
 """The source bundle is an allowlist, never a filtered repository copy."""
+import os,subprocess
 import sys
 import tempfile
 import unittest
@@ -50,6 +51,39 @@ class BundleTests(unittest.TestCase):
         self.assertIn('../app', pth)
         self.assertNotIn('PS2RC', pth)
         self.assertNotIn('import site', pth)
+
+    def test_isolated_paths_import_own_nested_movie_tools(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            bundle, foreign = root/'bundle', root/'foreign_checkout'
+            python = bundle/'python'
+            python.mkdir(parents=True)
+            for base, name, text in (
+                (bundle, 'app/dcrc/__init__.py', ''),
+                (bundle, 'app/dcrc/movies.py', 'from tools import movie_pmfmux\nvalue = movie_pmfmux.ORIGIN\n'),
+                (bundle, 'app/source/tools/movie_pmfmux.py', 'ORIGIN = "own bundled tooling"\n'),
+                (foreign, 'tools/__init__.py', ''),
+                (foreign, 'tools/movie_pmfmux.py', 'ORIGIN = "wrong old checkout"\n'),
+                (foreign, 'checkout_only.py', 'raise AssertionError("foreign dependency")\n'),
+            ):
+                path = base/name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(text, encoding='utf8')
+            pth = python/'python._pth'
+            pth.write_text(portable_pth(), encoding='utf8')
+            # Use only the exact portable path entries, with hostile cwd/PYTHONPATH.
+            # No source checkout, host site-packages or old bundle supplies tools.
+            code = ("import sys; from pathlib import Path; "
+                    "p=Path(sys.argv[1]); "
+                    "sys.path=[str((p.parent/x).resolve()) for x in p.read_text().splitlines()]; "
+                    "import dcrc.movies; assert dcrc.movies.value=='own bundled tooling'; "
+                    "exec('try: import checkout_only\\nexcept ModuleNotFoundError: pass\\nelse: raise AssertionError(\"foreign path leaked\")'); "
+                    "print(dcrc.movies.value)")
+            env = dict(os.environ, PYTHONPATH=str(foreign))
+            result = subprocess.run([sys.executable, '-I', '-S', '-B', '-c', code, str(pth)],
+                                    cwd=foreign, env=env, capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(result.stdout.strip(), 'own bundled tooling')
 
     def test_complete_layout_is_new_and_manifest_readback_matches(self):
         with tempfile.TemporaryDirectory() as tmp:

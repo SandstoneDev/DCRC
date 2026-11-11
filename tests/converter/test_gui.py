@@ -100,11 +100,14 @@ class QtBoundaryTests(unittest.TestCase):
         self.assertFalse(self.window.controls['startup_act'].isEnabled())
 
     def test_unsupported_identity_cannot_start_convert(self):
-        self.window.identity = {'ok': False, 'message': 'wrong boot hash'}
         self.window.controls['source'].setText('unsupported.gdi')
-        self.window.convert()
-        self.assertFalse(self.window.task.running)
-        self.assertIn('Check a supported', self.window.stage.text())
+        with patch('dcrc.pipeline.identify',return_value={'ok':False,'message':'wrong boot hash'}), patch('dcrc.pipeline.convert') as convert:
+            self.window.convert()
+            self.window.task.thread.join(2)
+            self.window.poll()
+        self.assertFalse(self.window.task.pending)
+        convert.assert_not_called()
+        self.assertIn('wrong boot hash',self.window.version.text())
 
     def test_identify_forwards_progress_and_cancellation_to_public_core(self):
         calls = []

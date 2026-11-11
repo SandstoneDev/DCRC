@@ -38,15 +38,21 @@ change; use the INI before launch. Wide fills reviewed boot/frontend screens;
 gameplay uses Hor+ while its HUD proportions remain unchanged. Frontend art/text
 is expanded horizontally. 4:3 keeps the complete image with side pillars.
 
-Menu restarts require a `DCRC_` app folder, an installed chain helper and no
-active profiler/resident crash-screen module. Ordinary menu-enabled PSP runs
+Menu restarts require an installed chain helper, no active profiler/resident
+crash-screen module, and a canonical single app folder under `ms0:/PSP/GAME`
+using ASCII letters, digits or underscores. A restart targets that same
+application only. Cross-application chaining retains its separate `DCRC_`
+namespace restriction. Ordinary menu-enabled PSP runs
 omit that kernel crash-screen module. Strict replays, headless/no-pad tests and
 saved-state resume disable the menu. HOME retains the ordinary cleanup/exit.
 
 ## User-supplied download events
 
 Pass `--dlc-dir "<own-extracted-events-folder>"` during conversion or select the
-optional DLC folder in the converter window. No DLC is downloaded or bundled.
+optional DLC folder in the converter window. Explicit catalogue/download
+actions can fetch chosen events into local work. Nothing is downloaded without
+that action, and no event payload is bundled with this repository. Checked
+catalogue selections are prepared before the Convert task imports them.
 The US profile imports valid `SONICADV_5xx` VMI/VMS pairs, reports unsupported
 files, keeps distinct variants and verifies copied files with SHA256 and size.
 
@@ -57,8 +63,9 @@ Event label|dlc/events/event00.vmi|dlc/events/event00.vms
 ```
 
 Paths are relative to data. The mount validates outer VMI/VMS metadata and optional
-container CRC. It does not decrypt or interpret the event payload. The original
-game functions generated from the user's image do that locally. The selected
+container CRC. It does not decrypt or interpret the event payload. Guest-side
+interpretation belongs to the locally generated game; this is an intended path,
+not verified public event-gameplay support. The selected
 event is a read-only VMU overlay; ordinary player files remain in the base VMU.
 At most32 catalogue entries and one mounted event are supported.
 
@@ -70,6 +77,8 @@ objects already spawned by it leave only when the game unloads the scene. Base
 VMU files, including any independent existing event, are not deleted by off.
 Strict/resumed runs do not mount it. Hardware activation/quality must be tested
 separately; a selected/mounted file alone is not evidence of visible activation.
+The public profile excludes the private event-payload decoder; opaque import
+and successful container checks do not establish gameplay compatibility.
 
 Event references: [Dreamcast Live's Sonic Adventure catalogue](https://dreamcastlive.net/sonic-adventure-dlc/)
 and [Sonic Retro's Downloadable Events reference](https://info.sonicretro.org/Sonic_Adventure_Downloadable_Events).

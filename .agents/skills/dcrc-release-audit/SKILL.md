@@ -24,6 +24,11 @@ the candidate. Validate archive membership, SHA256/size and source bindings.
 For a portable app, verify isolated paths, GUI/CLI entry points and dependency
 resolution using the candidate's own interpreter/tools, with no game job on open.
 Use explicit `-B` for child Python invocations under isolated `._pth`.
+For optional FFmpeg/ATRAC tools, bind the packaged binaries to their exact
+sources, patches, build options and complete notices. Verify selected local
+media and opaque DLC do not enter the source/tool archive. Review advertised
+features against current capability gates and functional evidence; compilation,
+download and package readback do not establish gameplay compatibility.
 
 Report findings with exact relative file locations, completed checks and limits.
 If content/provenance is unresolved, mark the affected candidate unready; do not

@@ -71,10 +71,12 @@ def test_repeat_conversion_replaces_owned_ini_values_and_preserves_user_dlc(tmp_
     pairs=[(line.split('=',1)[0].strip(),line.split('=',1)[1].strip())
            for line in text.splitlines() if '=' in line and not line.lstrip().startswith(('#',';'))]
     counts=Counter(key for key,value in pairs)
-    expected={'aspect':'wide','frame_skip':'off','mip_levels':'6','fps_hud':'on',
+    expected={'aspect':'16:9','frame_skip':'off','mip_levels':'6','fps_hud':'on',
               'debug_menu':'on','voice':'game','audio':'off','renderer':'ta','land_cull':'on',
               'event_skip':'on','math':'native','start_stage':'off','start_character':'big','start_act':'3',
-              'custom_user':'preserve me','dlc_event':'My local event'}
+              'custom_user':'preserve me','dlc_event':'My local event','movies':'off','dither':'on'}
+    from dcrc.controls import DEFAULT_CONTROL_MAP
+    expected.update({'control_'+key:value for key,value in DEFAULT_CONTROL_MAP.items()})
     # Public TA and primary native renderer defaults deliberately differ.
     expected['renderer']=dict(line.split('=',1) for line in
         runtime_text(new)[1].replace(' = ','=').splitlines() if '=' in line)['renderer']

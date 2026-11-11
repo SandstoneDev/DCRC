@@ -37,3 +37,6 @@ to sanitized diagnostics rather than memory dumps or generated game binaries.
 Final status must distinguish source audit, portable smoke, own-disc functional
 conversion and real PSP acceptance. A checked download link is not a checked
 binary; a hash match is not a licence grant; an emulator result is not hardware FPS.
+Keep route-specific exclusions visible: the current Sonic profile does not
+support Chao. Do not infer full-game support from conversion success or hide
+unimplemented overlay, VMU, motion or render services behind a no-op fallback.

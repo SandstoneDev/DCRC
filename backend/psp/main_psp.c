@@ -97,6 +97,12 @@ int native_land_set_distance(const char *value);
 #include "game/startup.h"
 #include "game/dlc_event.h"
 #include "../audio.h"
+#include "movie_psp.h"
+#include "movie_display.h"
+#include "audio_movie.h"
+#include "overlay/movie.h"
+#include "overlay/movie_profile.h"
+#include <pspctrl.h>
 
 #include <pspkernel.h>
 #include <pspdisplay.h>
@@ -180,6 +186,11 @@ void draw_gu_set_stall_every(int n);
 uint32_t hle_task_running(void);
 
 static char base_dir[256] = "ms0:/PSP/GAME/SA1PSP";
+static char movie_data_root[300];
+static int movie_input_release;
+extern int hle_config_dither;
+int draw_gu_set_dither(const char *);
+void draw_gu_border_path(const char *);
 static const char *data_dir = "data", *log_path = "sa1psp.log";
 static int headless, no_pad, no_pace, to_stdout, sync_log, stats_every, coro_heap, no_crash_screen;
 static volatile int home_exit_requested; /* callback publishes only this word */
@@ -297,6 +308,7 @@ static void prof_stop(void) {
 static void report_and_exit(int code) {
     if (exit_reporting) return;
     exit_reporting = 1;
+    if(movie_psp_shutdown()<0){sa1_log("movie: retained resources; process exit required");plat_log_flush();sceKernelExitGame();exit(1);}
     uint64_t t_end = sa1_plat_time_us();
     code = input_tape_finish(code, NULL);
     prof_stop();
@@ -314,11 +326,12 @@ static void report_and_exit(int code) {
     draw_gu_display_report();
     snd_host_report();
     audio_psp_report();
+    movie_psp_report();
     plat_io_report();
     mem_report("exit");
     sa1_seam_report(20);
     sa1_chain_prepare(code, exit_reason, home_exit_requested,
-                      no_crash_screen && prof == NULL, base_dir);
+                      no_crash_screen && prof == NULL && !movie_psp_live(), base_dir);
     sa1_log("exit: %u frames, %.3f s, code %d reports_complete=1 reason=%s", hle_frame_count(), (t_end - t0) / 1e6, code, exit_reason);
     plat_log_close();
     plat_files_close_all();
@@ -446,6 +459,26 @@ static void menu_restart(void) {
     if(home_exit_requested || prof || !no_crash_screen || sa1_chain_set_restart(base_dir)<0)return;
     exit_reason="menu_restart";report_and_exit(0);
 }
+/* Own host adapter. Filenames/results below are version-profile facts, not
+ * translated guest bodies. Firmware leaf has no guest RAM or entry mapping. */
+static uint32_t runtime_heartbeat(void){return debug_psp_heartbeat()+movie_psp_heartbeat();}
+static int movie_begin(void *p){(void)p;if(debug_psp_capture()||audio_psp_movie_pause(1)<0)return -1;if(draw_movie_begin()<0){audio_psp_movie_pause(0);return -1;}return 0;}
+static int movie_present(void*p,const uint16_t*q,unsigned stride){(void)p;return draw_movie_present(q,stride);}
+static int movie_end(void*p){(void)p;if(draw_movie_end()<0||audio_psp_movie_pause(0)<0)return -1;pace_set=0;movie_input_release=1;return 0;}
+static int movie_poll(void*p){(void)p;scePowerTick(PSP_POWER_TICK_ALL);return home_exit_requested||(time_limit_us&&sa1_plat_time_us()-t0>=time_limit_us);}
+static int movie_audio(void*p){(void)p;return audio_psp_enabled&&snd_audio_enabled;}
+static int movie_available(void*p){(void)p;return !headless&&!hle_strict&&!load_path&&!prof;}
+int32_t sa1_platform_movie_play(uint32_t id){
+
+ if(id>=DCRC_MOVIE_COUNT||!hle_movies_enabled||!movie_available(NULL))return -1;
+ char pmf[384],wav[384];int a=snprintf(pmf,sizeof pmf,"%s/MOVIE/%s.pmf",movie_data_root,dcrc_movie_names[id]);
+ int b=snprintf(wav,sizeof wav,"%s/MOVIE/%s.wav",movie_data_root,dcrc_movie_names[id]);
+ if(a<0||b<0||a>=(int)sizeof pmf||b>=(int)sizeof wav)return -1;
+ MoviePspHost host={NULL,movie_begin,movie_present,movie_end,movie_poll,movie_audio,movie_available};
+ int r=movie_psp_play(pmf,wav,&host);
+ if(r==MOVIE_PSP_CLEANUP_FATAL){home_exit_requested=1;exit_reason="movie_cleanup_failed";report_and_exit(1);}
+ return r==MOVIE_PSP_FINISHED?dcrc_movie_completed[id]:-1;
+}
 static void on_frame(uint32_t frame) {
     if (home_exit_requested) { exit_reason = "home"; report_and_exit(0); return; }
     if (!headless && !no_pace) pace(frame);
@@ -470,6 +503,9 @@ static void on_frame(uint32_t frame) {
     if (stick_scripted || headless) { hle_pad_state.x = (int8_t)sx; hle_pad_state.y = (int8_t)sy; }
     b = input_tape_pad(frame, b, scripted);
     if (b != hle_pad_state.buttons) sa1_log("pad: buttons 0x%x", b);
+    if(movie_input_release){SceCtrlData physical;memset(&physical,0,sizeof physical);
+        if(sceCtrlPeekBufferPositive(&physical,1)>0&&!physical.Buttons)movie_input_release=0;
+        b=0;hle_pad_state=(hle_pad){0};}
     if(debug_psp_capture()){b=0;hle_pad_state=(hle_pad){0};}
     hle_pad_state.buttons = b;
     for (int i = 0; i < nshots; i++) if (shots[i].frame == frame) kamui_set_screenshot(shots[i].path);
@@ -821,6 +857,7 @@ int main(int argc, char **argv) {
     sa1_log("guest RAM: %u KB at %p (16 MB + the 2 MB list area + the 2 MB null page)", SA1_RAM_ALLOC / 1024u, (void *)sa1_ram);
     char root[300], bin[320];
     abs_path(root, sizeof root, data_dir);
+    snprintf(movie_data_root,sizeof movie_data_root,"%s",root);
     snprintf(bin, sizeof bin, "%s/1ST_READ.BIN", root);
     sa1_log("step: load %s", bin);
     if (load_image(bin) != 0) { plat_log_flush(); sceKernelExitGame(); return 1; }
@@ -879,6 +916,9 @@ int main(int argc, char **argv) {
     sa1_log("step: function map");
     plat_crash_init();
     sa1_log("step: draw_init");
+    draw_gu_set_dither(hle_config_dither==2?"off":hle_config_dither==1?"opaque":"on");
+    {char border[300];int n=snprintf(border,sizeof border,"%s/border.bin",base_dir);
+     if(n>0&&n<(int)sizeof border)draw_gu_border_path(border);}
     draw_init(1, headless);
     sa1_log("step: draw_set_aspect");
     draw_set_aspect(hle_aspect_wide);
@@ -892,7 +932,7 @@ int main(int argc, char **argv) {
     sa1_log("step: watchdog");
     if(headless || no_pad || load_path)hle_config_debug_menu=0;
     debug_psp_init(base_dir,root,&home_exit_requested,prof||!no_crash_screen||load_path?NULL:menu_restart);
-    plat_watchdog_start(debug_psp_heartbeat, 10);
+    plat_watchdog_start(runtime_heartbeat, 10);
     mem_report("boot");
     plat_log_flush();
     sa1_log("step: root coroutine%s%s", load_path ? ", from the state " : "", load_path ? load_path : "");

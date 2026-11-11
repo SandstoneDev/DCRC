@@ -5,6 +5,14 @@ The supported ID is `sa1_us_1005`. Inspect `dcrc/profiles.py` and the correspond
 primary input; an extracted folder uses the same compatibility gate. Another
 region/version is not accepted by changing a label or disabling verification.
 
+The current profile has 58 overlay records and 59 address catalogs. Chao remains
+unsupported: its ordinary overlay coverage and required VMU/motion/render
+contracts are incomplete. Successful identify/conversion, texture loads or an
+advanced stage option do not prove every story, character or minigame works.
+Use [capabilities](../../../../dcrc/capabilities.py),
+[option validation](../../../../dcrc/models.py) and
+[profile validation](../../../../dcrc/profiles.py) as the current source limits.
+
 The flow is identify/hash → bounded extraction → own main/overlay SH-4 emission →
 native compile/link plus helpers → local assets/settings/package → full readback.
 Game C, EBOOT and assets are made on the user's machine, never supplied as a
@@ -40,13 +48,22 @@ python -B -m dcrc doctor --toolchain ../native-psp-sdk --json
 python -B -m dcrc identify ../own-disc/disc.gdi --json
 python -B -m dcrc convert ../own-disc/disc.gdi --out ../local-psp/DCRC_Port --work ../local-work/job --toolchain ../native-psp-sdk --preset psp
 python -B -m dcrc verify ../local-psp/DCRC_Port --json
-python -B -m unittest discover -s tests/converter -p "test_*.py"
+python -m pip install -r requirements-dev.txt
+python -B -m pytest tests/converter -q
 ```
 
 In a portable Windows folder, use `dcrc.cmd` or its own `python/python.exe -B`.
 Do not accidentally mix global Python, another SDK's headers or a private cache.
 An isolated `._pth` can ignore environment-only bytecode suppression: inspect the
 actual Python argv of workers and emitters and verify no new frozen-source files.
+
+Read `python -B -m dcrc convert --help` for the checked-out API. The GUI uses the
+same core for settings, guest control mapping, local artwork/music and optional
+DLC catalog/download/import. Normal VMU activation and the public decoder's
+exclusion remain separate from a successful opaque import. User-supplied art,
+music, movies and game-derived output stay local. FMV, custom borders and dither
+options require the capability gate and corresponding runtime/functional proof;
+do not advertise them from flag visibility or unit compilation alone.
 
 The PSP preset selects world64/full distance100; original world assets remain an
 explicit choice. The curated world policy applies to selected Emerald Coast

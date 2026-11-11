@@ -1,5 +1,10 @@
 # Contributing
 
+Fork DCRC on GitHub, make your changes on a branch in your fork, and open a pull
+request against `main`. The DCRC code is MIT-licensed. Keep the original
+CountAllegrex notice and the notices for individual third-party components.
+For questions about ports, tools or contributions, join [Discord](https://discord.gg/wV8x46ZTDu).
+
 Use the shared converter core for GUI/CLI behavior. Keep the current profile
 reproducible and a second game's claims separate from research. Changes include
 the relevant synthetic tests and a clear statement of what was actually run.

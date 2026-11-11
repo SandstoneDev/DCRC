@@ -21,10 +21,11 @@ int sa1_chain_set_next(const char *path) {
     strcpy(request.next,path); return 0;
 }
 int sa1_chain_set_restart(const char *base) {
+    ready=0; invalid=0; request.next[0]=0; request.magic=SA1_RESTART_MAGIC;
     char path[256];
     int n=snprintf(path,sizeof path,"%s/EBOOT.PBP",base?base:"");
-    if(n<0 || n>=(int)sizeof path || sa1_chain_set_next(path)<0) return -1;
-    request.magic=SA1_RESTART_MAGIC;
+    if(n<0 || n>=(int)sizeof path || !sa1_application_path_valid(path)) { invalid=1; return -1; }
+    strcpy(request.next,path);
     return 0;
 }
 int sa1_chain_prepare(int code,const char *reason,int home,int modules_safe,const char *base) {

@@ -114,7 +114,7 @@ class NativeBuildTest(unittest.TestCase):
             for rel in ['hle/bios/syscalls.c','hle/shinobi/cfg.c','hle/sound/sd.c',
                         'recomp/emitter/runtime/sh4_rt.c','recomp/emitter/runtime/sh4_rt.h',
                         'backend/desktop/input_tape.c','backend/desktop/sha256.c','backend/texpool.c',
-                        'backend/debug_menu.c','backend/debug_config.c']:
+                        'backend/debug_menu.c','backend/debug_config.c','backend/movie_wav.c']:
                 file = src/rel
                 file.parent.mkdir(parents=True, exist_ok=True)
                 file.write_text('/* own fixture */')

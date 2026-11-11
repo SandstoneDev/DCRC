@@ -3,12 +3,13 @@
   "scope": "Reviewed source proposal; no game-derived outputs or private development history",
   "limitations": [
     "Records are reviewed provenance claims, not proof of ownership.",
-    "Source preparation has no Git commit yet; project-authored revision labels are not invented commit IDs."
+    "The uncommitted-source-preparation labels record the original preparation phase before initial commit b970c0490e3d5a7af91e61cb406e9facd94657fd; they are historical labels, not upstream commit IDs. Current per-file hashes identify the reviewed source view.",
+    "Current uncommitted-public-source-review labels identify a local reviewed source proposal, not a published commit or binary distribution clearance."
   ],
   "files": {
     ".agents/skills/dcrc-dependency-research/SKILL.md": {
-      "sha256": "cae8a5cbcec394d1020021b39ac710e45c47e091ae1070e7662f2be9e447e475",
-      "bytes": 1758,
+      "sha256": "21c695ea1b58e0aad4451564424c5042189dd2a8b155507afb4e4ffbf892dcc8",
+      "bytes": 2149,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -16,11 +17,21 @@
         "revision": "uncommitted-source-preparation",
         "path": ".agents/skills/dcrc-dependency-research/SKILL.md"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": ".agents/skills/dcrc-dependency-research/SKILL.md"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     ".agents/skills/dcrc-dependency-research/references/evidence-record.md": {
-      "sha256": "9b3b2e8588782b789c106ccbe905ac4006b78d5cb4b3c5214f6e62c73352cebd",
-      "bytes": 1911,
+      "sha256": "8b19fd6bbaabc6636420732cc18c20b846d98e34e55c4d4a2ab2fe4bcdf63fb7",
+      "bytes": 2297,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -28,11 +39,21 @@
         "revision": "uncommitted-source-preparation",
         "path": ".agents/skills/dcrc-dependency-research/references/evidence-record.md"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": ".agents/skills/dcrc-dependency-research/references/evidence-record.md"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     ".agents/skills/dcrc-port-game/SKILL.md": {
-      "sha256": "1fcf66ffe2464bbed7a37ff86ec262ed08c0e9c35eacdc11c331fcd23f6c95e5",
-      "bytes": 2133,
+      "sha256": "269a6c42d7158d32d65f3bfaf2f3b73bed901dbff2d732d7bc0160bd11482fe0",
+      "bytes": 2573,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -40,11 +61,21 @@
         "revision": "uncommitted-source-preparation",
         "path": ".agents/skills/dcrc-port-game/SKILL.md"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": ".agents/skills/dcrc-port-game/SKILL.md"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     ".agents/skills/dcrc-port-game/references/another-game.md": {
-      "sha256": "66c8a1a6b8d7f39d575cd2ccab95b69e5d23d3acaf54f2a27e40a66acf1c46dc",
-      "bytes": 2075,
+      "sha256": "f33bfa56114ef11ec4e7de9f517de2bb999068614ca0494800c86d47d6f89237",
+      "bytes": 3318,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -52,23 +83,43 @@
         "revision": "uncommitted-source-preparation",
         "path": ".agents/skills/dcrc-port-game/references/another-game.md"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": ".agents/skills/dcrc-port-game/references/another-game.md"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     ".agents/skills/dcrc-port-game/references/public-resources.md": {
-      "sha256": "5117ca9ce7297d8407cc52c1ab1953d204e6e7a807e49a0c311d1a9346593db7",
-      "bytes": 2081,
+      "sha256": "dffa91f1e0552ec30fa25308e803c6fe1079380a4d78f178bf5e82c084b13f1c",
+      "bytes": 3855,
       "category": "O",
       "license": "MIT",
       "source": {
         "url": "https://github.com/SandstoneDev/DCRC",
-        "revision": "uncommitted-source-preparation",
+        "revision": "uncommitted-local-hygiene-2026-11-06",
         "path": ".agents/skills/dcrc-port-game/references/public-resources.md"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": ".agents/skills/dcrc-port-game/references/public-resources.md"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     ".agents/skills/dcrc-port-game/references/us1005-pipeline.md": {
-      "sha256": "6a603030b4d49bafb5e5fc0398d57b214f357db4dfdffcd6312a72b03ed6a3fe",
-      "bytes": 3584,
+      "sha256": "203cdeec1e6bfd2ba6abb3e0a5cd29e8e17688230e1676771390ed62eb6bd032",
+      "bytes": 4650,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -76,11 +127,21 @@
         "revision": "uncommitted-source-preparation",
         "path": ".agents/skills/dcrc-port-game/references/us1005-pipeline.md"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": ".agents/skills/dcrc-port-game/references/us1005-pipeline.md"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     ".agents/skills/dcrc-release-audit/SKILL.md": {
-      "sha256": "a7b4ba793d3e0d8e3fdb7bf51d63466ae5e73b55825fa299e7488d22c41fde42",
-      "bytes": 1876,
+      "sha256": "52abad29328ed2837de218c5ea22fabab0cd7282d890ffe9f2690d99481ad136",
+      "bytes": 2255,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -88,11 +149,21 @@
         "revision": "uncommitted-source-preparation",
         "path": ".agents/skills/dcrc-release-audit/SKILL.md"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": ".agents/skills/dcrc-release-audit/SKILL.md"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     ".agents/skills/dcrc-release-audit/references/release-boundaries.md": {
-      "sha256": "e6ee4c1fb25425aec5528a553be454f2eb3207ed02509ce387e1195ebb66974f",
-      "bytes": 2631,
+      "sha256": "b07f5fdeee39839f144f9ff9b353be396fa5602d2f32bba7f0d24bcd881c2fac",
+      "bytes": 2862,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -100,7 +171,17 @@
         "revision": "uncommitted-source-preparation",
         "path": ".agents/skills/dcrc-release-audit/references/release-boundaries.md"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": ".agents/skills/dcrc-release-audit/references/release-boundaries.md"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     ".githooks/pre-commit": {
       "sha256": "6ea5b17fb5f0d6b2f93b07524c4c5379bca5c5be86894c21a4a80bda88a1a03d",
@@ -151,16 +232,26 @@
       "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
     },
     "AGENTS.md": {
-      "sha256": "8a30388c7859efb8711511f1a8d946c2f6c0e1ee7974d8692ad359635d886527",
-      "bytes": 3863,
+      "sha256": "3c793ceee7a99f8d66abcebdb49c946d890588328eb18b08192971cb205e2095",
+      "bytes": 4267,
       "category": "O",
       "license": "MIT",
       "source": {
         "url": "https://github.com/SandstoneDev/DCRC",
-        "revision": "uncommitted-source-preparation",
+        "revision": "uncommitted-local-hygiene-2026-11-06",
         "path": "AGENTS.md"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Project-authored source/documentation. Own guidance addition identifies the optional external skill and prohibits private global skill vendoring. Reviewed for host paths, credentials and game/SDK payloads.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-local-hygiene-2026-11-06",
+          "path": "AGENTS.md"
+        },
+        "review": "Own guidance addition identifies the optional external skill and prohibits private global skill vendoring."
+      }
     },
     "CMakeLists.txt": {
       "sha256": "396732d1191ad5b66916d8bd1eb7f6ca73ea7aabaa2b8bc0ab5d61defe048aee",
@@ -175,8 +266,8 @@
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
     },
     "CONTRIBUTING.md": {
-      "sha256": "9ce245dacbb9170eb3a705beeb0d1e645221788c6ab2e29402e01ca483b4ada7",
-      "bytes": 1199,
+      "sha256": "cce489155d2bf4020345e99a859ae3c64892fa85def4b5d617d8cbc826625aa3",
+      "bytes": 1528,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -184,11 +275,21 @@
         "revision": "uncommitted-source-preparation",
         "path": "CONTRIBUTING.md"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "v0.1.0-preview.1-source-review",
+          "path": "CONTRIBUTING.md"
+        },
+        "review": "Project-authored release and contributor guidance; preserves upstream and third-party attribution."
+      }
     },
     "CREDITS.md": {
-      "sha256": "7226b163070ff144e604b67b709f41821a1db8ac30508d907f509b96bb50566c",
-      "bytes": 7993,
+      "sha256": "52c8747634a55ab4db8481fd7e687ea1c61189fc9953a9d136aab99c3014d808",
+      "bytes": 8234,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -196,7 +297,17 @@
         "revision": "uncommitted-source-preparation",
         "path": "CREDITS.md"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "v0.1.0-preview.1-source-review",
+          "path": "CREDITS.md"
+        },
+        "review": "Project-authored release and contributor guidance; preserves upstream and third-party attribution."
+      }
     },
     "LICENSE": {
       "sha256": "559a34be5e92dc0ed58e1845d1e00be3faa6203f97dcd366f62f26c7bc160878",
@@ -259,8 +370,8 @@
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
     "README.md": {
-      "sha256": "32a0bf12c14ad4be76efc329ef149b10a9a86d0baf688b8378c3eda5ba8a919e",
-      "bytes": 6112,
+      "sha256": "b35c7931dba6fb4c61def4c25d6b0927c71411a1930d798f803f672eec5f079b",
+      "bytes": 9408,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -268,7 +379,17 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "README.md"
       },
-      "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
+      "review": "Modified upstream MIT source; original upstream source and notices retained. Reviewed own generic integration only; no imported game/SDK implementation or private native accelerators.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "v0.1.0-preview.1-source-review",
+          "path": "README.md"
+        },
+        "review": "Project-authored release and contributor guidance; preserves upstream and third-party attribution."
+      }
     },
     "audit/REVIEW.md": {
       "sha256": "15701a38b8f98837a0b19ea1156abed2df5cd9ec768339aef25d5af048372dc2",
@@ -329,6 +450,30 @@
         "path": "backend/audio_pause_clock.h"
       },
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+    },
+    "backend/border_image.h": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "backend/border_image.h"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation.",
+      "sha256": "b4172ec7341bb6531db9580b274acd5913f728b89c00b0aca0f81e38d65f92f8",
+      "bytes": 1285
+    },
+    "backend/control_map.h": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "backend/control_map.h"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation.",
+      "sha256": "895e27d9adc7d9924ab7d14ec5c142f32014dc3292cae38a5b3d4be96fcc44f4",
+      "bytes": 1584
     },
     "backend/debug_chord.h": {
       "sha256": "e503ca57382871a36bbf8461c9fcdaea1016c876b586888a15cb5e76b5d0a27f",
@@ -618,6 +763,42 @@
       },
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
+    "backend/movie_layout.h": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "backend/movie_layout.h"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation.",
+      "sha256": "cba9104a052876780317bcd07d25f5fe3a80bc73066d6405b4db5cd6d7a846b9",
+      "bytes": 1101
+    },
+    "backend/movie_wav.c": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "backend/movie_wav.c"
+      },
+      "review": "Own-author generic player/format work with explicit SandstoneDev MIT notice; preserve documented PS2RC/SDXR/DCRC origin chain and owner grant, not blanket custom-project relicensing.",
+      "sha256": "d718089911f26be17f25baa754564e581e542b595a127c6ec45d4f7644698252",
+      "bytes": 7308
+    },
+    "backend/movie_wav.h": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "backend/movie_wav.h"
+      },
+      "review": "Own-author generic player/format work with explicit SandstoneDev MIT notice; preserve documented PS2RC/SDXR/DCRC origin chain and owner grant, not blanket custom-project relicensing.",
+      "sha256": "0e283fb9c91c61483e759386f942b9810ecf04eb2f49b9893353a05c96e99d67",
+      "bytes": 1814
+    },
     "backend/psp/CMakeLists.txt": {
       "sha256": "7d783811ad44d1075e078ddd1e3bcdffe8e7d3a5d666b05d9994d8250f2855b4",
       "bytes": 21872,
@@ -630,9 +811,21 @@
       },
       "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
     },
+    "backend/psp/audio_movie.h": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "backend/psp/audio_movie.h"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation.",
+      "sha256": "d61cefa689a709d66efb476777be7b053cd6e471867f478cdc4842bb0a9dce57",
+      "bytes": 282
+    },
     "backend/psp/audio_psp.c": {
-      "sha256": "09b0f58a5ba06f9b5b49cfb47340049add08d605f2c15b59cf289f38a88c7918",
-      "bytes": 8625,
+      "sha256": "7cbf97d9bf0b87ea66982b7eb9d5bb268720b0d9c61549bbaa6f37ddf356a945",
+      "bytes": 10720,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -640,7 +833,17 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "backend/psp/audio_psp.c"
       },
-      "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
+      "review": "Modified upstream MIT source; original upstream source and notices retained. Reviewed own generic integration only; no imported game/SDK implementation or private native accelerators.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "backend/psp/audio_psp.c"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately. O: own generic integration/control/parser/ownership changes; retain original upstream revision, licence and applicable attribution"
+      }
     },
     "backend/psp/chain/Makefile": {
       "sha256": "e475f6bac8e8f996a23d9ca69488a8450f0e8c0ed8eaf0338a86f91a8b5a4857",
@@ -667,8 +870,8 @@
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
     "backend/psp/chain_path.h": {
-      "sha256": "b60862ab6e5f11baa1a18e1a6f7a9d2b5e62869d3dc065c53dc7dd73032c71b4",
-      "bytes": 1428,
+      "sha256": "5cd71c6dad5e512b73ab0e2e2b9e5f8d36f2a9392fcbc999041ab0fccc0eaf23",
+      "bytes": 2044,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -676,11 +879,21 @@
         "revision": "uncommitted-source-preparation",
         "path": "backend/psp/chain_path.h"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "backend/psp/chain_path.h"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     "backend/psp/chain_protocol.h": {
-      "sha256": "58903a145fcdc17abb7def9e9d42703486276411353258531ac2f6438dc20e1d",
-      "bytes": 814,
+      "sha256": "ff6b19f014bbc33a1f905f307359e313ad6ec5ffc0ca1d340c71f3a9f7976f99",
+      "bytes": 854,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -688,11 +901,21 @@
         "revision": "uncommitted-source-preparation",
         "path": "backend/psp/chain_protocol.h"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "backend/psp/chain_protocol.h"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     "backend/psp/chain_psp.c": {
-      "sha256": "e6fb4eaacabfd80926a27ce8611641e3da0e85fb51e109ea57dccad271899e04",
-      "bytes": 4136,
+      "sha256": "6f1657cfde8d26726a8c7116227936389ba0894cc75473fa19a031e0734f3a36",
+      "bytes": 4228,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -700,7 +923,17 @@
         "revision": "uncommitted-source-preparation",
         "path": "backend/psp/chain_psp.c"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "backend/psp/chain_psp.c"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     "backend/psp/chain_psp.h": {
       "sha256": "11101c6237ecdc0dfe73b7f51dd33498b27446b4440daeb5e9002f4c07b69bf7",
@@ -751,7 +984,7 @@
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
     "backend/psp/debug_psp.c": {
-      "sha256": "25cd37486af792bb529e9a7ffa2b25a03a165366e61f582b886b8c342c0121ed",
+      "sha256": "20f84720933351f19702817fa47459f4f00efc3b031caeb7c75dec5346991d29",
       "bytes": 15851,
       "category": "O",
       "license": "MIT",
@@ -760,7 +993,17 @@
         "revision": "uncommitted-source-preparation",
         "path": "backend/psp/debug_psp.c"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "backend/psp/debug_psp.c"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     "backend/psp/debug_psp.h": {
       "sha256": "4d1563918140afd83c09bf9dfc61aa3517b1a625b333375acca18de41d0aac55",
@@ -787,8 +1030,8 @@
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
     "backend/psp/draw_gu.c": {
-      "sha256": "5301fb328eeeef7ab510a8734a71d2f8071da1f80793d9e9b28f446b924a338e",
-      "bytes": 171383,
+      "sha256": "98f60d7e4b00afdbc1fa9df803bde0e9cec7bd662eafae9932400735b6c62958",
+      "bytes": 184529,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -796,7 +1039,17 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "backend/psp/draw_gu.c"
       },
-      "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
+      "review": "Modified upstream MIT source; original upstream source and notices retained. Reviewed own generic integration only; no imported game/SDK implementation or private native accelerators.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "backend/psp/draw_gu.c"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately. O: own generic integration/control/parser/ownership changes; retain original upstream revision, licence and applicable attribution F: exact live texture names/dimensions/formats; no pixels or universal coverage claim"
+      }
     },
     "backend/psp/exc/Makefile": {
       "sha256": "179db0b1bf7e5603ea1ce91b708dc31e77873f7c4390164e772670d0801112ed",
@@ -859,8 +1112,8 @@
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
     },
     "backend/psp/main_psp.c": {
-      "sha256": "2e8f2f4ed29a6f5b88af142d6166025cc412cbad5c9a7f3596cae9bff2f4ac24",
-      "bytes": 50401,
+      "sha256": "8accde01528f824d9d65d2ff436397538de6c0962e01006242032451db6f8b9a",
+      "bytes": 53146,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -868,7 +1121,17 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "backend/psp/main_psp.c"
       },
-      "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
+      "review": "Modified upstream MIT source; original upstream source and notices retained. Reviewed own generic integration only; no imported game/SDK implementation or private native accelerators.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "backend/psp/main_psp.c"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately. O: own generic integration/control/parser/ownership changes; retain original upstream revision, licence and applicable attribution"
+      }
     },
     "backend/psp/me/Makefile": {
       "sha256": "f34c40f2c574e6e10ba3027cdef0819e2a24e60d5817468fdc890c9130a23c1e",
@@ -905,6 +1168,42 @@
         "path": "backend/psp/mesh_far.h"
       },
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+    },
+    "backend/psp/movie_display.h": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "backend/psp/movie_display.h"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation.",
+      "sha256": "b271d58ada11f64b7de7845439857214b6b968af3923dff762f1400e15f8490d",
+      "bytes": 247
+    },
+    "backend/psp/movie_psp.c": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "backend/psp/movie_psp.c"
+      },
+      "review": "Own-author generic player/format work with explicit SandstoneDev MIT notice; preserve documented PS2RC/SDXR/DCRC origin chain and owner grant, not blanket custom-project relicensing.",
+      "sha256": "837b7af437e69b51dcc45aa485e1ef9603d88b12cc703635f7e70b1009022d03",
+      "bytes": 22764
+    },
+    "backend/psp/movie_psp.h": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "backend/psp/movie_psp.h"
+      },
+      "review": "Own-author generic player/format work with explicit SandstoneDev MIT notice; preserve documented PS2RC/SDXR/DCRC origin chain and owner grant, not blanket custom-project relicensing.",
+      "sha256": "35d1b75ff06800fece8e95e00731142bc4f05fcfcc9c75cedca5dd2ba3e3e0bb",
+      "bytes": 1329
     },
     "backend/psp/pixel_probe.h": {
       "sha256": "1e932c76db30e85e80b1c799a152b2ef9043f0aee1e135a58e0196c640f68c6c",
@@ -1027,8 +1326,8 @@
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
     },
     "converter/README.md": {
-      "sha256": "267b768b281e36b1bf054155e64ada35234c018b1810dd9531984b91d49cfd68",
-      "bytes": 2768,
+      "sha256": "357253ad71b9883c37876494d3079f0f96f5eab12d56417874c6c0121499154c",
+      "bytes": 4750,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -1036,11 +1335,21 @@
         "revision": "uncommitted-source-preparation",
         "path": "converter/README.md"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "v0.1.0-preview.1-source-review",
+          "path": "converter/README.md"
+        },
+        "review": "Project-authored release and contributor guidance; preserves upstream and third-party attribution."
+      }
     },
     "converter/build_bundle.py": {
-      "sha256": "fe8aa10ac61b5c974b13f2e5375bd5f346c671e5b9d51e67a16c81f70a4c1ace",
-      "bytes": 10775,
+      "sha256": "be01a1c48867212eff7e33ab1d4a95230ca74e5d6806275d6486c9ed054320ea",
+      "bytes": 15850,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -1048,7 +1357,17 @@
         "revision": "uncommitted-source-preparation",
         "path": "converter/build_bundle.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "converter/build_bundle.py"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     "converter/launcher.c": {
       "sha256": "54c1e1d4b801df5566068278365747e7f342b9bc53f787372c933dca33425b1a",
@@ -1158,9 +1477,33 @@
       },
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
+    "dcrc/border.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "dcrc/border.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation.",
+      "sha256": "11d0cee8e15e9f44d73c7e1e516b19803eee19d3bbcd8f68ee055b665eec8034",
+      "bytes": 1385
+    },
+    "dcrc/capabilities.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "dcrc/capabilities.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation.",
+      "sha256": "a977ad5379ac5b8da7069711c99473f4e0f0c9edb695237f1c2794dbd268bf89",
+      "bytes": 656
+    },
     "dcrc/cli.py": {
-      "sha256": "7522e3a0efe9eb89f44ae689801559c5fab69755eb22bdf4e731163ff1724c08",
-      "bytes": 7049,
+      "sha256": "0129393d1422625b91fb74ef2b5d9e53bc5f070e6400436c8673254c2270d7c3",
+      "bytes": 10298,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -1168,7 +1511,17 @@
         "revision": "uncommitted-source-preparation",
         "path": "dcrc/cli.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "dcrc/cli.py"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     "dcrc/content.py": {
       "sha256": "20c8dca35a6763b181f8348ddd458095b4220445e8ae871d452003e9be33769d",
@@ -1181,6 +1534,18 @@
         "path": "dcrc/content.py"
       },
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+    },
+    "dcrc/controls.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "dcrc/controls.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation.",
+      "sha256": "21935b1d6e196f805666087aba535aee7cf644d9622f6d91083c679361760fdd",
+      "bytes": 1206
     },
     "dcrc/data/sa1_us_1005/NOTICE.txt": {
       "sha256": "0aaa2809ee1407c38102e933aa9bc4e5aee42c31dc264c14d104e4d47dcf8e6d",
@@ -1938,6 +2303,18 @@
       },
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
+    "dcrc/dlc_download.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "dcrc/dlc_download.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation.",
+      "sha256": "b9df4b28811134d3f0d869c1335eee14f39b8475c3b303520dc5cee6b8a8199d",
+      "bytes": 28921
+    },
     "dcrc/errors.py": {
       "sha256": "82440555fec52595404b783d174a06a412022d629c8cc2819262bae3b8f9c259",
       "bytes": 433,
@@ -1962,9 +2339,33 @@
       },
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
+    "dcrc/media.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "dcrc/media.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. F: bounded compatibility names/IDs/format/entry/result metadata, consumed from user-local media",
+      "sha256": "9b7790964657341c820ca06b5c206d5ae8d53fb1487eb32a4d8b66e73032018a",
+      "bytes": 10141
+    },
+    "dcrc/media_tools.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "dcrc/media_tools.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation.",
+      "sha256": "6006c0fc39eb0e95199990341f9a957bcccc58da5f13ecc4917ac80cd58e77a1",
+      "bytes": 1068
+    },
     "dcrc/models.py": {
-      "sha256": "79323f37d0f4d9d7d4b6d633dbcdd6eaa20d7b24cf0424e8b59f3d6ebee7f680",
-      "bytes": 4512,
+      "sha256": "cfcd10fe894b8b0c999a8e59ebc26fe9ff9bd6804e1ef91992241707c1cc35d9",
+      "bytes": 8860,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -1972,11 +2373,33 @@
         "revision": "uncommitted-source-preparation",
         "path": "dcrc/models.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "dcrc/models.py"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
+    },
+    "dcrc/movies.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "dcrc/movies.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. F: bounded compatibility names/IDs/format/entry/result metadata, consumed from user-local media",
+      "sha256": "c58538024518995db2411a55b7e339f2bcca9f6fa6d8c41b0e886d7a3fbb7ea3",
+      "bytes": 21812
     },
     "dcrc/native_build.py": {
-      "sha256": "23ee853902d1ceb0bb8ea0524e88028e000f6890ceab8c41322ced4ac75675fd",
-      "bytes": 20317,
+      "sha256": "e3ef540d73f4b26721c4b6dbfba4f27657a64279e40b9af50e64f86b4140dba9",
+      "bytes": 20422,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -1984,11 +2407,21 @@
         "revision": "uncommitted-source-preparation",
         "path": "dcrc/native_build.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "dcrc/native_build.py"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     "dcrc/package.py": {
-      "sha256": "1fdb39348a770bf48bd62097228606f8c5a3ac7e6e350c52bce6052e1a860ce8",
-      "bytes": 6172,
+      "sha256": "8aa3be3e4691667171d9d22b6354f77684cca9822bc47dfe753aa61d41dadb69",
+      "bytes": 7178,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -1996,11 +2429,21 @@
         "revision": "uncommitted-source-preparation",
         "path": "dcrc/package.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "dcrc/package.py"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     "dcrc/pipeline.py": {
-      "sha256": "601c3531b228e6497de992f063ec1008a2575439b426047d256e2847bb94e9d3",
-      "bytes": 12859,
+      "sha256": "7f4b418a5b30e08753faa15c6a085eb82e0464bb9dfbee1778c9d81752fd945b",
+      "bytes": 22699,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -2008,11 +2451,21 @@
         "revision": "uncommitted-source-preparation",
         "path": "dcrc/pipeline.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "dcrc/pipeline.py"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     "dcrc/process.py": {
-      "sha256": "bfc768f80a799392b5bed74b65e21adf2ce630a759a77fe369c07a25411766ac",
-      "bytes": 6047,
+      "sha256": "7b3b1c1f7c74fa64085109dd1f693d756dfee9568cae1f1bb0e69cc7497842d4",
+      "bytes": 6107,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -2020,7 +2473,17 @@
         "revision": "uncommitted-source-preparation",
         "path": "dcrc/process.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "dcrc/process.py"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     "dcrc/profiles.py": {
       "sha256": "ea9358587c148cac903445bffb7edb6ee0999babd1b529e9c5c839ffae91d080",
@@ -2035,8 +2498,8 @@
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
     "dcrc/runtime_source.py": {
-      "sha256": "797e6b3ae0b75ac2163a8d17ae14f15a9045e9535fe0bb017d1a861d98b3a907",
-      "bytes": 2435,
+      "sha256": "0661a44da2cfeb1b1e9ce1834e3cd0b91f569c575cd1a89747393b49a4007384",
+      "bytes": 2472,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -2044,7 +2507,17 @@
         "revision": "uncommitted-source-preparation",
         "path": "dcrc/runtime_source.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "dcrc/runtime_source.py"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     "dcrc/storage.py": {
       "sha256": "7ef854bc40ddb0076c765a41615e136058d08dfe56954a2a14e98361f905a73c",
@@ -2059,8 +2532,8 @@
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
     "dcrc/toolchain.py": {
-      "sha256": "c4392a6c1952116628f88fe706d592b8b610b41593c61cdc048209978ff8634e",
-      "bytes": 3106,
+      "sha256": "d3d1813b7992b581dbca7898b1e06d359fe4eb691cc25f6c81c25f9caba2bb04",
+      "bytes": 3232,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -2068,7 +2541,17 @@
         "revision": "uncommitted-source-preparation",
         "path": "dcrc/toolchain.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "dcrc/toolchain.py"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     "dcrc/worker.py": {
       "sha256": "83d5ae2b916925149ae66a1fc4a19eebf7b33e35e7812b6bd3753a930670ae40",
@@ -2082,9 +2565,21 @@
       },
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
+    "dcrc/xmb.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "dcrc/xmb.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. F: bounded compatibility names/IDs/format/entry/result metadata, consumed from user-local media",
+      "sha256": "0980ae5916f64678953d61f1d9b0afca86e9bafbf8dc5f3dd1fbcd9dd55d6fa1",
+      "bytes": 23619
+    },
     "dependencies.json": {
-      "sha256": "5b98033bda7a13f01ab745e8d2bac3c5662d32b93a95b61295b166003ed90338",
-      "bytes": 10055,
+      "sha256": "2f15204f90a7b631e7edb22eb2e46d64969ee4240e1dfa2ff645c45747959d89",
+      "bytes": 10939,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -2092,7 +2587,17 @@
         "revision": "uncommitted-source-preparation",
         "path": "dependencies.json"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "dependencies.json"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     "devkit/tapes/experimental/ec1_vmu.tape": {
       "sha256": "6ac41fb690dea34452145f81a98dc53cbbd404ae3ff65b4673474d526f21f3ea",
@@ -2238,9 +2743,21 @@
       },
       "review": "Reviewed addresses/bounds/hashes/configuration or input sequences only; no game instruction bodies, assets or copied disassembly. Historical discovery credited separately."
     },
+    "docs/COMPATIBILITY.md": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "docs/COMPATIBILITY.md"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation.",
+      "sha256": "24f61d60f2cae62afbafdeeeb5e974151e245af82e136f6403a44af787fa194e",
+      "bytes": 2678
+    },
     "docs/DEPENDENCIES.md": {
-      "sha256": "06e9762c4cd6eb2156cb7c9ff4beb33e4f8879127436984c5ba73f3ae61c943a",
-      "bytes": 4380,
+      "sha256": "320b4128265a908541431b3741a7abc66582d7e82de8ceca907d96d983173696",
+      "bytes": 5783,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -2248,11 +2765,21 @@
         "revision": "uncommitted-source-preparation",
         "path": "docs/DEPENDENCIES.md"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "docs/DEPENDENCIES.md"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     "docs/DEVELOPMENT.md": {
-      "sha256": "614a8a4ec221a6de30a70a4d39014df786b3e8a94b424de50239611ec261c3f6",
-      "bytes": 2749,
+      "sha256": "e236f7615be9aab9e8fef38c2db16c41ba0aa7d080571d82194c5c71b3be8df2",
+      "bytes": 3166,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -2260,11 +2787,21 @@
         "revision": "uncommitted-source-preparation",
         "path": "docs/DEVELOPMENT.md"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "docs/DEVELOPMENT.md"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     "docs/IN_GAME_MENU.md": {
-      "sha256": "8bb581c2acf106c4b6e2bbf57958fe6eb119f93dbfeb39bfe6904672642b7d1b",
-      "bytes": 4753,
+      "sha256": "1b6f6fa1f8117203a810ed8e6e3e5e8b67d8d53277a1ca5bb10cbebee1c67c43",
+      "bytes": 5382,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -2272,11 +2809,21 @@
         "revision": "uncommitted-source-preparation",
         "path": "docs/IN_GAME_MENU.md"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "docs/IN_GAME_MENU.md"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     "docs/PROVENANCE.md": {
-      "sha256": "0ff51a6810113f7c73e58a0a81d304f92cc67a199067594368ee70911a6e6008",
-      "bytes": 3628,
+      "sha256": "7091e16ee71befccb6b14a31c63046b4a0a875efca4f3b59233a3dff0b6351d7",
+      "bytes": 5105,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -2284,19 +2831,39 @@
         "revision": "uncommitted-source-preparation",
         "path": "docs/PROVENANCE.md"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "docs/PROVENANCE.md"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     "docs/RELEASE_AUDIT.md": {
-      "sha256": "4960fd7e45898d32ee832c6c895277add3a82cc4fce4198aaff3ab6da109ed98",
-      "bytes": 2576,
+      "sha256": "1dd0b738f423eba515a1fb4960313ab69baadee1971f6b0d1581e9573ff30fc4",
+      "bytes": 3400,
       "category": "O",
       "license": "MIT",
       "source": {
         "url": "https://github.com/SandstoneDev/DCRC",
-        "revision": "uncommitted-source-preparation",
+        "revision": "uncommitted-local-hygiene-2026-11-06",
         "path": "docs/RELEASE_AUDIT.md"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "docs/RELEASE_AUDIT.md"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     "gui/__init__.py": {
       "sha256": "a65e11c2c440b01fb7920fceb27af655a322c7ea2d8e5970d4875070d2d01964",
@@ -2323,8 +2890,8 @@
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
     "gui/app.py": {
-      "sha256": "77e32f14098ce86c7ca331896a00a408a5bbb7dc5f5a752fabea6d32e4f56ad9",
-      "bytes": 19158,
+      "sha256": "8ed6377b4560c56feef52d55342bf956a9901bcd796824748f405765af7c6680",
+      "bytes": 55446,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -2332,11 +2899,33 @@
         "revision": "uncommitted-source-preparation",
         "path": "gui/app.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "gui/app.py"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
+    },
+    "gui/art_preview.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "gui/art_preview.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation.",
+      "sha256": "aacbacdefb6480323d629f5a7210263b8be200d4b034114fe7a09788f69dcd2f",
+      "bytes": 2628
     },
     "gui/controller.py": {
-      "sha256": "a480ee7cad82eeac6124e63aec9865a046bb66f9ba01484e72e6c30a3be8732b",
-      "bytes": 4123,
+      "sha256": "d2989cbca583e844bc78583e564f3656e2c2bf7dcc641e62457e7ac673fa63f3",
+      "bytes": 6115,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -2344,11 +2933,81 @@
         "revision": "uncommitted-source-preparation",
         "path": "gui/controller.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "gui/controller.py"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
+    },
+    "gui/controls.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "gui/controls.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation.",
+      "sha256": "e3e386685d34e59f53097cc735d52174c0257a98be7ce705a39e4c65f918d4ae",
+      "bytes": 2976
+    },
+    "gui/i18n.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "gui/i18n.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation.",
+      "sha256": "e008e7b04dc15d2d3c8ffbe65b85ab50c0015be98c3d5f06137f3e7ccaccb937",
+      "bytes": 701
+    },
+    "gui/job_dialog.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "gui/job_dialog.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation.",
+      "sha256": "558678ba482c5059dd48a2b12618ebe2229808fe86a92d97aa2eb8d3dd32d185",
+      "bytes": 2077
+    },
+    "gui/lang/ru.json": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "gui/lang/ru.json"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation.",
+      "sha256": "a618b30a5b6bd62e6ed665459ef0e2f7e2b5767213421b5902d221cdd60b777c",
+      "bytes": 18547
+    },
+    "gui/media_picker.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "gui/media_picker.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation.",
+      "sha256": "93c51a0f17f0f852f19f84b8fe7de6625bd785dfc7158c93ce77cd60efb67823",
+      "bytes": 3414
     },
     "gui/run_gui.py": {
-      "sha256": "1e89d752ececd51b6e038aae9157cc4e81bfb2ef8cbb6b2d82967053b14f4c27",
-      "bytes": 1122,
+      "sha256": "f183260a14d733136d0910a96d78a33e9baf68b380b2ec0cc5478831102d583c",
+      "bytes": 1062,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -2356,7 +3015,41 @@
         "revision": "uncommitted-source-preparation",
         "path": "gui/run_gui.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "gui/run_gui.py"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
+    },
+    "gui/session_log.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "gui/session_log.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation.",
+      "sha256": "76e0a136c8befb5fd2e9d52bcc8074241a129660e7c4f234ed71decf8a77801e",
+      "bytes": 2174
+    },
+    "gui/theme.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "gui/theme.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation.",
+      "sha256": "c5c2842ba5003e10ec8515e3e99c16238fc540d3716e38399d462528a6a330ca",
+      "bytes": 1937
     },
     "hle/bios/syscalls.c": {
       "sha256": "7443d92de8857242dc2996e61502c31778efd00fd4764182491d1ebed6644357",
@@ -2635,8 +3328,8 @@
       "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
     },
     "hle/overlay/movie.c": {
-      "sha256": "4d3d99a34f7846a1fe2447936b37385aafd071699d4eb090db9cb08503fa6f2d",
-      "bytes": 924,
+      "sha256": "c9501de6e35b726f09a1d0832b550ab0a9c5c14b2b6475ae782df869ca63af28",
+      "bytes": 701,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -2644,7 +3337,41 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "hle/overlay/movie.c"
       },
-      "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
+      "review": "Modified upstream MIT source; original upstream source and notices retained. Reviewed own generic integration only; no imported game/SDK implementation or private native accelerators.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "hle/overlay/movie.c"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately. O: own generic integration/control/parser/ownership changes; retain original upstream revision, licence and applicable attribution O/F replacement host bridge plus profile entry fact; preserve inherited file origin even though the small body changed"
+      }
+    },
+    "hle/overlay/movie.h": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "hle/overlay/movie.h"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation.",
+      "sha256": "a4abe37068e925c868cc863d7f8fc6cdce666ff315a438aa1dbc515ba0b25fa3",
+      "bytes": 124
+    },
+    "hle/overlay/movie_profile.h": {
+      "category": "F",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "hle/overlay/movie_profile.h"
+      },
+      "review": "Minimal USA V1.005 movie filenames, entry and result identifiers, independently bound to supported user-input hashes. Facts only; no movie bytes, translated guest function or proprietary SDK implementation.",
+      "sha256": "7c84573967404ca175bacc41c05f22840becbf46bea7e4496bed1b28833360bc",
+      "bytes": 526
     },
     "hle/overlay/overlay_loader.c": {
       "sha256": "aa0a06353916d0659e2415b5ad3a001f06f87d5c20f74c75fc62c88700beafed",
@@ -2707,8 +3434,8 @@
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
     },
     "hle/settings.c": {
-      "sha256": "6231f443143cdff3b44588c8387c7e9ef64e209dbc69f4d702693022e306c0f5",
-      "bytes": 8642,
+      "sha256": "9b69801a13fe6bcee0f8d5a33f796977386d6f33aa0b111c6a2c8debbb86085c",
+      "bytes": 9361,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -2716,7 +3443,17 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "hle/settings.c"
       },
-      "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
+      "review": "Modified upstream MIT source; original upstream source and notices retained. Reviewed own generic integration only; no imported game/SDK implementation or private native accelerators.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "hle/settings.c"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately. O: own generic integration/control/parser/ownership changes; retain original upstream revision, licence and applicable attribution"
+      }
     },
     "hle/shinobi/cfg.c": {
       "sha256": "d5706a2239b15eef47e546195eddf9f7bcb58cafb841eaeaca7f5c02f5962110",
@@ -2899,8 +3636,8 @@
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
     },
     "hle/sound/sd.c": {
-      "sha256": "5d274d29371f1fa849c3eef3405640da93ca1825aa04cc4b0bb57c73b968b371",
-      "bytes": 9971,
+      "sha256": "dfdfd50ca309b9649d9915201045eebf8e13f85d509f90c98cb9c63e8c3d6f38",
+      "bytes": 10126,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -2908,11 +3645,21 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "hle/sound/sd.c"
       },
-      "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
+      "review": "Modified upstream MIT source; original upstream source and notices retained. Reviewed own generic integration only; no imported game/SDK implementation or private native accelerators.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "hle/sound/sd.c"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately. O: own generic integration/control/parser/ownership changes; retain original upstream revision, licence and applicable attribution"
+      }
     },
     "hle/sound/snd_core.c": {
-      "sha256": "e76e2828232af0af4b6fea3c427e223bf93493da2ad52922914417e07511494c",
-      "bytes": 29846,
+      "sha256": "d4fa259e98111a7062bf4658cf341eb69f5661c8667e999e33a0d22d9a4ae4a6",
+      "bytes": 33356,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -2920,11 +3667,21 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "hle/sound/snd_core.c"
       },
-      "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
+      "review": "Modified upstream MIT source; original upstream source and notices retained. Reviewed own generic integration only; no imported game/SDK implementation or private native accelerators.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "hle/sound/snd_core.c"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately. O: own generic integration/control/parser/ownership changes; retain original upstream revision, licence and applicable attribution"
+      }
     },
     "hle/sound/snd_core.h": {
-      "sha256": "9a988a7a44483d7e5d193e9c667c63aab22a5ec92d16ae473545e55774e03901",
-      "bytes": 6556,
+      "sha256": "96139d4d93381e5a32e53fb68e98dd4eca560f2582d5521781663125f3c15668",
+      "bytes": 6885,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -2932,7 +3689,17 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "hle/sound/snd_core.h"
       },
-      "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
+      "review": "Modified upstream MIT source; original upstream source and notices retained. Reviewed own generic integration only; no imported game/SDK implementation or private native accelerators.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "hle/sound/snd_core.h"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately. O: own generic integration/control/parser/ownership changes; retain original upstream revision, licence and applicable attribution"
+      }
     },
     "hle/sound/snd_host.c": {
       "sha256": "cd9963e9afb5ec3bd601936ec941c197a6adf83a7dcfe645fa3d47c21a410cf6",
@@ -2957,6 +3724,18 @@
         "path": "hle/sound/snd_host.h"
       },
       "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
+    },
+    "hle/sound/snd_sequence.h": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "hle/sound/snd_sequence.h"
+      },
+      "review": "Own bounded event scheduler; SMSB/SMSD opcodes/timing/field widths are format facts, not copied game/driver instruction bodies.",
+      "sha256": "67d2ef0a2598a2f1d86c7be54c0a9c33917e46e36751dac0ae0146e9e8d5528c",
+      "bytes": 7497
     },
     "hle/sound/sound_lfo.h": {
       "sha256": "763a28c697d68e10d6072b6f9d2e47dd1753263395f96ab512de1d081a37a0b9",
@@ -3067,8 +3846,8 @@
       "review": "Modified upstream MIT source; reviewed public source integration retains upstream notices and excludes hand-translated game bodies/private material."
     },
     "recomp/emitter/runtime/sh4_trig.h": {
-      "sha256": "40cbc65464829b6a2f3215682029b966c73301a6c7796c6dd1af9c5241cd56d8",
-      "bytes": 2184,
+      "sha256": "2ff2d5d9425c8296f2c9d748aa86f411c553f0aa8b647d58961c66f555484253",
+      "bytes": 2195,
       "category": "T",
       "license": "MIT",
       "source": {
@@ -3076,7 +3855,17 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "recomp/emitter/runtime/sh4_trig.h"
       },
-      "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
+      "review": "Modified upstream MIT source; upstream source attribution and notices retained. Own comment-only correction removes the excluded dumper reference and states the existing libm fallback. Executable code is unchanged. Reviewed for host paths, credentials and game/SDK payloads.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-local-hygiene-2026-11-06",
+          "path": "recomp/emitter/runtime/sh4_trig.h"
+        },
+        "review": "Own comment-only correction removes the excluded dumper reference and states the existing libm fallback. Executable code is unchanged."
+      }
     },
     "recomp/emitter/sh4emit/__init__.py": {
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -4578,9 +5367,21 @@
       },
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
+    "tests/converter/test_border.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/converter/test_border.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "c24a99cad965217a8ceeeda5271f041a1da04c064aa50197f07f1fea2c86b783",
+      "bytes": 2888
+    },
     "tests/converter/test_bundle.py": {
-      "sha256": "21895a43cb3c3f24c230d42a92868c28035ee3066229b2d32ccd1741d09b38f5",
-      "bytes": 5627,
+      "sha256": "2f862bec86400293292c623d5e92291da8d4fe288bc00776cea209b079f43123",
+      "bytes": 7785,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -4588,7 +5389,17 @@
         "revision": "uncommitted-source-preparation",
         "path": "tests/converter/test_bundle.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "tests/converter/test_bundle.py"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     "tests/converter/test_cli.py": {
       "sha256": "86aa344581a950e2493650108a9d644fb3f94faeccbedaa2a4dbc6baefcc5494",
@@ -4615,8 +5426,8 @@
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
     "tests/converter/test_content_pipeline.py": {
-      "sha256": "2a64377f77e6cc5bf62dcecdde85bf0d4bd2022239fe08c9a371b6e21e012a46",
-      "bytes": 6973,
+      "sha256": "0f6598582842a0642e8e5fa2e5ca37187a562f12c9a0fc2f6e3ea841555c857c",
+      "bytes": 8612,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -4624,7 +5435,29 @@
         "revision": "uncommitted-source-preparation",
         "path": "tests/converter/test_content_pipeline.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "tests/converter/test_content_pipeline.py"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
+    },
+    "tests/converter/test_controls.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/converter/test_controls.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "c50b57be68a5ce838df14e1b8d7c4eca837197a77afcfd72bb21835a7aaa9e59",
+      "bytes": 3110
     },
     "tests/converter/test_core.py": {
       "sha256": "2859dfaf56cf07df86a1f63a3876bb26e3910c2c2db3682f124a9ce29e792f5b",
@@ -4662,6 +5495,18 @@
       },
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
+    "tests/converter/test_dlc_download.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/converter/test_dlc_download.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "e2efe74a5fc665777f6b984704d594b1276bcdf7eb63fc2881bf48306039a10e",
+      "bytes": 22034
+    },
     "tests/converter/test_frozen_python_cache.py": {
       "sha256": "323f2a6c69e1961f1ba9c833bcb90f41bb70830716eb8ab4b498f921be58adda",
       "bytes": 753,
@@ -4687,8 +5532,8 @@
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
     "tests/converter/test_gui.py": {
-      "sha256": "76233e833109b757fa711db275fcc90d2d151f09606125736932438eb080a5b9",
-      "bytes": 6179,
+      "sha256": "aad03c3bd7b4defc2790b4c1e208c8627afeafc17bb7de6f8d91072b0e8f51b2",
+      "bytes": 6361,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -4696,11 +5541,117 @@
         "revision": "uncommitted-source-preparation",
         "path": "tests/converter/test_gui.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "tests/converter/test_gui.py"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
+    },
+    "tests/converter/test_gui_dlc_convert_c112.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/converter/test_gui_dlc_convert_c112.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "0b317c41b69b7a9b0ca3f877bf113929f77a8b4166fc1836a8f0869fa37d76a6",
+      "bytes": 5154
+    },
+    "tests/converter/test_gui_log_c111.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/converter/test_gui_log_c111.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "3a69c0c9061d6b02e17bd79b2999e2f22d4da0408c4710a4da28e119dcba43f2",
+      "bytes": 7739
+    },
+    "tests/converter/test_gui_rc4.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/converter/test_gui_rc4.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "4cba7697d675e7658473a4b587dd0f2c5ca35eaaea446f7c08b624cbfffd9fd9",
+      "bytes": 4314
+    },
+    "tests/converter/test_media_c109.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/converter/test_media_c109.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "8664cc5e47199e5484e1dad1f0c494d82ea952a823592c8100d6fc53e0552c7a",
+      "bytes": 4247
+    },
+    "tests/converter/test_media_dependency_c113.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/converter/test_media_dependency_c113.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "8cb12364891ef426c0b0e6ec24f07977b624668242bc94595fe5596838914f03",
+      "bytes": 1742
+    },
+    "tests/converter/test_movie_integration.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/converter/test_movie_integration.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "68409aee791095fbafd30d2cce46d4771cf981601d31053740329dac69f78075",
+      "bytes": 9834
+    },
+    "tests/converter/test_movie_pmf.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/converter/test_movie_pmf.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "d4be08426082e220b1ad1d09d4647c957172667e020e1453f279a8e472f4a603",
+      "bytes": 4799
+    },
+    "tests/converter/test_movies.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/converter/test_movies.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "27d3f4ce069096406015eadc3263ab1e5eb1d7ac5fa6d684ceacfca4eeb67b78",
+      "bytes": 13693
     },
     "tests/converter/test_native_build.py": {
-      "sha256": "68d171fa6ec4a491d6f2149ae8889e633d6c20bb4aa1d90dee63409b48c42ff4",
-      "bytes": 8218,
+      "sha256": "92f0d6e360e694aa862f5dc3c8e47eeee5b35f9d8403a296cad81eecc8a9be83",
+      "bytes": 8240,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -4708,7 +5659,17 @@
         "revision": "uncommitted-source-preparation",
         "path": "tests/converter/test_native_build.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "tests/converter/test_native_build.py"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     "tests/converter/test_profiles.py": {
       "sha256": "6e2d2f8a94ac108c7a0c01206c8b4ecab40f71a9beb354eea7ffa63ea71a451e",
@@ -4722,9 +5683,21 @@
       },
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
+    "tests/converter/test_public_capabilities_c113.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/converter/test_public_capabilities_c113.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "740b22ba909689c31370544e33942160b38a0b4afa36d4c02610a07f741d8a43",
+      "bytes": 2932
+    },
     "tests/converter/test_runtime_ini.py": {
-      "sha256": "e8333a7109fde0a29e56b0f9c04e6a5803b280ab9ca8ac4626de65623af1a15e",
-      "bytes": 4941,
+      "sha256": "2fff75287110e77b09531d7fbffea2db805b3c5ca727304275eb4fed5bcde55c",
+      "bytes": 5109,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -4732,7 +5705,29 @@
         "revision": "uncommitted-source-preparation",
         "path": "tests/converter/test_runtime_ini.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "tests/converter/test_runtime_ini.py"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
+    },
+    "tests/converter/test_session_log.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/converter/test_session_log.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "1791a25b21231778c2448d6d37ad6d473d62b9c81eaa21625cf26b4ecb6cf95c",
+      "bytes": 2186
     },
     "tests/converter/test_toolchain.py": {
       "sha256": "4abb82841205aedc1bf18d8a7b6df7f809d92058cbebb705e10339c5851d0999",
@@ -4745,6 +5740,18 @@
         "path": "tests/converter/test_toolchain.py"
       },
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+    },
+    "tests/converter/test_xmb.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/converter/test_xmb.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "1b59a3fb3712f80e33186a2d3cbbc339ae46b5798bb71b9432e9c13235d866dc",
+      "bytes": 18270
     },
     "tests/emitter/run_tests.py": {
       "sha256": "6ceb70aff394f699f8ec64b9c02a1d89064f3137b6e1e66f769c9eedf0038658",
@@ -4938,6 +5945,30 @@
       },
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
+    "tests/psp/movie_psp_test.c": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/psp/movie_psp_test.c"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "58d815820eefd034cc98e69711550b2542302285f3a17c8ef0ae3a3945fd11f0",
+      "bytes": 14212
+    },
+    "tests/psp/movie_sdk_stubs.h": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/psp/movie_sdk_stubs.h"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "1a53cc81c92bccc15799f55c0252900af4042e74b1a414ef4626cd7d189a128f",
+      "bytes": 3074
+    },
     "tests/psp/pixel_probe_test.c": {
       "sha256": "b4486f266084e16e52acbbd275b3053387d16acf3fb7c82f2b130e069da880f4",
       "bytes": 692,
@@ -4951,8 +5982,8 @@
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
     "tests/psp/test_chain_adapter.py": {
-      "sha256": "dffa9ac595c5af491913d0702d3448488d284fa3d9e9d24ebcbf0362f9a083df",
-      "bytes": 5235,
+      "sha256": "4787d3008c36f808d5e3e6298f65f83ec045a6b88a395db3965d151ab2c49312",
+      "bytes": 6527,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -4960,11 +5991,21 @@
         "revision": "uncommitted-source-preparation",
         "path": "tests/psp/test_chain_adapter.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "tests/psp/test_chain_adapter.py"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     "tests/psp/test_chain_kernel.py": {
-      "sha256": "48e7ad92dec7423b694d53ad872d42f733a44c2880f267e0ecb7b125a9a8f450",
-      "bytes": 7111,
+      "sha256": "92a6355bdd28b1d69c43462b2f836a1dacfb384fcca24b3ab9f81f1ef7a33329",
+      "bytes": 7862,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -4972,7 +6013,17 @@
         "revision": "uncommitted-source-preparation",
         "path": "tests/psp/test_chain_kernel.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "tests/psp/test_chain_kernel.py"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     "tests/psp/test_fps_overlay.py": {
       "sha256": "02d3221b754506198612799806a96fe8e26c10cf3d2630aa9c4728d15c42bae0",
@@ -4998,6 +6049,18 @@
       },
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
+    "tests/psp/test_hud_texture_residency.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/psp/test_hud_texture_residency.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "4335065f374f20fa1cc0196673aa5b074cfbba01fa2dddbe9ddb19a7904d160e",
+      "bytes": 8919
+    },
     "tests/psp/test_mesh_far.py": {
       "sha256": "e18a1ec33a989850f5c53894b5944e976c1b1596baf6bf570379a7f5a3851b9b",
       "bytes": 11794,
@@ -5011,8 +6074,8 @@
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
     "tests/psp/test_mirror_memory.py": {
-      "sha256": "52242785aa9afe5579bc8123d2050027b58fbea7cb9bacb793329a95c107d0bf",
-      "bytes": 8765,
+      "sha256": "948d3de378fba88eb0ff5da7e109149e9005b05a46e610ca0308509ee40661a6",
+      "bytes": 10963,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -5020,7 +6083,125 @@
         "revision": "uncommitted-source-preparation",
         "path": "tests/psp/test_mirror_memory.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "tests/psp/test_mirror_memory.py"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
+    },
+    "tests/psp/test_movie_audio.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/psp/test_movie_audio.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "9da963f29cb099981c55848d9cbd13bda876eefe85df7a764703898b48d26f33",
+      "bytes": 5612
+    },
+    "tests/psp/test_movie_audio_worker.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/psp/test_movie_audio_worker.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "0531ac50c3376ccb1f5195ccf1d6912d5bec6d67d1e5812d180c4be6cb237142",
+      "bytes": 4079
+    },
+    "tests/psp/test_movie_display.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/psp/test_movie_display.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "4138f02d4940c392b6684377af7185792e12e1028f2ef1ed76b3d752f4902647",
+      "bytes": 7323
+    },
+    "tests/psp/test_movie_hle.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/psp/test_movie_hle.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "782a6d34d179888994fefa728919d4ada44cd1c87fd279be69ae7f8c7153ed8c",
+      "bytes": 2696
+    },
+    "tests/psp/test_movie_host.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/psp/test_movie_host.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "6e5450179e5a527de837322732c12e036901cc8e09b8a40ad64ae8ee9794f77d",
+      "bytes": 2540
+    },
+    "tests/psp/test_movie_psp.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/psp/test_movie_psp.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "89313d23f1f743e3160182cbeac8e890b14245aacdb5c3ad28ac536d7093ac5e",
+      "bytes": 2439
+    },
+    "tests/psp/test_portable_border.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/psp/test_portable_border.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "58ce981edd448d8d73331781d2267dbbb73311282828182bd76369c9cfe0361e",
+      "bytes": 3616
+    },
+    "tests/psp/test_portable_dither.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/psp/test_portable_dither.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "552543ae0abeea3c7402ea97a2f05e6220d51f3a8d2899a33f2f366931f06be5",
+      "bytes": 4128
+    },
+    "tests/psp/test_public_scissor.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/psp/test_public_scissor.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "78566794da9328aa9ac5aded51cb39a3e8dc17df107601d492b799709e36052e",
+      "bytes": 2452
     },
     "tests/psp/test_report_lines.py": {
       "sha256": "265bc65a2999d0a7bbf46833a2a50e75127c3742c6f5f93a1ca63e747fd07871",
@@ -5033,6 +6214,30 @@
         "path": "tests/psp/test_report_lines.py"
       },
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+    },
+    "tests/psp/test_sky_texture_policy.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/psp/test_sky_texture_policy.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "9fa5cc9cf6807d2cef966f2b9581567e10f1d2b56bf888b7e30393fed1484504",
+      "bytes": 7899
+    },
+    "tests/psp/test_sound_sequence.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/psp/test_sound_sequence.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "ce29fde9a7855c75fa328681b2da675e5ee9af7512bb26f970287b1087ca504e",
+      "bytes": 4292
     },
     "tests/psp/test_spring_trace.py": {
       "sha256": "2a9cd0c68774edeea6a368ae5555e9d7905d60f1cca3768bdb991bd64491c3c4",
@@ -5069,6 +6274,18 @@
         "path": "tests/psp/test_texture_mirror_lifetime.py"
       },
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+    },
+    "tests/psp/test_ui_texture_policy.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/psp/test_ui_texture_policy.py"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "991d0d8752687e4d2fce7db5fafd972cfb570522b8b1e7ed240f0b60c3908ae8",
+      "bytes": 10129
     },
     "tests/psp/test_watchdog_stop.py": {
       "sha256": "b344eea553fba48a91d3c1bcd429d3ef5d3793dc9494930388cc9730953ef1df",
@@ -5227,8 +6444,8 @@
       "review": "Reviewed addresses/bounds/hashes/configuration or input sequences only; no game instruction bodies, assets or copied disassembly. Historical discovery credited separately."
     },
     "tests/runtime/run_tests.py": {
-      "sha256": "50b9638600432cbeeb7e8d0d37e2a6f7511083268ab0a54cce25a682b799b238",
-      "bytes": 1671,
+      "sha256": "e2da68e1d04993071d351b22c7b0128ea01145311a6eef7e75f6a774ee4906fc",
+      "bytes": 1726,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -5236,7 +6453,17 @@
         "revision": "uncommitted-source-preparation",
         "path": "tests/runtime/run_tests.py"
       },
-      "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+      "review": "Own reviewed project source/documentation, retaining the recorded original origin. Updated generic interfaces, synthetic checks or portable user guidance; no game payload, credentials or machine-specific paths.",
+      "local_modification": {
+        "category": "O",
+        "license": "MIT",
+        "source": {
+          "url": "https://github.com/SandstoneDev/DCRC",
+          "revision": "uncommitted-public-source-review-2026-11-06",
+          "path": "tests/runtime/run_tests.py"
+        },
+        "review": "Preserve the existing recorded origin/category; review current own changes separately."
+      }
     },
     "tests/runtime/test_aspect_clip.c": {
       "sha256": "baf3b3189a2a2a30062f14721e31ac6464be336b86bbf2bcc04d9bd2a2d4c920",
@@ -5261,6 +6488,18 @@
         "path": "tests/runtime/test_audio_pause_clock.c"
       },
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
+    },
+    "tests/runtime/test_border_image.c": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/runtime/test_border_image.c"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "b222f15bf9e7e39424d4120964d9b300aae94cec2b3f8d2cbee9bf4b128f3039",
+      "bytes": 1842
     },
     "tests/runtime/test_content_mount.c": {
       "sha256": "beb1162483c493be681b1696685f0109cd443053fff5ebe8ea821d3d8c40354e",
@@ -5346,6 +6585,18 @@
       },
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
+    "tests/runtime/test_movie_wav.c": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/runtime/test_movie_wav.c"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "3d33ed4da8f838bb898e0ba2000222eac46c0574e7ac54f1d95a394d73de9095",
+      "bytes": 3496
+    },
     "tests/runtime/test_restart_protocol.c": {
       "sha256": "469d47c974d496f4a7de007c4962e1ca1af21e368b7a49dc89faf28709c52150",
       "bytes": 778,
@@ -5393,6 +6644,18 @@
         "path": "tests/savestate/savestate_test.c"
       },
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
+    },
+    "tests/sound/snd_sequence_test.c": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tests/sound/snd_sequence_test.c"
+      },
+      "review": "Own generic implementation or synthetic test/documentation, with no bundled game or SDK implementation. Synthetic constructed inputs only; current test source inspected for literal embedded media/game code",
+      "sha256": "337e8453707da60a86a1cd3b55848f489c73eefbfb1ec8a22d6c7837b4b9a9f5",
+      "bytes": 10439
     },
     "tests/sound/snd_test.c": {
       "sha256": "8d7d5d5977d63c387218a18a34bc18fceab69a0f64117ae85b22589ea8620aad",
@@ -5633,6 +6896,30 @@
         "path": "tools/minidump.py"
       },
       "review": "Byte-identical upstream MIT source; reviewed by responsible runtime/tools audit, retaining notices."
+    },
+    "tools/movie_pmfinfo.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tools/movie_pmfinfo.py"
+      },
+      "review": "Own-author generic player/format work with explicit SandstoneDev MIT notice; preserve documented PS2RC/SDXR/DCRC origin chain and owner grant, not blanket custom-project relicensing.",
+      "sha256": "cd38e91b8366e592f3d3ed04b52e66635a46f4ecd9f17fad9744959416e84bb8",
+      "bytes": 20788
+    },
+    "tools/movie_pmfmux.py": {
+      "category": "O",
+      "license": "MIT",
+      "source": {
+        "url": "https://github.com/SandstoneDev/DCRC",
+        "revision": "uncommitted-public-source-review-2026-11-06",
+        "path": "tools/movie_pmfmux.py"
+      },
+      "review": "Own-author generic player/format work with explicit SandstoneDev MIT notice; preserve documented PS2RC/SDXR/DCRC origin chain and owner grant, not blanket custom-project relicensing.",
+      "sha256": "1bceb07dffd520ff4a1831e3da7e91c8b0834da9385f87990168b4a9b8d769ea",
+      "bytes": 15845
     },
     "tools/overlay_report.py": {
       "sha256": "e3c22502c199707c028afbca7c2aed3ad56e2ab2c815ffd119763103a0e4dd7e",

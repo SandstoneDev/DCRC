@@ -11,7 +11,8 @@ def main():
     cc=args.cc or shutil.which('clang') or shutil.which('gcc') or shutil.which('cc')
     if not cc:parser.error('Install/select a host C compiler with --cc')
     tests=sorted((root/'tests/runtime').glob('test_*.c'))+[root/'tests/game/startup_test.c']
-    extra={'test_debug_menu.c':['backend/debug_menu.c'],
+    extra={'test_movie_wav.c':['backend/movie_wav.c'],
+           'test_debug_menu.c':['backend/debug_menu.c'],
            'test_debug_chord.c':['backend/debug_menu.c'],
            'test_debug_config.c':['backend/debug_config.c'],
            'test_content_mount.c':['hle/game/optional_content.c']}

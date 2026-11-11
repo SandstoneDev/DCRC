@@ -17,7 +17,7 @@ from .errors import ConverterError
 from .toolchain import resolve
 
 BACKEND = ('platform_psp.c', 'coro_psp.c', 'draw_gu.c', 'crash_psp.c', 'main_psp.c',
-           'chain_psp.c', 'savestate_psp.c', 'vmu_store_psp.c', 'audio_psp.c', 'debug_psp.c')
+           'chain_psp.c', 'savestate_psp.c', 'vmu_store_psp.c', 'audio_psp.c', 'debug_psp.c', 'movie_psp.c')
 HOT_CHUNKS = {'game_001', 'game_002', 'game_003', 'game_004', 'game_005', 'game_007',
               'game_008', 'game_015', 'game_030'}
 WRAPS = ('8c037350', '8c0376d0', '8c028d0a', '8c028ec2', '8c02d2e0',
@@ -87,7 +87,7 @@ def link_order(text):
     return order
 
 
-def make_pbp(elf, title='DCRC Port', icon=b''):
+def make_pbp(elf, title='DCRC Port', icon=b'', *, pic1=b'', snd0=b''):
     """Encode public PBP/SFO layouts; no external packer or game artwork."""
     if not isinstance(title, str) or not title or '\0' in title or len(title.encode('utf8')) > 127:
         raise ConverterError('title', 'The PSP title must contain 1..127 UTF-8 bytes without NUL.')
@@ -107,7 +107,7 @@ def make_pbp(elf, title='DCRC Port', icon=b''):
     value_offset = (key_offset + len(keys) + 3) & ~3
     sfo = (struct.pack('<5I', 0x46535000, 0x101, key_offset, value_offset, len(records)) +
            b''.join(records) + keys + bytes(value_offset - key_offset - len(keys)) + values)
-    parts = (bytes(sfo), bytes(icon), b'', b'', b'', b'', bytes(elf), b'')
+    parts = (bytes(sfo), bytes(icon), b'', b'', bytes(pic1), bytes(snd0), bytes(elf), b'')
     offsets, cursor = [], 40
     for part in parts:
         offsets.append(cursor)
@@ -191,7 +191,7 @@ def plan(source_root, generated, build_dir, toolchain):
     hle.append(runtime/'sh4_rt.c')
     backend = [src/'backend'/'psp'/name for name in BACKEND]
     backend += [src/'backend'/'desktop'/'input_tape.c', src/'backend'/'desktop'/'sha256.c', src/'backend'/'texpool.c']
-    backend += [src/'backend'/'debug_menu.c',src/'backend'/'debug_config.c']
+    backend += [src/'backend'/'debug_menu.c',src/'backend'/'debug_config.c',src/'backend'/'movie_wav.c']
     definitions = ['-DSA1_OFF_AREA_TEST_ONLY'] + ['-D'+s for s in wrap_defines(header.read_text(encoding='utf8'))]
     units = []
     for group, sources in (('hle', hle), ('backend', backend), ('game', games+[table]+overlays)):
@@ -318,7 +318,7 @@ def build(source_root, generated, build_dir, toolchain, runner, jobs=1, title='D
     ld = ['-L'+(tc.root/'lib').as_posix(),'-L'+(tc.root/'psp'/'lib').as_posix(),'-L'+(sdk/'lib').as_posix(),
           '-Wl,-zmax-page-size=128','-Wl,--wrap=sceGeListUpdateStallAddr,--wrap=sceGuGetMemory,--wrap=sceDisplaySetFrameBuf',
           '-Wl,--section-ordering-file=sa1_hot_order.ld','-Wl,-Map=sa1psp.map']
-    libraries = ['-l'+name for name in ('pspgu','pspge','pspdisplay','pspctrl','psppower','psprtc','pspdebug','pspaudio')]
+    libraries = ['-l'+name for name in ('pspgu','pspge','pspdisplay','pspctrl','psppower','psprtc','pspdebug','pspaudio','pspmpeg','psputility')]
     # MinGW GCC/collect2 do not agree on non-ASCII paths read from response
     # files. Relative build-owned paths keep those arguments ASCII even when
     # the working directory itself contains Unicode. Python sets cwd via Win32.

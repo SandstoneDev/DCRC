@@ -16,17 +16,22 @@ import subprocess
 import sys
 
 SOURCE_TREES = {
-    'dcrc': {'.py', '.json', '.txt', '.policy'}, 'gui': {'.py'},
+    'dcrc': {'.py', '.json', '.txt', '.policy'}, 'gui': {'.py', '.json'},
     'backend': {'.c', '.h', '.S', '.s', '.inc', '.cmake'}, 'hle': {'.c', '.h', '.S', '.s', '.inc'},
     'recomp/emitter': {'.py', '.c', '.h', '.S', '.md'},
     'recomp/sa1_us_1005': {'.toml', '.tsv', '.txt', '.md'},
     'converter/support': {'.S', '.h', '.md'},
 }
 TOOLS = ('convert_assets.py', 'land_convert.py', 'prs.py', 'psp_world_textures.py', 'psp_hot_order.txt',
-         'psp_hot_order.py', 'gen_overlay_registry.py')
+         'psp_hot_order.py', 'gen_overlay_registry.py', 'movie_pmfmux.py', 'movie_pmfinfo.py')
 ROOT_FILES = ('LICENSE', 'CMakeLists.txt', 'CREDITS.md', 'NOTICE.md',
               'LICENSES/sa1-psp-MIT.txt', 'LICENSES/PSPLink-BSD-3-Clause.txt',
               'LICENSES/MAME-BSD-3-Clause.txt')
+ATRAC_REQUIRED = {'atracdenc.exe','README.md','SOURCE.txt','licenses/LICENSE.LGPL-2.1.txt',
+    'licenses/LICENSE.kissfft.BSD3.txt','licenses/LICENSE.libgha.BSD2.txt','licenses/NOTICE.FFmpeg.txt',
+    'licenses/crt-COPYING','licenses/crt-COPYING.MinGW-w64-runtime.txt','licenses/crt-COPYING.MinGW-w64.txt',
+    'licenses/gcc-COPYING.RUNTIME','licenses/gcc-COPYING3','licenses/libwinpthread-COPYING',
+    'source/atracdenc-0.2.3.tar.xz','source/atracdenc-0.2.3-dcrc-pcm1.tar.xz'}
 SKIP = {'__pycache__', '.git', 'work', 'build', 'private', 'generated', '.pytest_cache'}
 ENTRY_POINTS = ('gui/run_gui.py', 'gui/app.py', 'gui/controller.py', 'dcrc/__main__.py',
                 'dcrc/pipeline.py', 'dcrc/worker.py', 'dcrc/models.py', 'dcrc/native_build.py', 'converter/README.md',
@@ -35,7 +40,9 @@ ENTRY_POINTS = ('gui/run_gui.py', 'gui/app.py', 'gui/controller.py', 'dcrc/__mai
                 'LICENSES/MAME-BSD-3-Clause.txt')
 SDK_REQUIRED = ('bin/psp-gcc.exe', 'bin/psp-fixup-imports.exe', 'bin/psp-prxgen.exe', 'bin/psp-strip.exe',
                 'psp/sdk/include/pspkernel.h', 'psp/sdk/include/pspimport.s', 'psp/sdk/lib/prxspecs',
-                'psp/sdk/lib/linkfile.prx', 'psp/sdk/lib/prxexports.o', 'psp/sdk/lib/libpspgu.a', 'psp/lib/libc.a')
+                'psp/sdk/lib/linkfile.prx', 'psp/sdk/lib/prxexports.o', 'psp/sdk/lib/libpspgu.a', 'psp/lib/libc.a',
+                'psp/sdk/include/pspmpeg.h','psp/sdk/include/psputility.h',
+                'psp/sdk/lib/libpspmpeg.a','psp/sdk/lib/libpsputility.a')
 
 
 def digest(path):
@@ -90,7 +97,7 @@ def copy_sources(root, output):
 
 def portable_pth(zip_name='python314.zip'):
     # Explicit isolated paths: no host site-packages or previous PS2RC app.
-    return f'{zip_name}\n.\nLib\nDLLs\nLib/site-packages\n../app\n'
+    return f'{zip_name}\n.\nLib\nDLLs\nLib/site-packages\n../app\n../app/source\n'
 
 
 def copy_tree(source, target):
@@ -101,13 +108,68 @@ def copy_tree(source, target):
     shutil.copytree(source, target, ignore=shutil.ignore_patterns(*SKIP, '*.pyc'))
 
 
-def build(source, output, python_from, toolchain, licenses, cc=None, receipt=None):
+def verify_ffmpeg_dependency(dependency):
+    root=Path(dependency).resolve()
+    meta=json.loads((root/'MANIFEST.json').read_text(encoding='utf8'))
+    files=meta.get('files',{})
+    if meta.get('format')!='DCRC_FFMPEG_DEPENDENCY_V1' or not {'ffmpeg.exe','ffprobe.exe','README.txt','PROVENANCE.json'}.issubset(files):
+        raise ValueError('Incomplete FFmpeg dependency/provenance')
+    if not ({'LICENSE.GPL-2.0.txt','LICENSE.GPL-3.0.txt'} & set(files)):
+        raise ValueError('FFmpeg GPL license text required')
+    if not 5<=len(files)<=64:raise ValueError('Invalid FFmpeg file inventory')
+    for name,e in files.items():
+        p=Path(name)
+        if p.is_absolute() or '..' in p.parts or ':' in name or '\\' in name or p.as_posix()!=name:
+            raise ValueError('Unsafe FFmpeg dependency path')
+        path=root/p
+        if path.is_symlink() or getattr(path,'is_junction',lambda:False)() or not path.resolve().is_relative_to(root):
+            raise ValueError('FFmpeg dependency link refused')
+        if digest(path)!={'size':e['bytes'],'sha256':e['sha256']}:raise ValueError('FFmpeg dependency changed: '+name)
+    inventory={p.relative_to(root).as_posix() for p in root.rglob('*') if p.is_file()}
+    if inventory!=set(files)|{'MANIFEST.json'}:raise ValueError('Unlisted FFmpeg dependency files')
+    return files
+
+
+
+def copy_ffmpeg_dependency(dependency, target):
+    """Copy an inventoried dependency and read back its manifest and every file."""
+    source=Path(dependency).resolve();target=Path(target)
+    verify_ffmpeg_dependency(source)
+    manifest=digest(source/'MANIFEST.json')
+    copy_tree(source,target)
+    if digest(target/'MANIFEST.json')!=manifest:
+        raise ValueError('FFmpeg manifest copy readback mismatch')
+    return verify_ffmpeg_dependency(target)
+
+
+def build(source, output, python_from, toolchain, licenses, cc=None, receipt=None, atrac_dependency=None, ffmpeg_dependency=None):
     source, output = Path(source).resolve(), Path(output).resolve()
     python_from, toolchain, licenses = map(lambda p: Path(p).resolve(), (python_from, toolchain, licenses))
     if output.exists():
         raise FileExistsError('New output required: ' + str(output))
     if receipt and Path(receipt).resolve().is_relative_to(output):
         raise ValueError('Private build receipt must be outside the user bundle')
+    ffmpeg_files=verify_ffmpeg_dependency(ffmpeg_dependency) if ffmpeg_dependency else None
+    if ffmpeg_dependency and output.is_relative_to(Path(ffmpeg_dependency).resolve()):
+        raise ValueError("FFmpeg dependency must be outside output")
+    atrac_files=None
+    if atrac_dependency:
+        atrac_dependency=Path(atrac_dependency).resolve()
+        if output.is_relative_to(atrac_dependency):raise ValueError('ATRAC dependency must be outside output')
+        meta=json.loads((atrac_dependency/'MANIFEST.json').read_text(encoding='utf8'))
+        if meta.get('format')!='DCRC_ATRACDENC_DEPENDENCY_V1':raise ValueError('Unverified ATRAC dependency manifest')
+        atrac_files=meta.get('files',{})
+        if not ATRAC_REQUIRED.issubset(atrac_files) or len(atrac_files)>64:raise ValueError('Incomplete ATRAC licences/corresponding source')
+        for name,e in atrac_files.items():
+            p=Path(name)
+            if p.is_absolute() or '..' in p.parts or ':' in name or '\\' in name or p.as_posix()!=name:
+                raise ValueError('Unsafe ATRAC dependency path')
+            if not (atrac_dependency/p).resolve().is_relative_to(atrac_dependency):
+                raise ValueError('ATRAC dependency link escapes source')
+            actual=digest(atrac_dependency/p)
+            if actual!={'size':e['bytes'],'sha256':e['sha256']}:raise ValueError('ATRAC dependency changed: '+name)
+        inventory={p.relative_to(atrac_dependency).as_posix()for p in atrac_dependency.rglob('*')if p.is_file()}
+        if inventory!=set(atrac_files)|{'MANIFEST.json'}:raise ValueError('Unlisted ATRAC dependency files')
     for origin in (source, python_from, toolchain, licenses):
         ignored_work = (origin == source and output.is_relative_to(source) and
                         output.relative_to(source).parts and
@@ -143,6 +205,13 @@ def build(source, output, python_from, toolchain, licenses, cc=None, receipt=Non
     version = pths[0].stem.removesuffix('._pth')
     pths[0].write_text(portable_pth(version+'.zip'), encoding='utf8')
     copy_tree(toolchain, output/'toolchain')
+    if atrac_files is not None:
+        copy_tree(atrac_dependency,output/'tools/atracdenc')
+        for name,e in atrac_files.items():
+            if digest(output/'tools/atracdenc'/name)!={'size':e['bytes'],'sha256':e['sha256']}:
+                raise ValueError('ATRAC copy readback mismatch: '+name)
+    if ffmpeg_files is not None:
+        copy_ffmpeg_dependency(ffmpeg_dependency,output/'tools/ffmpeg')
     # License data are copied separately, including replaceable Qt source pointers.
     (output/'licenses').mkdir()
     for name in ('Python-LICENSE.txt', 'Qt', 'pillow', 'pyelftools'):
@@ -175,7 +244,8 @@ def build(source, output, python_from, toolchain, licenses, cc=None, receipt=Non
     manifest = {p.relative_to(output).as_posix(): digest(p) for p in sorted(output.rglob('*')) if p.is_file()}
     record = dict(status='PASS_STATIC_BUNDLE_REQUIRES_FUNCTIONAL_TEST', files=manifest,
                   source_manifest=source_manifest, game_data_included=False,
-                  launcher_built=bool(cc))
+                  launcher_built=bool(cc), standalone_atrac_tool=bool(atrac_files), standalone_ffmpeg_tools=bool(ffmpeg_files),
+                  binary_distribution_clearance=False)
     (output/'BUNDLE_MANIFEST.json').write_text(json.dumps(record, indent=2)+'\n', encoding='utf8')
     if receipt:
         receipt = Path(receipt)
@@ -194,8 +264,10 @@ def main(argv=None):
         parser.add_argument('--'+name, type=Path, required=True)
     parser.add_argument('--cc', type=Path, help='Native MinGW gcc for Unicode .exe launcher')
     parser.add_argument('--receipt', type=Path, help='Private provenance path OUTSIDE the user bundle')
+    parser.add_argument('--atrac-dependency',type=Path,help='Local verified encoder with licences and complete corresponding source; not release clearance.')
+    parser.add_argument('--ffmpeg-dependency',type=Path,help='Local verified FFmpeg/ffprobe with licence/provenance inventory; not release clearance.')
     a = parser.parse_args(argv)
-    record = build(a.source, a.out, a.python_from, a.toolchain, a.licenses, a.cc, a.receipt)
+    record = build(a.source, a.out, a.python_from, a.toolchain, a.licenses, a.cc, a.receipt, a.atrac_dependency, a.ffmpeg_dependency)
     print(json.dumps({'status': record['status'], 'files': len(record['files']), 'output': str(a.out)}))
 
 

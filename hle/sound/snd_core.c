@@ -16,6 +16,7 @@
  *
  * Part of sa1-psp (MIT). */
 #include "snd_core.h"
+#include "snd_sequence.h"
 #include <string.h>
 #include <math.h>
 
@@ -89,6 +90,10 @@ struct snd_core {
     stream st[SND_STREAMS];
     int32_t spare[4];               /* was a group level; keeps the save-state size */
     uint32_t age;
+    snd_sequencer sequences;
+    uint32_t sequence_clock; /* tenths of an output frame,mod1764 */
+    uint8_t port_volume[SND_PORTS],port_target[SND_PORTS];
+    uint8_t port_interval[SND_PORTS],port_count[SND_PORTS],port_step[SND_PORTS];
 };
 
 /* Tables, built once (snd_core_init; identical on every run). */
@@ -219,7 +224,10 @@ static inline int32_t tone_att(const snd_core *k, const voice *v, const chan *ch
     int32_t c = (int32_t)(((curve_at(k, curve, ch->vol) + 1) * (curve_at(k, curve, ch->expr) + 1)) >> 7) - 1;
     if (c < 0) c = 0;
     uint32_t level = (((uint32_t)v->vlev + 1) * (uint32_t)(c + 1) * (256u - v->tl) - 1) >> 14;
-    return (int32_t)(255 - (level & 255)) * 4;
+    int32_t final=(int32_t)(level&255)+k->port_volume[v->port]-128;
+    if(final<0)final=0;
+    if(final>255)final=255;
+    return (255-final)*4;
 }
 
 /* The splits a note-on starts: in every layer, each split whose key range
@@ -534,6 +542,33 @@ static void stream_start(snd_core *k, int si, uint32_t ringpos, uint32_t gen) {
     st->generation = gen; st->played = 0; st->pos = 0; st->state = s->on ? 3 : 5;
 }
 
+/* Sequence callbacks run only inside the existing synchronous core owner. */
+static void sequence_midi(void *opaque,unsigned p,unsigned st,unsigned d1,unsigned d2) {
+    midi((snd_core *)opaque,(int)p+2,(int)st,(int)d1,(int)d2);
+}
+static void sequence_stop(snd_core *k,unsigned port) {
+    snd_seq_stop(&k->sequences,port-2,sequence_midi,k);
+    for(unsigned i=0;i<SND_VOICES;i++)if(k->v[i].on&&k->v[i].port==port)k->v[i].eg_stage=EG_RELEASE;
+}
+static int sequence_busy(const snd_core *k) {
+    if(snd_seq_busy(&k->sequences))return 1;
+    for(unsigned p=2;p<SND_PORTS;p++)if(k->port_volume[p]!=k->port_target[p])return 1;
+    return 0;
+}
+static void sequence_tick(snd_core *k) {
+    snd_seq_tick(&k->sequences,k->sh->sound_ram,sequence_midi,k);
+    for(unsigned p=2;p<SND_PORTS;p++){
+        unsigned value=k->port_volume[p],target=k->port_target[p];
+        if(value==target)continue;
+        if(k->port_count[p]){k->port_count[p]--;continue;}
+        k->port_count[p]=k->port_interval[p];
+        if(!k->port_interval[p])value=target;
+        else if(value<target){value+=k->port_step[p];if(value>target)value=target;}
+        else{unsigned step=k->port_step[p];value=value>step?value-step:0;if(value<target)value=target;}
+        k->port_volume[p]=(uint8_t)value;
+    }
+}
+
 /* ---- commands ---------------------------------------------------------------- */
 static void run_commands(snd_core *k) {
     snd_cmd_ring *r = &k->sh->cmds;
@@ -546,6 +581,7 @@ static void run_commands(snd_core *k) {
         switch (c.op) {
         case SND_CMD_MIDI: midi(k, c.a, c.b, c.c, c.x & 0xFF); break;
         case SND_CMD_MIDI_RESET:
+            memset(&k->sequences,0,sizeof k->sequences);
             for (int i = 0; i < SND_VOICES; i++) k->v[i].on = 0;
             for (int p = 0; p < SND_PORTS; p++) for (int i = 0; i < 16; i++) { chan_reset(&k->ch[p][i]); k->ch[p][i].bank = 0; k->ch[p][i].prog = 0; }
             break;
@@ -562,7 +598,32 @@ static void run_commands(snd_core *k) {
         case SND_CMD_STREAM_VOL:
             if (c.a < SND_STREAMS) k->st[c.a].att = c.x >= 0 ? 0 : c.x <= -960 ? ATT_MAX : ATT_DB(-c.x / 10.0);
             break;
+        case SND_CMD_SEQ_START:
+            if(c.a>=2&&c.a<SND_PORTS&&c.b<16){
+                sequence_stop(k,c.a);
+                snd_seq_start(&k->sequences,c.a-2,k->sh->sound_ram,SND_RAM_SIZE,
+                    k->sh->seq_bank_addr[c.b],k->sh->seq_bank_size[c.b],(uint32_t)c.x,sequence_midi,k);
+            }
+            break;
+        case SND_CMD_SEQ_STOP:if(c.a>=2&&c.a<SND_PORTS)sequence_stop(k,c.a);break;
+        case SND_CMD_SEQ_VOLUME:
+            if(c.a>=2&&c.a<SND_PORTS){
+                int32_t level=c.x;level=level < -128?-128:level>127?127:level;
+                unsigned p=c.a,target=(unsigned)(level+128),value=k->port_volume[p];
+                unsigned interval=((uint32_t)c.y&0xffffu)>>3;
+                unsigned step=value>target?value-target:target-value;
+                while(step>1&&interval>1){step>>=1;interval>>=1;}
+                k->port_target[p]=(uint8_t)target;k->port_step[p]=(uint8_t)step;
+                k->port_count[p]=k->port_interval[p]=(uint8_t)interval;
+                if(!interval)k->port_volume[p]=(uint8_t)target;
+            }
+            break;
         case SND_CMD_BANK_CHANGED:
+            for(unsigned p=0;p<SND_SEQ_PORTS;p++){
+                snd_sequence *s=&k->sequences.port[p];
+                if(s->bank_size&&(uint64_t)s->bank<(uint64_t)(uint32_t)c.x+(uint32_t)c.y&&
+                   (uint64_t)(uint32_t)c.x<(uint64_t)s->bank+s->bank_size)sequence_stop(k,p+2);
+            }
             for (int i = 0; i < SND_VOICES; i++) {
                 voice *v = &k->v[i];
                 if (v->on && v->addr >= (uint32_t)c.x && v->addr < (uint32_t)c.x + (uint32_t)c.y) v->on = 0;
@@ -580,6 +641,7 @@ void snd_core_init(snd_core *k, snd_shared *sh) {
     build_tables();
     memset(k, 0, sizeof *k);
     k->sh = sh;
+    memset(k->port_volume,128,sizeof k->port_volume);memset(k->port_target,128,sizeof k->port_target);
     for (int p = 0; p < SND_PORTS; p++) for (int i = 0; i < 16; i++) chan_reset(&k->ch[p][i]);
 }
 
@@ -590,6 +652,10 @@ void snd_core_render(snd_core *k, int16_t *out, uint32_t n) {
     int32_t acc[2 * SND_FRAME_SAMPLES];
     while (n) {
         uint32_t m = n > SND_FRAME_SAMPLES ? SND_FRAME_SAMPLES : n;
+        if(sequence_busy(k)){
+            uint32_t next=(1764u-k->sequence_clock+9u)/10u;
+            if(m>next)m=next;
+        }
         memset(acc, 0, sizeof(int32_t) * 2 * m);
         uint32_t active = 0;
         uint32_t mute = k->sh->mute;
@@ -610,6 +676,11 @@ void snd_core_render(snd_core *k, int16_t *out, uint32_t n) {
         }
         k->sh->voices_active = active;
         k->sh->rendered += m;
+        k->sequence_clock+=10u*m;
+        if(k->sequence_clock>=1764u){
+            k->sequence_clock%=1764u;
+            if(sequence_busy(k))sequence_tick(k);
+        }
         out += 2 * m; n -= m;
     }
 }

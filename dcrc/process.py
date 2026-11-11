@@ -45,10 +45,10 @@ class CommandRunner:
                 progress=value.get('progress')
                 if value.get('type')=='progress' and type(progress) in (int,float) and 0<=progress<=1:
                     self.event({'type':'progress','stage':str(value.get('stage',label))[:64],
-                                'message':str(value.get('message',''))[:4096],'progress':progress})
+                                'message':str(value.get('message',''))[:4096],'progress':progress,'log_path':str(self.log_path)})
                     return
             except (ValueError,AttributeError):pass
-        self.event({'type':'log','stage':label,'message':text.rstrip()})
+        self.event({'type':'log','stage':label,'message':text.rstrip(),'log_path':str(self.log_path)})
     def run(self,argv,cwd=None,env=None,label=''):
         if self.cancel_event.is_set():raise Cancelled()
         argv=[str(v) for v in argv]

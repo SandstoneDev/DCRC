@@ -13,6 +13,8 @@ REQUIRED = tuple('bin/' + name + '.exe' for name in TOOLS) + (
     'psp/sdk/include/pspkernel.h', 'psp/sdk/include/pspimport.s',
     'psp/sdk/lib/prxspecs', 'psp/sdk/lib/linkfile.prx',
     'psp/sdk/lib/prxexports.o', 'psp/sdk/lib/libpspgu.a', 'psp/lib/libc.a',
+    'psp/sdk/include/pspmpeg.h','psp/sdk/include/psputility.h',
+    'psp/sdk/lib/libpspmpeg.a','psp/sdk/lib/libpsputility.a',
 )
 
 

@@ -51,6 +51,12 @@ SKILL.md directly. Do not assume a globally installed private skill, MCP server,
 debugger or machine-specific SDK exists. Public PSPSDK documentation and project
 source are the PSP references; no confidential SDK manuals or copied SDK code.
 
+For optional agent guidance, link to [psp-developer by SandstoneDev](https://github.com/SandstoneDev/psp-developer).
+It is an external reference under its own PS2RC License 1.2, not part of DCRC's
+MIT code. See the pinned source/licence in
+[public resources](.agents/skills/dcrc-port-game/references/public-resources.md).
+Do not vendor a private global skill or assume this optional skill is installed.
+
 Record source URL, revision/version, licence and SHA256 for third-party material.
 An inaccessible page is not evidence that a dependency is abandoned. Research
 the maintainer's official replacement; do not silently substitute another SDK,

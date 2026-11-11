@@ -29,6 +29,7 @@ harness=r'''
 #include "pspkernel.h"
 static int checks,errors,exists=1,loadrc=7,startrc=0,statusrc=0,loads,starts,execs,delays,unloads;
 static volatile int cancel;static int cancel_on_load,cancel_on_user_marker;
+static const char *expected_exec="ms0:/PSP/GAME/DCRC_NEXT/EBOOT.PBP";
 #define CHECK(x) do { checks++;if(!(x)){errors++;printf("FAIL line %d: %s\n",__LINE__,#x);} }while(0)
 void sa1_log(const char *s,...) {(void)s;}
 int sceIoGetstat(const char *p,SceIoStat *s){(void)p;s->st_size=12345;return exists?0:-1;}
@@ -39,10 +40,10 @@ int kuKernelLoadModule(const char*p,int f,void*x){(void)f;(void)x;CHECK(strstr(p
 int sceKernelStartModule(int m,unsigned n,void*p,int*s,void*x){(void)m;(void)n;(void)p;(void)x;starts++;*s=statusrc;return startrc;}
 int sceKernelUnloadModule(int m){(void)m;unloads++;return 0;}
 int sceKernelDelayThread(unsigned us){CHECK(us<=5000000);delays++;return 0;}
-int sceKernelLoadExec(const char*p,struct SceKernelLoadExecParam*s){CHECK(!strcmp(p,"ms0:/PSP/GAME/DCRC_NEXT/EBOOT.PBP"));CHECK(s->args==strlen(p)+1);execs++;return -123;}
+int sceKernelLoadExec(const char*p,struct SceKernelLoadExecParam*s){CHECK(!strcmp(p,expected_exec));CHECK(s->args==strlen(p)+1);execs++;return -123;}
 #include "CHAIN_SOURCE"
 static const char *next="ms0:/PSP/GAME/DCRC_NEXT/EBOOT.PBP",*base="ms0:/PSP/GAME/DCRC_CURRENT";
-static void reset(void){exists=1;loadrc=7;startrc=0;statusrc=0;loads=starts=execs=delays=unloads=0;cancel=0;cancel_on_load=0;cancel_on_user_marker=0;sa1_chain_set_next(NULL);}
+static void reset(void){exists=1;loadrc=7;startrc=0;statusrc=0;loads=starts=execs=delays=unloads=0;cancel=0;cancel_on_load=0;cancel_on_user_marker=0;expected_exec=next;sa1_chain_set_next(NULL);}
 int main(void){
  reset();CHECK(!sa1_chain_prepare(0,"time_limit",0,1,base));
  CHECK(sa1_chain_set_next("../outside/EBOOT.PBP")<0);CHECK(!sa1_chain_prepare(0,"time_limit",0,1,base));
@@ -60,6 +61,25 @@ int main(void){
  reset();sa1_chain_set_next(next);CHECK(sa1_chain_prepare(0,"time_limit",0,1,base));cancel=1;sa1_chain_launch(&cancel);CHECK(loads==0&&execs==0&&starts==0);
  reset();sa1_chain_set_next(next);CHECK(sa1_chain_prepare(0,"time_limit",0,1,base));cancel_on_load=1;sa1_chain_launch(&cancel);CHECK(loads==1&&unloads==1&&execs==0&&starts==0);
  reset();sa1_chain_set_next(next);CHECK(sa1_chain_prepare(0,"time_limit",0,1,base));loadrc=-1;cancel_on_user_marker=1;sa1_chain_launch(&cancel);CHECK(loads==1&&execs==0&&starts==0);
+ /* A tagged menu restart may only return to its current app. Cross-app
+  * profiling chains retain the narrower DCRC allowlist. */
+ reset();CHECK(sa1_chain_set_restart("ms0:/PSP/GAME/sonictest")==0);
+ CHECK(!sa1_chain_prepare(0,"time_limit",0,1,"ms0:/PSP/GAME/sonictest"));
+ CHECK(!sa1_chain_prepare(0,"menu_restart",0,1,base));
+ CHECK(sa1_chain_prepare(0,"menu_restart",0,1,"ms0:/PSP/GAME/sonictest"));
+ sa1_chain_launch(&cancel);CHECK(loads==1&&starts==1&&execs==0&&delays==1);
+ reset();CHECK(sa1_chain_set_restart("ms0:/PSP/GAME/sonictest")==0);
+ CHECK(!sa1_chain_prepare(0,"menu_restart",1,1,"ms0:/PSP/GAME/sonictest"));
+ CHECK(!sa1_chain_prepare(0,"menu_restart",0,0,"ms0:/PSP/GAME/sonictest"));
+ CHECK(sa1_chain_set_next("ms0:/PSP/GAME/sonictest/EBOOT.PBP")<0);
+ reset();CHECK(sa1_chain_set_restart("ms0:/PSP/GAME/sonictest")==0);
+ CHECK(sa1_chain_prepare(0,"menu_restart",0,1,"ms0:/PSP/GAME/sonictest"));
+ loadrc=-1;expected_exec="ms0:/PSP/GAME/sonictest/EBOOT.PBP";
+ sa1_chain_launch(&cancel);CHECK(loads==1&&execs==1&&starts==0);
+ reset();CHECK(sa1_chain_set_restart("ms0:/PSP/GAME/sonictest")==0);
+ CHECK(sa1_chain_prepare(0,"menu_restart",0,1,"ms0:/PSP/GAME/sonictest"));
+ CHECK(sa1_chain_set_restart("../outside")<0);
+ sa1_chain_launch(&cancel);CHECK(loads==0&&starts==0&&execs==0);
  printf("chain adapter: %d checks, %d errors\n",checks,errors);return errors?1:0;
 }
 '''.replace('CHAIN_SOURCE',str(root/'backend/psp/chain_psp.c'))

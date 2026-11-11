@@ -45,7 +45,10 @@ static uint64_t starve_us;
 static uint64_t wait_since;
 static uint64_t wait_pause_start;
 static uint32_t pushed_frames, output_calls, output_errors;
-static int output_busy;
+static volatile int output_busy;
+static volatile int pause_ack;
+static int movie_pause_owned;
+static uint32_t movie_discarded_frames;
 static volatile int menu_paused;
 static uint64_t menu_pause_start,menu_pause_total;
 void audio_psp_pause(int on) {
@@ -55,6 +58,44 @@ void audio_psp_pause(int on) {
     else if(!on && menu_paused){menu_pause_total+=now-menu_pause_start;menu_paused=0;}
     sceKernelCpuResumeIntr(intr);
     if(sema>=0)sceKernelSignalSema(sema,1);
+}
+int audio_psp_movie_pause(int on) {
+    if(on){
+        if(movie_pause_owned)return 0;
+        if(ch<0||th<0||!run)return 0;
+        if(menu_paused)return -1; /* never take another pause owner's token */
+        audio_psp_pause(1);
+        uint64_t deadline=sa1_plat_time_us()+500000u;
+        while(!pause_ack||output_busy){
+            if(sa1_plat_time_us()>=deadline){audio_psp_pause(0);return -1;}
+            sceKernelDelayThread(1000);
+        }
+        /* OutputBlocking returning is not proof that the DAC finished the
+         * last queued block. The movie has not acquired any audio channel yet. */
+        for(;;){
+            int rest=audio_psp_out2?sceAudioOutput2GetRestSample():sceAudioGetChannelRestLen(ch);
+            if(rest<0||sa1_plat_time_us()>=deadline){
+                sa1_log("audio-movie: hardware drain declined rest=%d",rest);
+                audio_psp_pause(0);return -1;
+            }
+            if(!rest)break;
+            sceKernelDelayThread(1000);
+        }
+        movie_pause_owned=1;
+    }else{
+        if(!movie_pause_owned)return 0;
+        if(ch>=0&&run&&(!menu_paused||!pause_ack||output_busy))return -1;
+    }
+    /* The consumer acknowledged it is outside its copy/output region; the
+     * producer is this blocked owner thread. Retire old music without any
+     * Output2/SRC release/re-reserve, including on the way back to gameplay. */
+    unsigned intr=sceKernelCpuSuspendIntr();
+    uint32_t queued=wr-rd;
+    if(queued<=AUD_RING)movie_discarded_frames+=queued;
+    rd=wr;
+    sceKernelCpuResumeIntr(intr);
+    if(!on){movie_pause_owned=0;audio_psp_pause(0);}
+    return 0;
 }
 static uint64_t pause_clock(void) {
     unsigned intr=sceKernelCpuSuspendIntr();
@@ -86,9 +127,13 @@ void audio_psp_report(void) {
 static int out_thread(SceSize args, void *argp) {
     (void)args; (void)argp;
     int b = 0;
-    while (wr - rd < AUD_START && run) { waiting = 1; sceKernelWaitSema(sema, 1, NULL); }
+    while (wr-rd<AUD_START && run) {
+        if(menu_paused){pause_ack=1;sceKernelDelayThread(1000);continue;}
+        pause_ack=0;waiting=1;sceKernelWaitSema(sema,1,NULL);
+    }
     while (run) {
-        if(menu_paused){sceKernelDelayThread(10000);continue;}
+        if(menu_paused){pause_ack=1;sceKernelDelayThread(1000);continue;}
+        pause_ack=0;
         if (wr - rd < AUD_BLOCK) {
             const uint64_t t0 = sa1_plat_time_us();
             const uint64_t p0 = pause_clock();
@@ -97,9 +142,13 @@ static int out_thread(SceSize args, void *argp) {
             wait_pause_start=p0;
             sceKernelCpuResumeIntr(intr);
             while (run && (menu_paused || wr-rd<AUD_BLOCK)) {
-                if(menu_paused)sceKernelDelayThread(10000);
+                if(menu_paused){pause_ack=1;sceKernelDelayThread(1000);}
+                else if(pause_ack){pause_ack=0;}
                 else {waiting=1;sceKernelWaitSema(sema,1,NULL);}
             }
+            /* A resumed ready block can exit the wait immediately. Retire
+             * its ACK before timing services or any copy/output work. */
+            pause_ack=0;
             uint64_t elapsed=sa1_plat_time_us()-t0,paused=pause_clock()-p0;
             intr = sceKernelCpuSuspendIntr();
             starves++; starve_us += audio_unpaused_wait(elapsed,paused); wait_since = 0;

@@ -13,14 +13,14 @@ for key in ('QT_PLUGIN_PATH', 'QT_QPA_PLATFORM_PLUGIN_PATH', 'QML2_IMPORT_PATH')
 
 
 def main():
+    from gui.session_log import start_app_log
+    session_log=start_app_log()
     try:
         from gui.app import main as start
-        return start()
+        return start(session_log=session_log)
     except Exception:
-        folder = Path(os.environ.get('LOCALAPPDATA', str(Path.home())))/'DCRC Converter'
-        folder.mkdir(parents=True, exist_ok=True)
-        log = folder/'gui_start.log'
-        log.write_text(traceback.format_exc(), encoding='utf8')
+        log=session_log.path
+        session_log.write(traceback.format_exc())
         if os.name == 'nt':
             import ctypes
             ctypes.windll.user32.MessageBoxW(None, 'DCRC Converter could not start.\n\n' + str(log),

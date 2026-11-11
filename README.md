@@ -1,11 +1,14 @@
 # DCRC
 
-**Dreamcast → PSP converter and development toolkit.** A supported disc supplied
-by the user is extracted, translated, compiled and converted locally into a PSP
-folder. No game executable, generated game C or converted game assets are shipped.
+**An open-source platform for porting Dreamcast games to PSP.** DCRC includes a
+Windows converter, an SH-4 recompiler, a PSP runtime, and guides and agent skills
+for researching and developing new ports. The converter builds a PSP folder
+locally from the user's own supported disc.
 
-**Based on [sa1-psp by CountAllegrex](https://github.com/countallegrex/sa1-psp).**
-Its MIT emitter, runtime, HLE and backends are the foundation of this project.
+**DCRC is an independent fork of [sa1-psp](https://github.com/countallegrex/sa1-psp),
+created by CountAllegrex.** CountAllegrex's MIT emitter, runtime, HLE and backends
+are the foundation. **SandstoneDev** developed the DCRC converter and toolkit,
+adapted the runtime, and continues to improve the project.
 See [CREDITS.md](CREDITS.md), [NOTICE.md](NOTICE.md) and [LICENSE](LICENSE).
 The converter workflow was inspired by [PS2RC](https://github.com/SandstoneDev/PS2RC);
 its custom-licensed implementation is not copied here.
@@ -14,8 +17,9 @@ its custom-licensed implementation is not copied here.
 
 This is a source-first preview. The first compatibility profile is **Sonic
 Adventure, Dreamcast USA V1.005**, supplied as a GDI with its track files. Other
-games and disc revisions are not automatically supported. No ready game download
-is provided. Future source/binary releases must pass the publication audit.
+games and disc revisions require their own porting work. Download the Windows
+converter source package from [GitHub Releases](https://github.com/SandstoneDev/DCRC/releases).
+Each game build is generated locally from your own supported disc.
 
 The reviewed source profile deliberately uses locally translated original
 functions instead of several handwritten native accelerators. Its supported
@@ -54,11 +58,24 @@ python -m pip install -r requirements-gui.txt
 python -B gui/run_gui.py
 ```
 
-Choose the GDI, check its version, choose graphics/audio/startup settings and an
-exact new output folder, then **Convert / resume**. Normal game boot is the
-default. Optional stage/character/act warps override it explicitly. World texture
+The six steps are Disc, Output, Appearance, Settings, Controls and Convert.
+Selecting a disc checks its version automatically; Convert also performs the
+check when needed. Choose an exact new output folder, then use **Convert** on
+the last step. Disc/DLC/media operations stay on their current step. Normal game
+boot is the default. Optional stage/character/act warps override it explicitly. World texture
 caps64/128 affect selected Emerald Coast assets and reduce detail; original
 textures are available. Reduced static distance is unavailable in this TA profile.
+
+Appearance combines the local game title, an own-disc image gallery or supplied
+pictures, XMB music preview and a selected 1–10 second clip. Custom 4:3 side
+images are made locally from the user's image. The source repository contains
+no game artwork or private default border. Digital control assignments map PSP
+buttons to Dreamcast actions; physical HOME and the DCRC menu chord remain available.
+
+Movie playback, custom borders and dithering depend on the reviewed runtime
+capabilities, not just visible controls. See [profile support](docs/COMPATIBILITY.md)
+and [converter usage](converter/README.md). FFmpeg/ffprobe and an ATRAC encoder
+are separate optional dependencies for the media operations that require them.
 
 The resulting folder contains `EBOOT.PBP`, helpers and `data/`. Copy the complete
 folder into `PSP/GAME` on your own device. Every game-derived result stays local;
@@ -68,11 +85,14 @@ In the PSP game, **L+R+Cross+Down** opens the control menu. Release all buttons,
 then use L/R for pages and the D-pad to edit. Settings, bounded cheats, startup
 level/character selection and opaque user-supplied DLC mounts are described in
 [the menu guide](docs/IN_GAME_MENU.md). Optional `--dlc-dir` imports your own
-extracted VMI/VMS folder locally. DLC activation requires normal VMU selection.
+extracted VMI/VMS folder locally. Explicit catalogue/download actions can also
+retrieve selected events into local work; checked events are prepared before
+Convert. Failure/cancellation stops the job. This is opaque import, not a promise
+of playable DLC; see the menu guide and profile support limits.
 
-The source checkout itself contains no portable Windows executable/dependency
-bundle. [converter/README.md](converter/README.md) describes local packaging and
-the additional dependency/notice audit needed before any binary release.
+The release archive includes the converter and its runtime source. Install the
+Python dependencies and select a native Windows PSP toolchain to use it.
+[Converter setup and local packaging](converter/README.md) covers both workflows.
 
 ## Settings, resume and recovery
 
@@ -86,9 +106,27 @@ GUI and CLI use the same core. Complete stages are reused only after content
 verification; changing the output folder still stages its files. Runtime settings
 need no compilation; world texture changes repeat asset conversion. Player saves
 and unknown files are preserved by repair. Cancellation shuts down owned processes
-and keeps work for diagnosis. No converter action automatically deploys to a card.
+and keeps work for diagnosis. The GUI saves one dated session log automatically
+and provides **Open logs folder**. Portable apps use their own `logs` directory;
+source/read-only layouts use the application-data fallback. Logs may contain
+local input paths: review/redact them before a public bug report. No converter
+action automatically deploys to a card.
 
-## Development toolkit
+## Port another Dreamcast game
+
+1. Start with the [porting skill](.agents/skills/dcrc-port-game/SKILL.md) and its
+   [new-game guide](.agents/skills/dcrc-port-game/references/another-game.md).
+   Record the exact disc revision, executable and overlays from your input.
+2. Install analysis and build tools using the [dependency guide](docs/DEPENDENCIES.md)
+   and the [source and licence index](dependencies.json). The
+   [dependency-research skill](.agents/skills/dcrc-dependency-research/SKILL.md)
+   explains how to find and validate a replacement when a tool or link is missing.
+3. Follow the [development guide](docs/DEVELOPMENT.md) to research guest calls and
+   hardware behavior, define profile facts and bindings, generate code, and test
+   each implemented service against the game's actual use.
+4. Record test coverage in the [compatibility guide](docs/COMPATIBILITY.md) and
+   check the export with [the release audit](docs/RELEASE_AUDIT.md). Use PPSSPP
+   for functional and visual checks and PSP hardware for acceptance.
 
 | Location | Purpose |
 |---|---|
@@ -105,6 +143,17 @@ Read [AGENTS.md](AGENTS.md), [development](docs/DEVELOPMENT.md),
 The toolkit is gradually extracted from a working first game. A second game has
 not established general portability; adding a game requires analysis, bindings,
 runtime work and tests, not just selecting another disc image.
+
+Optional PSP homebrew guidance: [psp-developer by SandstoneDev](https://github.com/SandstoneDev/psp-developer).
+This is an external reference, not a bundled skill or DCRC dependency. Its
+separate PS2RC License 1.2 is source-available, not MIT; see the
+[pinned reference and licence](.agents/skills/dcrc-port-game/references/public-resources.md).
+
+## Community and contributions
+
+Fork DCRC, make improvements in your fork, and send a pull request. Share what
+changed, which configuration you tested, and how to reproduce the result.
+See [the contribution guide](CONTRIBUTING.md) and join [Discord](https://discord.gg/wV8x46ZTDu).
 
 ## Credits and licences
 

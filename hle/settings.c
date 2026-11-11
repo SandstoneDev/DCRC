@@ -1,3 +1,7 @@
+#include "overlay/movie.h"
+int hle_config_dither; /* 0 on(default),1 opaque,2 off */
+#include "../backend/control_map.h"
+unsigned char hle_control_map[CONTROL_COUNT]=CONTROL_DEFAULTS;
 /* settings.c - the user's settings file: sa1psp.ini in the data root (next
  * to SONICADV/, so the same file works on the desktop and on the Memory
  * Stick).  Lines are "key = value"; '#' or ';' start a comment.  Read once
@@ -122,6 +126,8 @@ void hle_settings_load(void) {
             char *k = trim(line), *v = trim(eq + 1);
             /* Paths retain case; enum settings below retain their original
              * lower-case handling. Command-line launch settings win. */
+            int control=control_map_setting(hle_control_map,k,v);
+            if(control){line=next;continue;}
             int launch = hle_startup_setting(k, v, 0);
             if (!launch) launch = hle_dlc_setting(k, v, 0);
             if (launch) {
@@ -147,6 +153,13 @@ void hle_settings_load(void) {
                 int lang = hle_parse_voice(v);
                 if (lang >= -1) { snd_voice_lang = lang; sa1_log("settings: voice = %s", v); }
                 else sa1_log("settings: voice = %s: not en, ja or game", v);
+            } else if (!strcmp(k,"movies")) {
+                hle_movies_enabled=strcmp(v,"off")&&strcmp(v,"0");
+            } else if (!strcmp(k,"dither")) {
+                if(!strcmp(v,"on"))hle_config_dither=0;
+                else if(!strcmp(v,"opaque"))hle_config_dither=1;
+                else if(!strcmp(v,"off"))hle_config_dither=2;
+                else sa1_log("settings: unsupported dither (use on/opaque/off)");
             } else if (!strcmp(k, "audio")) {
                 snd_audio_enabled = strcmp(v, "off") != 0 && strcmp(v, "0") != 0;
                 sa1_log("settings: audio %s", snd_audio_enabled ? "on" : "off");

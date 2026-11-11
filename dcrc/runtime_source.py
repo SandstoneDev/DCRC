@@ -9,7 +9,7 @@ TREES={'backend':{'.c','.h','.S','.s','.inc','.cmake'},'hle':{'.c','.h','.S','.s
        'recomp/sa1_us_1005':{'.toml','.tsv','.txt','.md'},
        'converter/support':{'.S','.h','.md'}}
 TOOLS=('convert_assets.py','land_convert.py','prs.py','psp_world_textures.py',
-       'psp_hot_order.txt','psp_hot_order.py','gen_overlay_registry.py')
+       'psp_hot_order.txt','psp_hot_order.py','gen_overlay_registry.py','movie_pmfmux.py','movie_pmfinfo.py')
 SKIP={'__pycache__','.git','work','build','private','generated','.pytest_cache'}
 NOTICES=('CREDITS.md','NOTICE.md','LICENSES/sa1-psp-MIT.txt',
          'LICENSES/PSPLink-BSD-3-Clause.txt','LICENSES/MAME-BSD-3-Clause.txt')
