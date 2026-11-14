@@ -16,7 +16,7 @@ def reject_links(path):
         raise ConverterError('unsafe_path',f'Linked paths are not accepted: {p}')
 
 def windows_native_path_too_long(path):
-    # The bundled Windows PSP compiler fails to open source paths at MAX_PATH.
+    # Use the classic MAX_PATH bound for compiler and intermediate file paths.
     return os.name == 'nt' and len(str(path).encode('utf-16-le', 'surrogatepass')) >= 260 * 2
 
 

@@ -401,7 +401,7 @@
       }
     },
     "README.md": {
-      "sha256": "381d8c4e879a536898d87645e855e36ddb37dc0f7bce2230568c8f0edcc6b19d",
+      "sha256": "97b0fa73428d75d09dc427a07b4f8fb46b0121495d4f157ac5a1c827a679c4e0",
       "bytes": 9578,
       "category": "T",
       "license": "MIT",
@@ -410,7 +410,7 @@
         "revision": "c3d128badaa9906f919e27345ad908d50785e1f8",
         "path": "README.md"
       },
-      "review": "Own platform instructions updated to the 0.1.1 converter asset.",
+      "review": "Own platform instructions updated to the 0.1.2 converter asset.",
       "local_modification": {
         "category": "O",
         "license": "MIT",
@@ -1478,8 +1478,8 @@
       "review": "Own journal, CRC and transaction recovery; no save data."
     },
     "converter/README.md": {
-      "sha256": "580a5d1cf954f17dcb710c062db0b87f68be17b78c617bf12f4875378689c83a",
-      "bytes": 5450,
+      "sha256": "e6bbf1e46e31fc7d8dce6ed868e9f86b3c81e2077cb1a1faefa0a9e2cde736c5",
+      "bytes": 5499,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -1604,7 +1604,7 @@
       "review": "Project-authored source/documentation reviewed for local paths, credentials, payloads and external-source boundaries."
     },
     "dcrc/__init__.py": {
-      "sha256": "392850f3b732816c11c71399359207cd8efa1b8da7aaff577d8b2641d888c756",
+      "sha256": "707037e79fd542191ff762340fc8070e4ea2bca67a13886bc869d967f4f35846",
       "bytes": 95,
       "category": "O",
       "license": "MIT",
@@ -2916,8 +2916,8 @@
       "bytes": 1068
     },
     "dcrc/models.py": {
-      "sha256": "2493d6798c9a04dff76a6cf6bdf35b38a7788297874f55ecf409d4834213635b",
-      "bytes": 9442,
+      "sha256": "b9db0cba5d1ccc7c6d331f75eda35dbcb26223de2150f5c355e718822555aff7",
+      "bytes": 10051,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -2925,7 +2925,7 @@
         "revision": "uncommitted-source-preparation",
         "path": "dcrc/models.py"
       },
-      "review": "Own default work folder policy for Windows compiler path lengths.",
+      "review": "Own Windows work-folder preflight and fallback including temporary object stamps.",
       "local_modification": {
         "category": "O",
         "license": "MIT",
@@ -2949,8 +2949,8 @@
       "bytes": 21812
     },
     "dcrc/native_build.py": {
-      "sha256": "fdfa970b0edd166bc1115e4be38be5168422b01d1307ae49cf453dad7f2cc4dd",
-      "bytes": 20793,
+      "sha256": "42a10854c4ceead4554fc41fd690336a8e34de4be96940467c7e3c2ad973966b",
+      "bytes": 21235,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -2958,7 +2958,7 @@
         "revision": "uncommitted-source-preparation",
         "path": "dcrc/native_build.py"
       },
-      "review": "Own preflight error for unreadable long native source paths.",
+      "review": "Own preflight on actual compiler source and temporary object-cache paths.",
       "local_modification": {
         "category": "O",
         "license": "MIT",
@@ -3078,7 +3078,7 @@
       }
     },
     "dcrc/storage.py": {
-      "sha256": "26dea572b49ab11be8f202bd1f72aa03267c7466f7c05f601e7fe48d2e59d135",
+      "sha256": "5a77db729c216d6688635f8392b7d04fc4af34cde39b32ff982a29a8feaa1cd7",
       "bytes": 5935,
       "category": "O",
       "license": "MIT",
@@ -3087,7 +3087,7 @@
         "revision": "uncommitted-source-preparation",
         "path": "dcrc/storage.py"
       },
-      "review": "Own shared Windows native path-length check.",
+      "review": "Own shared Windows MAX_PATH check for source and work paths.",
       "local_modification": {
         "category": "O",
         "license": "MIT",
@@ -6569,8 +6569,8 @@
       "bytes": 3110
     },
     "tests/converter/test_core.py": {
-      "sha256": "74764c954866dd58eba593afc4a1c7cb535af4d534de5ec04e6453eabee1a670",
-      "bytes": 6482,
+      "sha256": "838482b555eb8b56a2f3083aa0d7a6484082c4833e91b1e555e6650c8e9913e8",
+      "bytes": 7429,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -6578,7 +6578,7 @@
         "revision": "uncommitted-source-preparation",
         "path": "tests/converter/test_core.py"
       },
-      "review": "Own Windows deep-output and explicit work-folder regression cases.",
+      "review": "Own synthetic tests of the Windows work-path boundary and selection.",
       "local_modification": {
         "category": "O",
         "license": "MIT",
@@ -6777,8 +6777,8 @@
       "bytes": 13693
     },
     "tests/converter/test_native_build.py": {
-      "sha256": "021249f21a78836e51e7ec5c285c84b5f71e9d436b6811ce52ad7ddf84403e31",
-      "bytes": 8801,
+      "sha256": "5ee280ce785e91142c2439e2b3913f85aa80146c36971957e1421561312bf003",
+      "bytes": 9324,
       "category": "O",
       "license": "MIT",
       "source": {
@@ -6786,7 +6786,7 @@
         "revision": "uncommitted-source-preparation",
         "path": "tests/converter/test_native_build.py"
       },
-      "review": "Own synthetic native path-length regression case.",
+      "review": "Own synthetic test of the temporary object-cache path limit.",
       "local_modification": {
         "category": "O",
         "license": "MIT",

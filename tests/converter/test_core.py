@@ -45,6 +45,25 @@ def test_deep_output_uses_short_local_work_folder(tmp_path, monkeypatch):
     assert not o.output.exists()
 
 
+@pytest.mark.skipif(sys.platform != 'win32', reason='Windows work path limit')
+@pytest.mark.parametrize(('work_length', 'fallback'), [(42, False), (43, True), (48, True)])
+def test_windows_work_path_includes_temporary_build_stamp(tmp_path, monkeypatch, work_length, fallback):
+    anchor = Path(tmp_path.anchor)
+    suffix = len(str(anchor / 'Downloads' / '.dcrc-work')) - len(str(anchor)) + 1
+    home = anchor / ('Test User ' + 'x' * (work_length - len(str(anchor)) - suffix - 10))
+    local = home / 'AppData' / 'Local'
+    monkeypatch.setenv('USERPROFILE', str(home))
+    monkeypatch.setenv('LOCALAPPDATA', str(local))
+    o = options(tmp_path)
+    o.output = home / 'Downloads' / 'game'
+    adjacent = o.output.parent / '.dcrc-work'
+    assert len(str(adjacent)) == work_length
+    expected = home / '.dcrc-work' if fallback else adjacent
+
+    assert o.validate().work == expected
+    assert not adjacent.exists() and not expected.exists()
+
+
 @pytest.mark.skipif(sys.platform != 'win32', reason='Windows PSP compiler path limit')
 def test_short_and_explicit_work_paths_are_kept(tmp_path):
     root = Path(tmp_path.anchor) / 'dcrc-test-short'

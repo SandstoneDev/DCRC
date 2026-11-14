@@ -14,17 +14,27 @@ STAGES=('normal','emerald_coast','station_square','windy_valley','twinkle_park',
  'egg_carrier_outside','egg_carrier_inside','sky_chase1','sky_chase2')
 CHARACTERS=('sonic','tails','knuckles','amy','gamma','big')
 
-# Reserve the suffix of a longest generated C path in the US V1.005 profile.
-_GENERATED_INPUT = (Path('stages/generate') / ('0' * 64) / ('run_' + '0' * 32) /
-                    'generated/overlays/emitter/al_garden00/ovl_al_garden00_table.c')
+# Reserve space for the deepest build file, including the temporary stamp
+# extension and both the stage digest and run ID.
+_BUILD_STAMP = (Path('stages/build') / ('0' * 64) / ('run_' + '0' * 32) /
+                'build/obj/sa1_game_psp.dir/generated/overlays/emitter/al_garden00' /
+                'ovl_al_garden00_table.c.o.json.part')
 
 
 def default_work_folder(output):
     adjacent = output.parent / '.dcrc-work'
-    if windows_native_path_too_long(adjacent / _GENERATED_INPUT):
-        local = Path(os.environ.get('LOCALAPPDATA') or Path.home() / 'AppData' / 'Local')
-        return plain_path(local / 'DCRC' / 'work')
-    return adjacent
+    if not windows_native_path_too_long(adjacent / _BUILD_STAMP):
+        return adjacent
+    home = Path.home()
+    local = Path(os.environ.get('LOCALAPPDATA') or home / 'AppData' / 'Local') / 'DCRC' / 'work'
+    for fallback in (local, home / '.dcrc-work'):
+        if not windows_native_path_too_long(fallback / _BUILD_STAMP):
+            work = plain_path(fallback)
+            if not windows_native_path_too_long(work / _BUILD_STAMP):
+                return work
+    raise ConverterError('native-work-path',
+        'The build files would exceed the Windows path limit. Choose a short work folder near the drive root.',
+        'Use Output > Advanced build options > Work folder, or set --work in the CLI.')
 
 @dataclass
 class ConversionOptions:
@@ -71,7 +81,8 @@ class ConversionOptions:
         self.control_map=validate_control_map(self.control_map)
         self.source=plain_path(self.source)
         self.output=plain_path(self.output)
-        self.work=plain_path(self.work) if self.work else default_work_folder(self.output)
+        if check_paths:
+            self.work=plain_path(self.work) if self.work else default_work_folder(self.output)
         self.toolchain=Path(self.toolchain).expanduser().resolve() if self.toolchain else None
         self.dlc_dir=plain_path(self.dlc_dir) if self.dlc_dir else None
         self.border_image=plain_path(self.border_image) if self.border_image and self.border_mode not in ('default','orbit') else None

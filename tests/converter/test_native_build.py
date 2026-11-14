@@ -147,6 +147,13 @@ class NativeBuildTest(unittest.TestCase):
             self.assertTrue(all('hello' not in str(u['source']) for u in result['units']))
             self.assertFalse((base/'build').exists())
             if os.name == 'nt':
+                stamp = units['ovl_000.c']['object'].with_suffix('.o.json.part')
+                build = base / ('b' * (261 - len(str(stamp)) + len('build')))
+                self.assertEqual(len(str(build / stamp.relative_to(base/'build'))), 261)
+                with self.assertRaisesRegex(api.ConverterError, 'temporary object cache') as failure:
+                    api.plan(src,gen,build,sdk)
+                self.assertEqual(failure.exception.code,'native-work-path')
+                self.assertFalse(build.exists())
                 deep = gen / 'overlays' / 'emitter' / ('long_' * 38) / 'ovl_long.c'
                 deep.parent.mkdir()
                 deep.write_text('/* own fixture */')

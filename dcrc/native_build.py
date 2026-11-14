@@ -34,9 +34,13 @@ def _hash(path):
     return h.hexdigest()
 
 
+def _json_temp_path(path):
+    return path.with_suffix(path.suffix + '.part')
+
+
 def _json(path, value):
     path = Path(path)
-    temp = path.with_suffix(path.suffix + '.part')
+    temp = _json_temp_path(path)
     temp.write_text(json.dumps(value, indent=2, ensure_ascii=False) + '\n', encoding='utf8')
     temp.replace(path)
 
@@ -205,6 +209,11 @@ def plan(source_root, generated, build_dir, toolchain):
                     'Use Output > Advanced build options > Work folder, or set --work in the CLI.')
             rel = path.relative_to(gen if group == 'game' else src)
             obj = dest/'obj'/('sa1_' + group + '_psp.dir')/('generated' if group == 'game' else 'source')/rel.parent/(rel.name+'.o')
+            stamp = obj.with_suffix('.o.json')
+            if windows_native_path_too_long(_json_temp_path(stamp)):
+                raise ConverterError('native-work-path',
+                    'The temporary object cache path is too long. Choose a short work folder near the drive root.',
+                    'Use Output > Advanced build options > Work folder, or set --work in the CLI.')
             flags = common + includes + sdk_inc
             if group == 'hle':
                 flags += definitions + ['-O2', '-fno-strict-aliasing', '-ffp-contract=off', '-Wall', '-g']
@@ -303,7 +312,7 @@ def build(source_root, generated, build_dir, toolchain, runner, jobs=1, title='D
         obj.parent.mkdir(parents=True, exist_ok=True)
         args = [str(tc.tool('psp-gcc'))]+unit['flags']+['-c',source.as_posix(),'-o',obj.as_posix()]
         key = hashlib.sha256(json.dumps([args,_hash(source),header_hash,fingerprint]).encode('utf8')).hexdigest()
-        stamp = obj.with_suffix(obj.suffix+'.json')
+        stamp = obj.with_suffix('.o.json')
         try:
             saved = json.loads(stamp.read_text(encoding='utf8'))
             cached = saved.get('key') == key and obj.is_file() and saved.get('sha256') == _hash(obj)
